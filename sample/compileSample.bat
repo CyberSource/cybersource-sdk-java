@@ -1,4 +1,4 @@
-#@echo off
+@echo off
 
 set LOCAL_CP=
 set LOCAL_CP=%LOCAL_CP%;lib/cybsclients-1.0.0.jar
