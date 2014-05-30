@@ -91,7 +91,7 @@
       <dependency>
 		<groupId>net.sf.saxon</groupId>
 		<artifactId>saxon</artifactId>
-		<version>7.3.1</version>
+		<version>8.7</version>
 	</dependency>
      <dependency>
             <groupId>commons-io</groupId>
