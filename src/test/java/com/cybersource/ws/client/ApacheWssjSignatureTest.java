@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
- * User: jeaton
+ * This is Junit test case for ApacheSignatureWrapper.java class
+ * User: sunagara
  * Date: 6/20/14
  * Time: 1:36 PM
  */
@@ -41,6 +41,9 @@ public class ApacheWssjSignatureTest {
             "<nvpRequest xmlns=\"{0}\">\n{1}</nvpRequest>" +
             "\n</soap:Body>\n</soap:Envelope>";
 
+    /**
+     * Validates the P12 loading mechanism and Signing of XML document for SOAP Request
+     * /
     @Test
     public void testSoapWrapAndSign() throws Exception {
         HashMap<String, String> requestMap = new HashMap<String, String>();
