@@ -36,13 +36,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: jeaton
- * Date: 6/23/14
- * Time: 10:39 AM
+ * Junit Test case for validating XMLClient.java class.
+ * This aimed at validating the Transaction where XML document is used  as the input for XMLClient.java
+ * User: sunagara
+ * 
  */
 public class XmlClientTest {
-
+    /**
+     * validating RunTransaction method of XMLClient.java
+     */
     @Test
     public void testRunTransaction() throws Exception {
       
