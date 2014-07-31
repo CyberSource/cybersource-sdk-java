@@ -26,13 +26,16 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
- * User: jeaton
- * Date: 6/23/14
- * Time: 10:39 AM
+ * Junit Test case for validating Client.java class.
+ * This aimed at validating the Transaction which are sent as Name -value pair or HashMap as the input for Client.java
+ * User: sunagara
+ * 
  */
 public class ClientTest {
 
+    /**
+     * validated the RunTransaction method of client.java
+     * /
     @Test
     public void testRunTransaction() throws Exception {
         HashMap<String, String> requestMap = new HashMap<String, String>();
