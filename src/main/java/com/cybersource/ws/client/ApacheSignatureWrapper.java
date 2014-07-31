@@ -44,15 +44,10 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
+ * This class helps in loading the P12 Key and Signing the XML Request Document using Apache WS Security packages.
  * User: jeaton
  * Date: 6/24/14
  * Time: 12:19 PM
- */
-
-/**
- * @author sunagara
- *
  */
 class ApacheSignatureWrapper {
     private static final String KEY_FILE_TYPE = "PKCS12";
@@ -65,6 +60,14 @@ class ApacheSignatureWrapper {
         Security.addProvider(new BouncyCastleProvider());
     }
 
+    /**
+	 * This helps to Sign the XML request document using Apache WS Security jars and Wraps the SOAP XML request with Signature tags.
+     * @param trxnDataXml  - Input transaction details.
+     * @param merchantConfig - Merchant Config
+     * @param logger - Logget isntance
+     * @return  - Signed SOAP XML Document request.
+     * @throws SignException
+     */
     public static Document soapWrapAndSign(String trxnDataXml, MerchantConfig merchantConfig, Logger logger)
             throws SignException {
 
@@ -135,6 +138,12 @@ class ApacheSignatureWrapper {
         return soapDocument;
     }
 
+    /** Reads the Transaction XML String and returns Document object
+     * @param trxnDataXml - Input XML string
+     * @param logger - logger 
+     * @return - Document object
+     * @throws SignException
+     */
     private static Document getDocumentFromString(String trxnDataXml, Logger logger) throws SignException {
         Document doc;
         try {
@@ -157,9 +166,17 @@ class ApacheSignatureWrapper {
         return doc;
     }
 
-    // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key 
+    
+     /**
+     * Method loads the Merchant P12 key.
+     *  IMPORTANT :This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key 
+     * @param merchantConfig - Merchant Config 
+     * @param logger - logger instance
+     * @throws SignException - Signature exception
+     */
     private static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException {
         // Load the KeyStore and get the signing key and certificate do this once only
+        // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
         if (merchantCertificate == null || merchantPrivateKey == null) {
         	readAndStoreCertificateAndPrivateKey( merchantConfig,  logger);
         }else if(  !currentMerchantId.equals(merchantConfig.getMerchantID() )){
@@ -167,6 +184,12 @@ class ApacheSignatureWrapper {
         }
     }
     
+    /**
+	 *Reads the Certificate or Public key  and Private from the P12 key .
+     * @param merchantConfig - Merchant Config details
+     * @param logger - logger object
+     * @throws SignException
+     */
     private static void readAndStoreCertificateAndPrivateKey(MerchantConfig merchantConfig,Logger logger) throws SignException{
     	
     	
