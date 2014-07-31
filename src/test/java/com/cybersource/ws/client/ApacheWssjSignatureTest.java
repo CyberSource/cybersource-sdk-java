@@ -43,7 +43,7 @@ public class ApacheWssjSignatureTest {
 
     /**
      * Validates the P12 loading mechanism and Signing of XML document for SOAP Request
-     * /
+     */
     @Test
     public void testSoapWrapAndSign() throws Exception {
         HashMap<String, String> requestMap = new HashMap<String, String>();
