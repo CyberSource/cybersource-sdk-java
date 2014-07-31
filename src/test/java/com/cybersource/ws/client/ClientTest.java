@@ -35,7 +35,7 @@ public class ClientTest {
 
     /**
      * validated the RunTransaction method of client.java
-     * /
+     */
     @Test
     public void testRunTransaction() throws Exception {
         HashMap<String, String> requestMap = new HashMap<String, String>();
