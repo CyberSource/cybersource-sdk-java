@@ -5,6 +5,7 @@ Copyright 2003-2007 CyberSource Corporation
 Simple Order API SDK Client uses Bouncy Castle and Apache WS Security Open source jars 
 for sending the transactions over SOAP based Web services.
 - Bouncy Castle jars are used for loading the P12 and Apache WS Security for singing the Request XML Document 
+- P12 keys generated to specific merchant will be used for encrypting thedata and for signing the SOAP XML Request
 -------------------------------------------------------------------------------
 RELEASE NOTES
 -------------------------------------------------------------------------------
