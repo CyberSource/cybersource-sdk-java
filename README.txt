@@ -1,11 +1,15 @@
 ===============================================================================
 CyberSource Simple Order API for Java
-Copyright 2003-2007 CyberSource Corporation
+Copyright 2014 CyberSource Corporation
 ===============================================================================
+
 Simple Order API SDK Client uses Bouncy Castle and Apache WS Security Open source jars 
 for sending the transactions over SOAP based Web services.
+
 - Bouncy Castle jars are used for loading the P12 and Apache WS Security for singing the Request XML Document 
-- P12 keys generated to specific merchant will be used for encrypting thedata and for signing the SOAP XML Request
+
+- P12 keys generated to specific merchant will be used for encrypting the data and for signing the SOAP XML Request
+
 -------------------------------------------------------------------------------
 RELEASE NOTES
 -------------------------------------------------------------------------------
@@ -25,7 +29,7 @@ Java SDK 1.5 or later
 
 
 -------------------------------------------------------------------------------
-CONFIGURATION AND TESTING
+CONFIGURATION AND TESTING THE SDK CLIENT ( This is not Junit Test cases )
 -------------------------------------------------------------------------------
 
 1. You need a security key (<your merchant id>.p12) in order to send requests
@@ -117,7 +121,9 @@ slf4j-api-1.7.7.jar   		 	- Logging helper jars
 slf4j-jcl-1.7.7.jar       		 		- Helps in logging.
 commons-logging-2.6.jar          	- commons-logging jar file needed by HttpClient.
 	  
-	  
+----------------------------------------------------------------------------------
+JUNIT TEST CASES	  
+----------------------------------------------------------------------------------
 
 TESTING THE NAME-VALUE PAIR SAMPLE
 
@@ -125,6 +131,10 @@ TESTING THE NAME-VALUE PAIR SAMPLE
    Name-Value pair Merchant and Transaction details.
    Command Line : mvn clean install or mvn test 
   // This will run all the Test cases under this project.
+  Target URL and Merchant Details are hard coded in each Test Cases. 
+  User can change the hard coded details and re-run the test case.
+  
+  
   
 TESTING THE XML SAMPLE
 
@@ -132,7 +142,8 @@ TESTING THE XML SAMPLE
    auth.xml file being used for Merchant and Transaction details.
    Command Line : mvn clean install or mvn test 
   // This will run all the Test cases under this project.
-   
+  Target URL and Merchant Details are hard coded in each Test Cases. 
+  User can change the hard coded details and re-run the test case.
 
 -------------------------------------------------------------------------------
 THIRD-PARTY LICENSES
