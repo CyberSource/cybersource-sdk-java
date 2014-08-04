@@ -25,6 +25,13 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Properties;
 
+/** 
+ * Import : This JUNIT Test case wil fail until P12 related details are not modified
+ * Steps to Modify the P12
+ * - Generate a P12 specific to Merchant ID and place the new P12 key under <keysDirectory>/src/test/resources/
+ * - Change Merchnt ID , KeyAlias and keyPassword in all test cases
+ * /
+
 /**
  * Junit Test case for validating Client.java class.
  * This aimed at validating the Transaction which are sent as Name -value pair or HashMap as the input for Client.java
