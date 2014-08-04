@@ -21,7 +21,9 @@ Please refer to the CHANGES file for the release notes.
 REQUIREMENTS
 -------------------------------------------------------------------------------
 
-P12 Key for specific to Merchant ID
+P12 Key for specific to Merchant ID needs to generated.
+
+IMPORTANT: ** JUNIT Test Cases will fail until you configure or add specific P12 key details in each Test Case.
 
 --------------------
 Minimum Requirements
@@ -136,6 +138,8 @@ commons-logging-2.6.jar - commons-logging jar file needed by HttpClient.
 ----------------------------------------------------------------------------------
 JUNIT TEST CASES	  
 ----------------------------------------------------------------------------------
+
+** JUnit test cases will fail until you provide the generated P12 key and add P12 key details in all Test cases.
 
 TESTING THE NAME-VALUE PAIR SAMPLE
 
