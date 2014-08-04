@@ -125,13 +125,13 @@ JAR FILES INCLUDED
 
 The following are the jar files included in the lib directory:
 
-bcprov-jdk16-1.45.jar 	      	- includes the classes required for Digital Signature and Encrytion techniques. 
-								  These mainly used for signing the outgoing messages/Transaction data.	
-xmlsec-2.0.0.jar			    - Part of Apache Santuario , this contains XML parsing packages.			  
-wss4j-1.6.5.jar     		    - part of Apache Web Security  jar used for building and signing the XML document
-slf4j-api-1.7.7.jar   		 	- Logging helper jars
-slf4j-jcl-1.7.7.jar       		 		- Helps in logging.
-commons-logging-2.6.jar          	- commons-logging jar file needed by HttpClient.
+bcprov-jdk16-1.45.jar  	- includes the classes required for Digital Signature and Encrytion techniques. 
+		          These mainly used for signing the outgoing messages/Transaction data.	
+xmlsec-2.0.0.jar        - Part of Apache Santuario , this contains XML parsing packages.			  
+wss4j-1.6.5.jar         - part of Apache Web Security  jar used for building and signing the XML document
+slf4j-api-1.7.7.jar   	- Logging helper jars
+slf4j-jcl-1.7.7.jar     - Helps in logging.
+commons-logging-2.6.jar - commons-logging jar file needed by HttpClient.
 	  
 ----------------------------------------------------------------------------------
 JUNIT TEST CASES	  
@@ -139,10 +139,10 @@ JUNIT TEST CASES
 
 TESTING THE NAME-VALUE PAIR SAMPLE
 
-   Junit Test Case  : ClientTest.java is made available under Test package which has sample
-   Name-Value pair Merchant and Transaction details.
+   Junit Test Case  : ClientTest.java is made available under Test package which
+   has sample Name-Value pair Merchant and Transaction details.
    Command Line : mvn clean install or mvn test 
-  // This will run all the Test cases under this project.
+  This will run all the Test cases under this project.
   Target URL and Merchant Details are hard coded in each Test Case. 
   User can change the hard coded details and re-run the test case.
   
@@ -153,9 +153,9 @@ TESTING THE XML SAMPLE
    Junit Test Case  : XMLClientTest.java is made available under Test package which contains sample
    auth.xml file which is being used for fetching the Merchant and Transaction details.
    Command Line : mvn clean install or mvn test 
-  // This will run all the Test cases under this project.
-  Target URL and Merchant Details are hard coded in each Test Case. 
-  User can change the hard coded details and re-run the test case.
+   This will run all the Test cases under this project.
+   Target URL and Merchant Details are hard coded in each Test Case. 
+   User can change the hard coded details and re-run the test case.
 
 -------------------------------------------------------------------------------
 THIRD-PARTY LICENSES
