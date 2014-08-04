@@ -35,6 +35,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+/** 
+ * Import : This JUNIT Test case wil fail until P12 related details are not modified
+ * Steps to Modify the P12
+ * - Generate a P12 specific to Merchant ID and place the new P12 key under <keysDirectory>/src/test/resources/
+ * - Change Merchnt ID , KeyAlias and keyPassword in all test cases
+ * /
+
+
 /**
  * Junit Test case for validating XMLClient.java class.
  * This aimed at validating the Transaction where XML document is used  as the input for XMLClient.java
