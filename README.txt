@@ -72,7 +72,8 @@ CONFIGURATION AND TESTING THE SDK CLIENT ( This is not Junit Test cases )
            // Builds the project and creates a jar file of client SDk
            // Includes running all JUnit Test cases 
         
-        c. mvn install -Dmaven.test.skip=true  // This is for building the project by skipping the Junit Test cases
+        c. mvn install -Dmaven.test.skip=true  
+           // This is for building the project by skipping the Junit Test cases
         
 
 NOTES:
