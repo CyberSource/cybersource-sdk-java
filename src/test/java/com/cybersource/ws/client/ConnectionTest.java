@@ -13,6 +13,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
+
+/** 
+ * Import : This JUNIT Test case wil fail until P12 related details are not modified
+ * Steps to Modify the P12
+ * - Generate a P12 specific to Merchant ID and place the new P12 key under <keysDirectory>/src/test/resources/
+ * - Change Merchnt ID , KeyAlias and keyPassword in all test cases
+ * /
+
 /**
  * Test case to validate the Conenction instance
  * @author sunagara
