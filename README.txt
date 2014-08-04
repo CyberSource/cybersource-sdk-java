@@ -21,6 +21,8 @@ Please refer to the CHANGES file for the release notes.
 REQUIREMENTS
 -------------------------------------------------------------------------------
 
+P12 Key for specific to Merchant ID
+
 --------------------
 Minimum Requirements
 --------------------
@@ -36,9 +38,9 @@ CONFIGURATION AND TESTING THE SDK CLIENT ( This is not Junit Test cases )
    to the server.  If you do not have your key yet, refer to the CyberSource
    Developer's Guide for the procedure to create one.
    
-2. Download the SimpleOrderAPI package into a directory of your choice. 
+2. Download the sdk-java-master.zip package into a directory of your choice. 
 
-3. Go to the SimpleOrderAPI directory.
+3. Extract and Go to the sdk-java-master directory.
 
 4. Edit cybs.properties and make the following changes:
 
@@ -62,7 +64,16 @@ CONFIGURATION AND TESTING THE SDK CLIENT ( This is not Junit Test cases )
 	NOTE:  sendToProduction is initially set to false.  Set it to true only
 	       when you are ready to send live transactions.
 	
+5. Build this project using Maven 
 
+        a. mvn clean  // Cleans the Project
+        
+        b. mvn install 
+           // Builds the project and creates a jar file of client SDk
+           // Includes running all JUnit Test cases 
+        
+        c. mvn install -Dmaven.test.skip=true  // This is for building the project by skipping the Junit Test cases
+        
 
 NOTES:
 
@@ -131,18 +142,18 @@ TESTING THE NAME-VALUE PAIR SAMPLE
    Name-Value pair Merchant and Transaction details.
    Command Line : mvn clean install or mvn test 
   // This will run all the Test cases under this project.
-  Target URL and Merchant Details are hard coded in each Test Cases. 
+  Target URL and Merchant Details are hard coded in each Test Case. 
   User can change the hard coded details and re-run the test case.
   
   
   
 TESTING THE XML SAMPLE
 
-	Junit Test Case  : XMLClientTest.java is made available under Test package which has sample
-   auth.xml file being used for Merchant and Transaction details.
+   Junit Test Case  : XMLClientTest.java is made available under Test package which contains sample
+   auth.xml file which is being used for fetching the Merchant and Transaction details.
    Command Line : mvn clean install or mvn test 
   // This will run all the Test cases under this project.
-  Target URL and Merchant Details are hard coded in each Test Cases. 
+  Target URL and Merchant Details are hard coded in each Test Case. 
   User can change the hard coded details and re-run the test case.
 
 -------------------------------------------------------------------------------
