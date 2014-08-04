@@ -28,9 +28,17 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Properties;
 
+
+/** 
+ * Import : This JUNIT Test case wil fail until P12 related details are not modified
+ * Steps to Modify the P12
+ * - Generate a P12 specific to Merchant ID and place the new P12 key under <keysDirectory>/src/test/resources/
+ * - Change Merchnt ID , KeyAlias and keyPassword in all test cases
+ * /
+
 /**
  * This is Junit test case for ApacheSignatureWrapper.java class
- * User: sunagara
+ *  User: sunagara
  * Date: 6/20/14
  * Time: 1:36 PM
  */
@@ -75,9 +83,12 @@ public class ApacheWssjSignatureTest {
         requestMap.put("merchant_id", "jasoneatoncorp");
 
         Properties merchantProperties = new Properties();
+            //Modify the merchantID property to specific Merchant ID
         merchantProperties.setProperty("merchantID", "jasoneatoncorp");
         merchantProperties.setProperty("keysDirectory", "src" + File.separator + "test" + File.separator + "resources");
+         //Modify the "keyAlias" property to specific Merchant ID
         merchantProperties.setProperty("keyAlias", "jasoneatoncorp");
+         //Modify the "keyPassword" property to specific Merchant ID
         merchantProperties.setProperty("keyPassword", "jasoneatoncorp");
         merchantProperties.setProperty("targetAPIVersion", "1.97");
         merchantProperties.setProperty("sendToProduction", "false");
