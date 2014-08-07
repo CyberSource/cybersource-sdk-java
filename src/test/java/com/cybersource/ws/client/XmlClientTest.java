@@ -27,13 +27,17 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 /**
- * 
- * User: sunagara
- * Date: 8/7/14
+ * Test case for XMLClient.
+ * User: sunaga
+ * Date: 6/23/14
  * Time: 10:39 AM
  */
 public class XmlClientTest {
 
+
+    /**
+     *In this case , we are reading 
+    */
     @Test
     public void testRunTransaction() throws Exception {
     	Properties merchantProperties = new Properties();
