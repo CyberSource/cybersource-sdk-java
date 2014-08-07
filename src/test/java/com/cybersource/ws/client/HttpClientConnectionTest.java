@@ -1,6 +1,7 @@
 package com.cybersource.ws.client;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -12,13 +13,6 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
-/** 
- * Import : This JUNIT Test case wil fail until P12 related details are not modified
- * Steps to Modify the P12
- * - Generate a P12 specific to Merchant ID and place the new P12 key under <keysDirectory>/src/test/resources/
- * - Change Merchnt ID , KeyAlias and keyPassword in all test cases
- * /
 
 /**
  * Test case to validate the HttpClientConnection instance
@@ -35,20 +29,16 @@ public class HttpClientConnectionTest {
 	 public void testGetInstance(){
 		 
 		    HttpClientConnection con = null;
-	        Properties merchantProperties = new Properties();
-	        merchantProperties.setProperty("merchantID", "jasoneatoncorp");
-	        merchantProperties.setProperty("keysDirectory", "src/test/resources");
-	        //merchantProperties.setProperty("keyAlias", "jasoneatoncorp");
-	        //merchantProperties.setProperty("keyPassword", "jasoneatoncorp");
-	        merchantProperties.setProperty("targetAPIVersion", "1.97");
-	        merchantProperties.setProperty("sendToProduction", "false");
-	        merchantProperties.setProperty("serverURL", "https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/");
-	       // merchantProperties.setProperty("serverURL", "http://mvqsstage002d.qa.intra:11080/commerce/1.x/transactionProcessor/");
-	        merchantProperties.setProperty("timeout", "1000");
-	        merchantProperties.setProperty("enableLog", "true");
-	        merchantProperties.setProperty("logDirectory", ".");
-	        merchantProperties.setProperty("logMaximumSize", "10");
-	        
+		    Properties merchantProperties = new Properties();
+	        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
+			if (in == null) {
+				throw new RuntimeException("Unable to load test_cybs.properties file");
+			}
+			try {
+				merchantProperties.load(in);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 	        DocumentBuilder builder;
 			try {
 				builder = Utility.newDocumentBuilder();
