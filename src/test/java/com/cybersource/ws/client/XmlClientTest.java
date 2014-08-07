@@ -18,63 +18,38 @@
 
 package com.cybersource.ws.client;
 
-import com.cybersource.ws.client.Client;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Properties;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-/** 
- * Import : This JUNIT Test case wil fail until P12 related details are not modified
- * Steps to Modify the P12
- * - Generate a P12 specific to Merchant ID and place the new P12 key under <keysDirectory>/src/test/resources/
- * - Change Merchnt ID , KeyAlias and keyPassword in all test cases
- * /
-
 
 /**
- * Junit Test case for validating XMLClient.java class.
- * This aimed at validating the Transaction where XML document is used  as the input for XMLClient.java
- * User: sunagara
  * 
+ * User: sunagara
+ * Date: 8/7/14
+ * Time: 10:39 AM
  */
 public class XmlClientTest {
-    /**
-     * validating RunTransaction method of XMLClient.java
-     */
+
     @Test
     public void testRunTransaction() throws Exception {
-      
-        Properties merchantProperties = new Properties();
-        merchantProperties.setProperty("merchantID", "jasoneatoncorp");
-        merchantProperties.setProperty("keysDirectory", "src/test/resources");
-        //merchantProperties.setProperty("keyAlias", "jasoneatoncorp");
-        //merchantProperties.setProperty("keyPassword", "jasoneatoncorp");
-        merchantProperties.setProperty("targetAPIVersion", "1.97");
-        merchantProperties.setProperty("sendToProduction", "false");
-        merchantProperties.setProperty("serverURL", "https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/");
-       // merchantProperties.setProperty("serverURL", "http://mvqsstage002d.qa.intra:11080/commerce/1.x/transactionProcessor/");
-        merchantProperties.setProperty("timeout", "10000");
-        merchantProperties.setProperty("enableLog", "true");
-        merchantProperties.setProperty("logDirectory", ".");
-        merchantProperties.setProperty("logMaximumSize", "10");
+    	Properties merchantProperties = new Properties();
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
+		if (in == null) {
+			throw new RuntimeException("Unable to load test_cybs.properties file");
+		}
+		try {
+			merchantProperties.load(in);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
         Document request = Utility.readRequest(merchantProperties);
-        
-        // run transaction now
-         Document replyDoc = XMLClient.runTransaction(request, merchantProperties);
-         String responseStr =  Utility.nodeToString(replyDoc);
-         Assert.assertTrue(responseStr.contains("<c:reasonCode>100</c:reasonCode>"));
+        Document replyDoc = XMLClient.runTransaction(request, merchantProperties);
+        String responseStr =  Utility.nodeToString(replyDoc);
+        Assert.assertTrue(responseStr.contains("<c:reasonCode>100</c:reasonCode>"));
     }
     
     
