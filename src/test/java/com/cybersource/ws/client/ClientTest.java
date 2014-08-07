@@ -34,8 +34,12 @@ import java.util.Properties;
  */
 public class ClientTest {
 
+
+   // Test case takes the Transaction Data and Merchant Properties details are given as input.
     @Test
     public void testRunTransaction() throws Exception {
+    	
+    	// Transaction Data
         HashMap<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("ccAuthService_run", "true");
         requestMap.put("merchantReferenceCode", "jasoneatoncorp");
