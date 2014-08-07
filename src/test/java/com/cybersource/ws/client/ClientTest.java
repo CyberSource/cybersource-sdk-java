@@ -22,27 +22,18 @@ import com.cybersource.ws.client.Client;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Properties;
 
-/** 
- * Import : This JUNIT Test case wil fail until P12 related details are not modified
- * Steps to Modify the P12
- * - Generate a P12 specific to Merchant ID and place the new P12 key under <keysDirectory>/src/test/resources/
- * - Change Merchnt ID , KeyAlias and keyPassword in all test cases
- * /
-
 /**
- * Junit Test case for validating Client.java class.
- * This aimed at validating the Transaction which are sent as Name -value pair or HashMap as the input for Client.java
- * User: sunagara
- * 
+ * Created with IntelliJ IDEA.
+ * User: jeaton
+ * Date: 6/23/14
+ * Time: 10:39 AM
  */
 public class ClientTest {
 
-    /**
-     * validated the RunTransaction method of client.java
-     */
     @Test
     public void testRunTransaction() throws Exception {
         HashMap<String, String> requestMap = new HashMap<String, String>();
@@ -74,20 +65,12 @@ public class ClientTest {
         requestMap.put("merchant_id", "jasoneatoncorp");
 
         Properties merchantProperties = new Properties();
-        merchantProperties.setProperty("merchantID", "jasoneatoncorp");
-        merchantProperties.setProperty("keysDirectory", "src/test/resources");
-        //merchantProperties.setProperty("keyAlias", "jasoneatoncorp");
-        //merchantProperties.setProperty("keyPassword", "jasoneatoncorp");
-        merchantProperties.setProperty("targetAPIVersion", "1.97");
-        merchantProperties.setProperty("sendToProduction", "false");
-        merchantProperties.setProperty("serverURL", "https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/");
-       // merchantProperties.setProperty("serverURL", "http://mvqsstage002d.qa.intra:11080/commerce/1.x/transactionProcessor/");
-        merchantProperties.setProperty("timeout", "1000");
-        merchantProperties.setProperty("enableLog", "true");
-        merchantProperties.setProperty("logDirectory", ".");
-        merchantProperties.setProperty("logMaximumSize", "10");
-
-        HashMap<String, String> replyMap = Client.runTransaction(requestMap, merchantProperties);
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
+		if (in == null) {
+			throw new RuntimeException("Unable to load test_cybs.properties file");
+		}
+		merchantProperties.load(in);
+		HashMap<String, String> replyMap = Client.runTransaction(requestMap, merchantProperties);
         Assert.assertEquals("100", replyMap.get("reasonCode"));
     }
 }
