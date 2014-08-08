@@ -29,6 +29,7 @@ public class JDKHttpURLConnectionTest {
 		 
 		    JDKHttpURLConnection con = null;
 		    Properties merchantProperties = new Properties();
+		    //Loading the properties file from src/test/resources
 	        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
 			if (in == null) {
 				throw new RuntimeException("Unable to load test_cybs.properties file");
