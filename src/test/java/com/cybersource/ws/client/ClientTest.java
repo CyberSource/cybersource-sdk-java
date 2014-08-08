@@ -27,10 +27,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
- * User: jeaton
- * Date: 6/23/14
- * Time: 10:39 AM
+ * This class helps in testing the Client.java class which uses Name Value pair as the input data
+ * author : sunagara
  */
 public class ClientTest {
 
@@ -68,6 +66,7 @@ public class ClientTest {
         requestMap.put("item_1_unitPrice", "56.78");
         requestMap.put("merchant_id", "jasoneatoncorp");
 
+	//Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
 		if (in == null) {
