@@ -3,6 +3,11 @@ CyberSource Simple Order API for Java
 Copyright 2014 CyberSource Corporation
 ===============================================================================
 
+CyberSource APIs provide access to every service CyberSource offers. With Simple Order API, 
+CyberSource provides the client software. It's the right choice for merchants who want scalability, 
+a full range of services, and greater control of the buying experience.
+
+Tip: Software Development Kits contain API Client software, code samples, and release notes
 Simple Order API SDK Client uses Bouncy Castle and Apache WS Security Open source jars 
 for sending the transactions over SOAP based Web services.
 
