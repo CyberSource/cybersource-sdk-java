@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
+ * This class helps in testing Apache WebService Security Signature class
  * User: jeaton
  * Date: 6/20/14
  * Time: 1:36 PM
@@ -44,6 +44,8 @@ public class ApacheWssjSignatureTest {
 
     @Test
     public void testSoapWrapAndSign() throws Exception {
+    	
+    	// Sample Transadction Data is fed as HashMap input
         HashMap<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("ccAuthService_run", "true");
         requestMap.put("merchantReferenceCode", "jasoneatoncorp");
@@ -72,6 +74,8 @@ public class ApacheWssjSignatureTest {
         requestMap.put("item_1_unitPrice", "56.78");
         requestMap.put("merchant_id", "jasoneatoncorp");
 
+
+       //Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
 		if (in == null) {
