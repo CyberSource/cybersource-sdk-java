@@ -418,6 +418,8 @@ public class Utility {
                         : (String) src.get(key);
                 dest.append(key + "=" + val + "\n");
             }
+        } else {
+            return dest.toString();
         }
 
         String hasEscapes = (String) src.get(HAS_ESCAPES);
