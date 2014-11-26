@@ -18,26 +18,27 @@
 
 package com.cybersource.ws.client;
 
-import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 
 /**
  * This class helps in testing the Client.java class which uses Name Value pair as the input data
  * author : sunagara
  */
-public class ClientTest {
+public class ClientTest extends BaseTest {
 
-    /**
-     * Test case takes the Transaction Data and Merchant Properties details are given as input.
-     * @throws Exception
-     */
+
+   // Test case takes the Transaction Data and Merchant Properties details are given as input.
     @Test
     public void testRunTransaction() throws Exception {
+    	
     	// Transaction Data
         HashMap<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("ccAuthService_run", "true");
@@ -67,14 +68,23 @@ public class ClientTest {
         requestMap.put("item_1_unitPrice", "56.78");
         requestMap.put("merchant_id", "jasoneatoncorp");
 
-	    //Loading the properties file from src/test/resources
+	//Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
 		if (in == null) {
 			throw new RuntimeException("Unable to load test_cybs.properties file");
 		}
 		merchantProperties.load(in);
-		Map replyMap = Client.runTransaction(requestMap, merchantProperties);
-        Assert.assertEquals("100", replyMap.get("reasonCode"));
+		Map<String, String> replyMap = Client.runTransaction(requestMap, merchantProperties);
+        assertEquals("100", replyMap.get("reasonCode"));
+    }
+
+    @Test
+    public void testSetVersionInformation() throws InvocationTargetException {
+        Class[] argClasses = {Map.class};
+        Map<String,String> request = getSampleRequest();
+        Object[] argObjects = {request};
+        invokePrivateStaticMethod(Client.class, "setVersionInformation", argClasses, argObjects);
+        assertEquals("Java Basic", request.get("clientLibrary"));
     }
 }
