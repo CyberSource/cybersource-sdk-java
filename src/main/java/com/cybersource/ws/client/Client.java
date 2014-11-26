@@ -59,7 +59,7 @@ public class Client {
      * @throws FaultException  if a fault occurs.
      * @throws ClientException if any other exception occurs.
      */
-    public static HashMap<String, String> runTransaction(Map request, Properties props)
+    public static Map runTransaction(Map<String,String> request, Properties props)
             throws FaultException, ClientException {
         return (runTransaction(
                 request, props, null, true, true));
@@ -79,7 +79,7 @@ public class Client {
      * @throws FaultException  if a fault occurs.
      * @throws ClientException if any other exception occurs.
      */
-    public static HashMap runTransaction(
+    public static Map runTransaction(
             Map<String, String> request, Properties props,
             Logger _logger, boolean prepare, boolean logTranStart)
             throws FaultException, ClientException {

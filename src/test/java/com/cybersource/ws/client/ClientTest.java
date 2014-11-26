@@ -18,12 +18,12 @@
 
 package com.cybersource.ws.client;
 
-import com.cybersource.ws.client.Client;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -32,11 +32,12 @@ import java.util.Properties;
  */
 public class ClientTest {
 
-
-   // Test case takes the Transaction Data and Merchant Properties details are given as input.
+    /**
+     * Test case takes the Transaction Data and Merchant Properties details are given as input.
+     * @throws Exception
+     */
     @Test
     public void testRunTransaction() throws Exception {
-    	
     	// Transaction Data
         HashMap<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("ccAuthService_run", "true");
@@ -66,14 +67,14 @@ public class ClientTest {
         requestMap.put("item_1_unitPrice", "56.78");
         requestMap.put("merchant_id", "jasoneatoncorp");
 
-	//Loading the properties file from src/test/resources
+	    //Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
 		if (in == null) {
 			throw new RuntimeException("Unable to load test_cybs.properties file");
 		}
 		merchantProperties.load(in);
-		HashMap<String, String> replyMap = Client.runTransaction(requestMap, merchantProperties);
+		Map replyMap = Client.runTransaction(requestMap, merchantProperties);
         Assert.assertEquals("100", replyMap.get("reasonCode"));
     }
 }
