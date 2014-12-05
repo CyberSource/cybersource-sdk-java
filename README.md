@@ -1,19 +1,15 @@
 #CyberSource Simple Order API for Java
 
--------------------------------------------------------------------------------
-
 
 
 ##Requirements
 
--------------------------------------------------------------------------------
 
 Java SDK 1.6 and later<br>
 Maven 3 and later
 	
 ##Prerequisites
 
--------------------------------------------------------------------------------
 
 A CyberSource Evaluation account. Sign up here:  <http://www.cybersource.com/register>
 
@@ -27,7 +23,6 @@ Refer to our Developer's Guide for details <http://www.cybersource.com/developer
 
 ##Installing the SDK 
 
--------------------------------------------------------------------------------
 
 1. Download the sdk-java-master.zip package into a directory of your choice. 
 
@@ -62,17 +57,10 @@ Refer to our Developer's Guide for details <http://www.cybersource.com/developer
   
 
 ##Documentation
--------------------------------------------------------------------------------
 
-For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation/>
+For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>
 
-For all other support needs, see
+For all other support needs, see <http://www.cybersource.com/support>
 
-Enteprise Business Center users:
 
-For information about how to use a specific ICS service, see the Implementation
-Guide for that service.  The Implementation Guides are available on the Support
-Center at:
-
-http://www.cybersource.com/support_center/support_documentation/services_documentation/
 
