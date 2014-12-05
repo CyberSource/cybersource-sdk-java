@@ -28,7 +28,7 @@ Refer to our Developer's Guide for details <http://www.cybersource.com/developer
 
 2. Extract and go to the sdk-java-master directory.
 
-4. To run the tests, edit the test_cybs.properties and make the following changes:
+3. To run the integration tests, edit the test_cybs.properties and make the following changes:
 
     a. Set merchantID, keyAlias and keyPassword to your merchantID.  Please note that it is case-sensitive.
     
@@ -46,13 +46,19 @@ Refer to our Developer's Guide for details <http://www.cybersource.com/developer
 	NOTE:  sendToProduction is initially set to false.  Set it to true only
 	       when you are ready to send live transactions.
 	
-5. Build this project using Maven 
+4. Build this project using Maven.
 
         a. mvn clean  // Cleans the Project
         
         b. mvn install 
-           // Builds the project and creates a jar file of client SDk
-           // Includes running all unit test cases 
+           // Builds the project and creates a jar file of client SDK
+           // Includes running all unit tests and integration tests
+
+        c. mvn test
+           // Runs unit tests
+
+        d. mvn failsafe:integration-test
+           // Runs unit and integration tests. Note that integration tests require proper setup of test_cybs.properties
 
   
 
