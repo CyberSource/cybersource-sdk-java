@@ -161,13 +161,13 @@ public abstract class BaseTest {
             "</person>\n" +
             "</employees>\n";
 
-    protected static Document getSampleXMLDocument() {
+    protected static Document getSampleXMLDocument(String sampleXML) {
         Document document = null;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             DocumentBuilder builder = dbf.newDocumentBuilder();
-            StringReader sr = new StringReader(testSimpleXML);
+            StringReader sr = new StringReader(sampleXML);
             document = builder.parse(new InputSource(sr));
             sr.close();
 

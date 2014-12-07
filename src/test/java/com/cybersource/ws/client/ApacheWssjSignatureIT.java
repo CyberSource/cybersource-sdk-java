@@ -35,7 +35,7 @@ import java.util.Properties;
  * Date: 6/20/14
  * Time: 1:36 PM
  */
-public class ApacheWssjSignatureTest {
+public class ApacheWssjSignatureIT {
 
     private static final String textXmlDoc = "<soap:Envelope xmlns:soap=\"" +
             "http://schemas.xmlsoap.org/soap/envelope/\">\n<soap:Body id=\"body1\">\n" +

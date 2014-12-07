@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
  * @author sunagara
  *
  */
-public class JDKHttpURLConnectionTest {
+public class JDKHttpURLConnectionIT {
     private String requestFilename = "src/test/resources/auth.xml";
 
     /**

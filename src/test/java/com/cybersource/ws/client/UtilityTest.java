@@ -1,14 +1,11 @@
 package com.cybersource.ws.client;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.soap.SOAPElement;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -36,7 +33,7 @@ public class UtilityTest extends BaseTest {
 
     @Test
     public void testNodeToString() {
-        Document document = getSampleXMLDocument();
+        Document document = getSampleXMLDocument(testSimpleXML);
         Node n = document.getChildNodes().item(0);
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + testSimpleXML;
         String result = Utility.nodeToString(n);
