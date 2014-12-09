@@ -35,9 +35,12 @@ public class UtilityTest extends BaseTest {
     public void testNodeToString() {
         Document document = getSampleXMLDocument(testSimpleXML);
         Node n = document.getChildNodes().item(0);
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + testSimpleXML;
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + testSimpleXML;
         String result = Utility.nodeToString(n);
         result = result.replaceAll("\\r\\n", "\n");
+        System.out.println(expected);
+        //XML
+        System.out.println(result);
         assertEquals(expected, result);
     }
 

@@ -140,6 +140,9 @@
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>2.6</version>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
