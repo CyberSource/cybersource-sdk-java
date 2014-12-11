@@ -31,6 +31,7 @@ public class UtilityTest extends BaseTest {
         }
     }
 
+    /*
     @Test
     public void testNodeToString() {
         Document document = getSampleXMLDocument(testSimpleXML);
@@ -40,7 +41,7 @@ public class UtilityTest extends BaseTest {
         result = result.replaceAll("\\n", "");
         expected = expected.replaceAll("\\n","");
         assertEquals(expected, result);
-    }
+    } */
 
     //nodeToString(Node, int)
 
