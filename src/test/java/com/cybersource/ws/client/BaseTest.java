@@ -69,7 +69,7 @@ public abstract class BaseTest {
         // Sample Transadction Data is fed as HashMap input
         basicRequestMap = new HashMap<String,String>();
         basicRequestMap.put("ccAuthService_run", "true");
-        basicRequestMap.put("merchantReferenceCode", "jasoneatoncorp");
+        basicRequestMap.put("merchantReferenceCode", "your_reference_code");
         basicRequestMap.put("billTo_firstName", "John");
         basicRequestMap.put("billTo_lastName", "Doe");
         basicRequestMap.put("billTo_street1", "1295 Charleston Road");
@@ -93,13 +93,13 @@ public abstract class BaseTest {
         basicRequestMap.put("purchaseTotals_currency", "USD");
         basicRequestMap.put("item_0_unitPrice", "12.34");
         basicRequestMap.put("item_1_unitPrice", "56.78");
-        basicRequestMap.put("merchant_id", "jasoneatoncorp");
+        basicRequestMap.put("merchant_id", "your_merchant_id");
     }
 
     protected static Map<String,String> getSampleRequest() {
         Map<String,String> sampleRequestMap = new HashMap<String,String>();
         sampleRequestMap.put("ccAuthService_run", "true");
-        sampleRequestMap.put("merchantReferenceCode", "jasoneatoncorp");
+        sampleRequestMap.put("merchantReferenceCode", "your_reference_code");
         sampleRequestMap.put("billTo_firstName", "John");
         sampleRequestMap.put("billTo_lastName", "Doe");
         sampleRequestMap.put("billTo_street1", "1295 Charleston Road");
@@ -123,7 +123,7 @@ public abstract class BaseTest {
         sampleRequestMap.put("purchaseTotals_currency", "USD");
         sampleRequestMap.put("item_0_unitPrice", "12.34");
         sampleRequestMap.put("item_1_unitPrice", "56.78");
-        sampleRequestMap.put("merchant_id", "jasoneatoncorp");
+        sampleRequestMap.put("merchant_id", "your_merchant_id");
         return sampleRequestMap;
     }
 

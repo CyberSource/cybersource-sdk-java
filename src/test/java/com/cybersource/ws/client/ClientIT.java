@@ -42,7 +42,7 @@ public class ClientIT extends BaseTest {
     	// Transaction Data
         HashMap<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("ccAuthService_run", "true");
-        requestMap.put("merchantReferenceCode", "jasoneatoncorp");
+        requestMap.put("merchantReferenceCode", "your_reference_code");
         requestMap.put("billTo_firstName", "John");
         requestMap.put("billTo_lastName", "Doe");
         requestMap.put("billTo_street1", "1295 Charleston Road");
@@ -66,7 +66,7 @@ public class ClientIT extends BaseTest {
         requestMap.put("purchaseTotals_currency", "USD");
         requestMap.put("item_0_unitPrice", "12.34");
         requestMap.put("item_1_unitPrice", "56.78");
-        requestMap.put("merchant_id", "jasoneatoncorp");
+        requestMap.put("merchant_id", "your_merchant_id");
 
 	    //Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();
