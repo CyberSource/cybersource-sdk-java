@@ -16,15 +16,15 @@
     <licenses>
         <license>
             <name>CyberSource SDK License Agreement</name>
-            <url>https://github.com/CyberSource/sdk-java/blob/master/License.txt</url>
+            <url>https://github.com/CyberSource/cybersource-sdk-java.git/blob/master/License.txt</url>
             <comments>Distributed by CyberSource Inc.</comments>
             <distribution>repo</distribution>
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:https://github.com/CyberSource/sdk-java.git</connection>
-        <developerConnection>scm:git:https://github.com/CyberSource/sdk-java.git</developerConnection>
-        <url>https://github.com/CyberSource/sdk-java.git</url>
+        <connection>scm:git:https://github.com/CyberSource/cybersource-sdk-java.git</connection>
+        <developerConnection>scm:git:https://github.com/CyberSource/cybersource-sdk-java.git</developerConnection>
+        <url>https://github.com/CyberSource/cybersource-sdk-java.git</url>
     </scm>
     <developers>
         <developer>
