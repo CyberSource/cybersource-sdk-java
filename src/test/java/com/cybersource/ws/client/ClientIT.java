@@ -18,37 +18,31 @@
 
 package com.cybersource.ws.client;
 
-import com.cybersource.ws.client.*;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.InputStream;
-import java.text.MessageFormat;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+
 /**
- * This class helps in testing Apache WebService Security Signature class
- * User: jeaton
- * Date: 6/20/14
- * Time: 1:36 PM
+ * This class helps in testing the Client.java class which uses Name Value pair as the input data
+ * author : sunagara
  */
-public class ApacheWssjSignatureTest {
+public class ClientIT extends BaseTest {
 
-    private static final String textXmlDoc = "<soap:Envelope xmlns:soap=\"" +
-            "http://schemas.xmlsoap.org/soap/envelope/\">\n<soap:Body id=\"body1\">\n" +
-            "<nvpRequest xmlns=\"{0}\">\n{1}</nvpRequest>" +
-            "\n</soap:Body>\n</soap:Envelope>";
 
+   // Test case takes the Transaction Data and Merchant Properties details are given as input.
     @Test
-    public void testSoapWrapAndSign() throws Exception {
+    public void testRunTransaction() throws Exception {
     	
-    	// Sample Transadction Data is fed as HashMap input
+    	// Transaction Data
         HashMap<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("ccAuthService_run", "true");
-        requestMap.put("merchantReferenceCode", "jasoneatoncorp");
+        requestMap.put("merchantReferenceCode", "your_reference_code");
         requestMap.put("billTo_firstName", "John");
         requestMap.put("billTo_lastName", "Doe");
         requestMap.put("billTo_street1", "1295 Charleston Road");
@@ -72,28 +66,16 @@ public class ApacheWssjSignatureTest {
         requestMap.put("purchaseTotals_currency", "USD");
         requestMap.put("item_0_unitPrice", "12.34");
         requestMap.put("item_1_unitPrice", "56.78");
-        requestMap.put("merchant_id", "jasoneatoncorp");
+        requestMap.put("merchant_id", "your_merchant_id");
 
-
-       //Loading the properties file from src/test/resources
+	    //Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
 		if (in == null) {
 			throw new RuntimeException("Unable to load test_cybs.properties file");
 		}
 		merchantProperties.load(in);
-        Logger logger = new LoggerImpl(new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID")));
-
-        MerchantConfig config = new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID"));
-
-        Object[] arguments
-                = {config.getEffectiveNamespaceURI(),
-                Client.mapToString(requestMap, false, PCI.REQUEST)};
-        String xmlString = MessageFormat.format(textXmlDoc, arguments);
-        Document doc = ApacheSignatureWrapper.soapWrapAndSign(xmlString, config, logger);
-
-        NodeList signatureElement = doc.getElementsByTagName("wsse:Security");
-
-        assert (signatureElement.getLength() >= 1);
+		Map<String, String> replyMap = Client.runTransaction(requestMap, merchantProperties);
+        assertEquals("100", replyMap.get("reasonCode"));
     }
 }

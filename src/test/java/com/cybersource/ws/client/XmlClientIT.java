@@ -32,12 +32,12 @@ import org.w3c.dom.Document;
  * Date: 6/23/14
  * Time: 10:39 AM
  */
-public class XmlClientTest {
-
+public class XmlClientIT {
+    private String requestFilename = "src/test/resources/auth.xml";
 
     /**
-     *In this case , we are reading 
-    */
+     * Load properties file and request from src/test/resources
+     */
     @Test
     public void testRunTransaction() throws Exception {
     	Properties merchantProperties = new Properties();
@@ -51,13 +51,9 @@ public class XmlClientTest {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-        Document request = Utility.readRequest(merchantProperties);
+        Document request = Utility.readRequest(merchantProperties, requestFilename);
         Document replyDoc = XMLClient.runTransaction(request, merchantProperties);
         String responseStr =  Utility.nodeToString(replyDoc);
         Assert.assertTrue(responseStr.contains("<c:reasonCode>100</c:reasonCode>"));
     }
-    
-    
-    
-   
 }

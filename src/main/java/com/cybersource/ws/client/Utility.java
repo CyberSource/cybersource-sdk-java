@@ -418,6 +418,8 @@ public class Utility {
                         : (String) src.get(key);
                 dest.append(key + "=" + val + "\n");
             }
+        } else {
+            return dest.toString();
         }
 
         String hasEscapes = (String) src.get(HAS_ESCAPES);
@@ -432,23 +434,22 @@ public class Utility {
     
     /**
      * Read the request xml file
-     * @param props
-     * @return
+     * @param props Properties object to lookup properties in
+     * @param filename Filename of file containing XML request
+     * @return Document Request from filename read as document
      */
-    public static  Document readRequest(
-        Properties props) {
+    public static Document readRequest(Properties props, String filename) {
         Document doc = null;
 
         try {
             // read in the XML file
-            String filename = "src/test/resources/auth.xml";
             byte[] xmlBytes = Utility.read(filename);
 
             // replace _NSURI_ (if any) with effective namespace URI.
             String xmlString = new String(xmlBytes, "UTF-8");
             int pos = xmlString.indexOf("_NSURI_");
             if (pos != -1) {
-                StringBuffer sb = new StringBuffer(xmlString);
+                StringBuilder sb = new StringBuilder(xmlString);
                 sb.replace(
                         pos, pos + 7,
                         XMLClient.getEffectiveNamespaceURI(props, null));
