@@ -8,11 +8,11 @@
 To install the cybersource-sdk-java from central repository,add dependency to your application pom.xml as below.
 
         <dependency>
-        <groupId>com.cybersource</groupId>
-  		<artifactId>cybersource-sdk-java</artifactId>
-  		<version>LATEST</version
+            <groupId>com.cybersource</groupId>
+            <artifactId>cybersource-sdk-java</artifactId>
+            <version>6.0.1</version
         </dependency> 
-		
+
  Run mvn install, to install dependency
 
 ##Requirements
