@@ -9,22 +9,22 @@
     </parent>
     <groupId>com.cybersource</groupId>
     <artifactId>cybersource-sdk-java</artifactId>
-    <version>6.0.1-SNAPSHOT</version>
+    <version>6.0.2-SNAPSHOT</version>
     <name>cybersource-sdk-java</name>
     <description>Simple Order API Client</description>
     <url>http://www.cybersource.com</url>
     <licenses>
         <license>
             <name>CyberSource SDK License Agreement</name>
-            <url>https://github.com/CyberSource/sdk-java/blob/master/License.txt</url>
+            <url>https://github.com/CyberSource/cybersource-sdk-java.git/blob/master/License.txt</url>
             <comments>Distributed by CyberSource Inc.</comments>
             <distribution>repo</distribution>
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:https://github.com/CyberSource/sdk-java.git</connection>
-        <developerConnection>scm:git:https://github.com/CyberSource/sdk-java.git</developerConnection>
-        <url>https://github.com/CyberSource/sdk-java.git</url>
+        <connection>scm:git:https://github.com/CyberSource/cybersource-sdk-java.git</connection>
+        <developerConnection>scm:git:https://github.com/CyberSource/cybersource-sdk-java.git</developerConnection>
+        <url>https://github.com/CyberSource/cybersource-sdk-java.git</url>
     </scm>
     <developers>
         <developer>

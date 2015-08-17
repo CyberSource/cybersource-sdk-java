@@ -1,8 +1,28 @@
 #CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/sdk-java.png?branch=master)]
-(https://travis-ci.org/CyberSource/sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)]
+(https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
+##Package Managers
+
+### Maven
+To install the cybersource-sdk-java from central repository,add dependency to your application pom.xml as below.
+````
+        <dependency>
+            <groupId>com.cybersource</groupId>
+            <artifactId>cybersource-sdk-java</artifactId>
+            <version>6.0.1</version
+        </dependency> 
+````
+ Run mvn install, to install dependency
+
+### Grails/Gradle
+Add the dependency to your build.gradle
+````
+dependencies {
+    compile 'com.cybersource:cybersource-sdk-java:6.0.1'
+    }
+````
 ##Requirements
 
 
@@ -26,6 +46,7 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 
 ##Installing the SDK 
 
+You do not need to download and build the source to use the SDK but if you want to do that, follow these steps:
 
 1. Download the sdk-java-master.zip package into a directory of your choice. 
 
