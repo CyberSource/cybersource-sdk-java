@@ -11,7 +11,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
         <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.0.1</version
+            <version>6.0.1</version>
         </dependency> 
 ````
  Run mvn install, to install dependency
