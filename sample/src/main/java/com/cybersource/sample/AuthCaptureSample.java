@@ -1,6 +1,10 @@
 package com.cybersource.sample;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Properties;
+
 import com.cybersource.ws.client.*;
 
 /**
@@ -23,7 +27,9 @@ public class AuthCaptureSample
    	{   	
 	   	// read in properties file.
 	   	Properties props = Utility.readProperties( args );
-	   	
+
+		System.out.println( "Key file : "+props.getProperty("keyFilename") );
+
 	   	// run auth
    		String requestID = runAuth( props );
    		if (requestID != null)
@@ -44,7 +50,7 @@ public class AuthCaptureSample
     {  	
 	    String requestID = null;
 	    
-	   	HashMap request = new HashMap();
+	   	HashMap<String, String> request = new HashMap<String, String>();
 	   	
 		request.put( "ccAuthService_run", "true" );
 		
@@ -88,7 +94,7 @@ public class AuthCaptureSample
 			displayMap( "CREDIT CARD AUTHORIZATION REQUEST:", request );
 			
 			// run transaction now
-			HashMap reply = Client.runTransaction( request, props );	
+			Map<String, String>  reply = Client.runTransaction( request, props );	
 			
 			displayMap( "CREDIT CARD AUTHORIZATION REPLY:", reply );
 			
@@ -131,7 +137,7 @@ public class AuthCaptureSample
     {  	
 	    String requestID = null;
 	    
-	   	HashMap request = new HashMap();
+	   	HashMap<String, String> request = new HashMap<String, String>();
 	   	
 		request.put( "ccCaptureService_run", "true" );
 		
@@ -158,7 +164,7 @@ public class AuthCaptureSample
 			displayMap( "FOLLOW-ON CAPTURE REQUEST:", request );
 			
 			// run transaction now
-			HashMap reply = Client.runTransaction( request, props );	
+			Map<String, String> reply = Client.runTransaction( request, props );	
 			
 			displayMap( "FOLLOW-ON CAPTURE REPLY:", reply );			
 		}	
