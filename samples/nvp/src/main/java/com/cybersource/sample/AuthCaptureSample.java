@@ -8,10 +8,7 @@ import java.util.Properties;
 import com.cybersource.ws.client.*;
 
 /**
- * Sample class that demonstrates how to call Credit Card Authorization and
- * a follow-on Credit Card Capture.  Note that in most cases, the follow-on
- * capture is not performed until after the goods are shipped, not right after
- * the authorization.
+ * Sample class that demonstrates how to call Credit Card Authorization.
  */
 public class AuthCaptureSample
 {

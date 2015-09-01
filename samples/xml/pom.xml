@@ -2,10 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.cybersource.sample</groupId>
-  <artifactId>AuthCaptureSample</artifactId>
+  <artifactId>AuthSample</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
-  <name>AuthCaptureSample</name>
+  <name>AuthSample</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
@@ -63,7 +63,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>com.cybersource.sample.AuthCaptureSample</mainClass>
+          <mainClass>com.cybersource.sample.AuthSample</mainClass>
           <arguments>
           </arguments>
         </configuration>
@@ -73,7 +73,7 @@
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.4.1</version>
         <configuration>
-              <finalName>AuthCaptureSample</finalName>
+              <finalName>AuthSample</finalName>
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <artifactSet>
                 <includes>
@@ -100,7 +100,7 @@
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.cybersource.sample.AuthCaptureSample</mainClass>
+                  <mainClass>com.cybersource.sample.AuthSample</mainClass>
                 </transformer>
               </transformers>
             </configuration>
