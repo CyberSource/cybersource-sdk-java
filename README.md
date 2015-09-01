@@ -26,22 +26,32 @@ dependencies {
 ##Requirements
 
 
-Java SDK 1.6 and later<br>
-Maven 3 and later
+Java SDK 1.6 and later  
+Maven 3 and later  
+Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar), available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
 	
 ##Prerequisites
 
 
-A CyberSource Evaluation account. Sign up here:  <http://www.cybersource.com/register>
+######A CyberSource Evaluation account. 
+
+Sign up here:  <http://www.cybersource.com/register>
 
 * Complete your Evaluation account creation by following the instructions in the Registration email
 
-Transaction Security Keys
+######Transaction Security Keys
 
 * Create security keys in the Enterprise Business Center (ebctest) after you've created your Merchant Admin account. 
 Refer to our Developer's Guide for details <http://apps.cybersource.com/library/documentation/dev_guides/security_keys/html/wwhelp/wwhimpl/js/html/wwhelp.htm#href=securityKeys_SO_API.4.2.html>.
 
->
+######JCE Unlimited Strength Jars
+
+  Replace your Java installation’s existing security policy files with the new ones you downloaded from the Oracle site:
+  
+* 	Locate your existing US_export_policy.jar and local_policy.jar files in the $JAVA_HOME/jre/lib/security directory.  
+* 	Rename or move your existing files to another directory.  
+* 	Copy the new US_export_policy.jar and local_policy.jar that you downloaded from Oracle to the $JAVA_HOME/jre/lib/security directory.  
+	
 
 
 ##Installing the SDK 
@@ -91,6 +101,8 @@ You do not need to download and build the source to use the SDK but if you want 
 For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>
 
 For all other support needs, see <http://www.cybersource.com/support>
+
+
 
 
 
