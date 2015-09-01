@@ -26,9 +26,9 @@ dependencies {
 ##Requirements
 
 
-Java SDK 1.6 and later  
-Maven 3 and later  
-Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar), available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+1. Java SDK 1.6 and later  
+2. Maven 3 and later  
+3. Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar), available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
 	
 ##Prerequisites
 
