@@ -58,9 +58,9 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 
 You do not need to download and build the source to use the SDK but if you want to do that, follow these steps:
 
-1. Download the sdk-java-master.zip package into a directory of your choice. 
+1. Clone this repository.
 
-2. Extract and go to the sdk-java-master directory.
+2. Go to the sdk-java-master directory.
 
 3. To run the integration tests, edit the test_cybs.properties and make the following changes:
 
