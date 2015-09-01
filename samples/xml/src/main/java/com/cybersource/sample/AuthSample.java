@@ -1,17 +1,17 @@
+/* Copyright 2003-2004 CyberSource Corporation */
+
 package com.cybersource.sample;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.Properties;
-
+import java.io.*;
+import java.util.*;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 import com.cybersource.ws.client.*;
 
 /**
- * Sample class that demonstrates how to call Credit Card Authorization and
- * a follow-on Credit Card Capture.  Note that in most cases, the follow-on
- * capture is not performed until after the goods are shipped, not right after
- * the authorization.
+ * Sample class that demonstrates how to call Credit Card Authorization using
+ * the XML client.
  */
 public class AuthSample
 {
@@ -19,154 +19,36 @@ public class AuthSample
 	 * Entry point.
 	 *
 	 * @param args	command-line arguments. The name of the property file
-	 *              may be passed as a command-line argument.  If not passed, 
-	 *				it will look for "cybs.properties" in the current
-	 *				directory.
+	 *              followed by the name of the input XML file may be passed
+	 *				as command-line arguments.  If not passed, it will look for
+	 *				"cybs.properties" and "auth.xml", respectively in the
+	 *				current directory.
 	 */
     public static void main( String[] args )
    	{   	
 	   	// read in properties file.
-	   	Properties props = Utility.readProperties( args );
-
-		System.out.println( "Key file : "+props.getProperty("keyFilename") );
-
-	   	// run auth
-   		String requestID = runAuth( props );
-   		if (requestID != null)
-   		{
-	   		// if auth was successful, run capture
-   			runCapture( props, requestID );
-   		}
-	}
-	
-	/**
-	 * Runs Credit Card Authorization.
-	 * 
-	 * @param props	Properties object.
-	 *
-	 * @return the requestID.
-	 */
-    public static String runAuth( Properties props )
-    {  	
-	    String requestID = null;
-	    
-	   	HashMap<String, String> request = new HashMap<String, String>();
+	   	Properties props = Utility.readProperties( args );   	
 	   	
-		request.put( "ccAuthService_run", "true" );
-		
-		// We will let the Client get the merchantID from props and insert it
-		// into the request Map.
-		
-		// this is your own tracking number.  CyberSource recommends that you
-		// use a unique one for each order.
-		request.put( "merchantReferenceCode", "your_merchant_reference_code" );
-		
-		request.put( "billTo_firstName", "John" );
-		request.put( "billTo_lastName", "Doe" );
-		request.put( "billTo_street1", "1295 Charleston Road" );
-		request.put( "billTo_city", "Mountain View" );
-		request.put( "billTo_state", "CA" );
-		request.put( "billTo_postalCode", "94043" );
-		request.put( "billTo_country", "US" );
-		request.put( "billTo_email", "nobody@cybersource.com" );
-		request.put( "billTo_ipAddress", "10.7.7.7" );
-		request.put( "billTo_phoneNumber", "650-965-6000" );
-		request.put( "shipTo_firstName", "Jane" );
-		request.put( "shipTo_lastName", "Doe" );
-		request.put( "shipTo_street1", "100 Elm Street" );
-		request.put( "shipTo_city", "San Mateo" );
-		request.put( "shipTo_state", "CA" );
-		request.put( "shipTo_postalCode", "94401" );
-		request.put( "shipTo_country", "US" );
-		request.put( "card_accountNumber", "4111111111111111" );
-		request.put( "card_expirationMonth", "12" );
-		request.put( "card_expirationYear", "2020" );
-		request.put( "purchaseTotals_currency", "USD" );
-
-		// there are two items in this sample
-		request.put( "item_0_unitPrice", "12.34" );
-		request.put( "item_1_unitPrice", "56.78" );
-
-		// add more fields here per your business needs
+	   	// read in input XML file, replacing _NSURI_ (if any) with the
+	   	// effective namespace URI.  See header comment for the method
+	   	// readRequest() for more information.
+		Document request = readRequest( props, args );		
+		if (request == null) return;
+   				
+		// The sample auth.xml does not have the merchantID element.  We will
+		// let the XMLClient get the merchantID from props and insert it into
+		// the request document.
 		
 		try
 		{
-			displayMap( "CREDIT CARD AUTHORIZATION REQUEST:", request );
+			displayDocument(
+				"CREDIT CARD AUTHORIZATION REQUEST:", request );
 			
 			// run transaction now
-			Map<String, String>  reply = Client.runTransaction( request, props );	
+			Document reply = XMLClient.runTransaction( request, props );	
 			
-			displayMap( "CREDIT CARD AUTHORIZATION REPLY:", reply );
-			
-			// if the authorization was successful, obtain the request id
-			// for the follow-on capture later.
-			String decision = (String) reply.get( "decision" );
-			if ("ACCEPT".equalsIgnoreCase( decision ))
-			{
-				requestID = (String) reply.get( "requestID" );
-			}
-			
-		}	
-		catch (ClientException e)
-		{
-			System.out.println( e.getMessage() );
-			if (e.isCritical())
-			{
-				handleCriticalException( e, request );
-			}
-		}
-		catch (FaultException e)
-		{
-			System.out.println( e.getMessage() );
-			if (e.isCritical())
-			{
-				handleCriticalException( e, request );
-			}
-		}
-		
-		return( requestID );
-    }
-    
-	/**
-	 * Runs Credit Card Capture.
-	 * 
-	 * @param props			Properties object.
-	 * @param authRequestID	requestID returned by a previous authorization.
-	 */
-    public static void runCapture( Properties props, String authRequestID )
-    {  	
-	    String requestID = null;
-	    
-	   	HashMap<String, String> request = new HashMap<String, String>();
-	   	
-		request.put( "ccCaptureService_run", "true" );
-		
-		// We will let the Client get the merchantID from props and insert it
-		// into the request Map.
-		
-		// so that you can efficiently track the order in the CyberSource
-		// reports and transaction search screens, you should use the same
-		// merchantReferenceCode for the auth and subsequent captures and
-		// credits.
-		request.put( "merchantReferenceCode", "MRC-14344" );
-		
-		// reference the requestID returned by the previous auth.
-		request.put( "ccCaptureService_authRequestID", authRequestID );
-		
-		// this sample assumes only the first item has been shipped.
-		request.put( "purchaseTotals_currency", "USD" );
-		request.put( "item_0_unitPrice", "12.34" );
-
-		// add more fields here per your business needs
-		
-		try
-		{
-			displayMap( "FOLLOW-ON CAPTURE REQUEST:", request );
-			
-			// run transaction now
-			Map<String, String> reply = Client.runTransaction( request, props );	
-			
-			displayMap( "FOLLOW-ON CAPTURE REPLY:", reply );			
+			displayDocument(
+				"CREDIT CARD AUTHORIZATION REPLY:", reply );			
 		}	
 		catch (ClientException e)
 		{
@@ -187,33 +69,89 @@ public class AuthSample
     }
     
 	/**
-	 * Displays the content of the Map object.
+	 * Reads the input XML file.  It replaces "_NSURI_" (if any) with the
+	 * effective namespace URI derived from the Properties.  The sample file
+	 * auth.xml included in the package has this placeholder.  This is so that
+	 * you would only need to change the properties file in order to test this
+	 * sample.  In your own application, you would likely have the correct
+	 * namespace URI already set in your input XML documents and therefore
+	 * would not need to do this.
+	 *
+	 * @param props				the Properties object to be used to derive
+	 *                          the effective namespace URI.
+	 * @param commandLineArgs	the command-line arguments.
+	 *
+	 * @return Document object.
+	 */
+    private static Document readRequest(
+    	Properties props, String[] commandLineArgs )
+    {
+	    Document doc = null;
+	    
+	    try
+	   	{
+		   	// read in the XML file
+		   	String filename
+		   		= commandLineArgs.length > 1 ? commandLineArgs[1] : "auth.xml";
+		   	byte[] xmlBytes = Utility.read( filename );
+		   	
+		   	// replace _NSURI_ (if any) with effective namespace URI.
+		   	String xmlString = new String( xmlBytes, "UTF-8" );
+		   	int pos = xmlString.indexOf( "_NSURI_" );
+		   	if (pos != -1)
+		   	{
+		   		StringBuffer sb	= new StringBuffer( xmlString );
+		   		sb.replace(
+		   			pos, pos + 7,
+		   			XMLClient.getEffectiveNamespaceURI( props, null ) );
+		   		xmlBytes = sb.toString().getBytes( "UTF-8" );
+	   		}
+	   	
+	   		// load the byte array into a Document object.
+	   		ByteArrayInputStream bais = new ByteArrayInputStream( xmlBytes );		   	
+	   		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	   		dbf.setNamespaceAware( true );
+	   		DocumentBuilder builder = dbf.newDocumentBuilder();
+	   		doc = builder.parse( bais );
+	   		bais.close();
+   		}
+   		catch (ClientException e)
+   		{
+	   		e.printStackTrace();
+   		}
+   		catch (ParserConfigurationException e)
+   		{
+	   		e.printStackTrace();
+   		}
+   		catch (SAXException e)
+   		{
+	   		e.printStackTrace();
+   		}
+   		catch (IOException e)
+   		{
+	   		e.printStackTrace();
+   		}
+   		
+   		return( doc );
+	}
+
+	/**
+	 * Displays the content of the Document object.
 	 *
 	 * @param header	Header text.
-	 * @param map		Map object to display.
+	 * @param doc		Document object to display.
 	 */
-    private static void displayMap( String header, Map map )
+    private static void displayDocument( String header, Document doc )
     {
 	    System.out.println( header );
 	    
-		StringBuffer dest = new StringBuffer();
-		
-		if (map != null && !map.isEmpty())
-		{
-			Iterator iter = map.keySet().iterator();
-			String key, val;
-			while (iter.hasNext())
-			{
-				key = (String) iter.next();
-				val = (String) map.get( key );
-				dest.append( key + "=" + val + "\n" );
-			}
-		}
-		
-		System.out.println( dest.toString() );		
-    }
-    
-       
+		// Note that Utility.nodeToString() is meant to be used for logging
+		// or demo purposes only.  As it employs some formatting
+		// parameters, parsing the string it returns may not result to a
+		// Node object exactly similar to the one passed to it.
+		System.out.println( Utility.nodeToString( doc ) );
+    }		
+	    
 	/**
 	 * An exception is considered critical if some type of disconnect occurs
 	 * between the client and server and the client can't determine whether the
@@ -233,7 +171,7 @@ public class AuthSample
 	 * @param request	Request that was sent.
 	 */
 	private static void handleCriticalException(
-		ClientException e, Map request )
+		ClientException e, Document request )
 	{
 		// send the exception and order information to the appropriate
 		// personnel at your company using any suitable method, e.g. e-mail,
@@ -248,12 +186,11 @@ public class AuthSample
 	 * @param request	Request that was sent.
 	 */
 	private static void handleCriticalException(
-		FaultException e, Map request )
+		FaultException e, Document request )
 	{
 		// send the exception and order information to the appropriate
 		// personnel at your company using any suitable method, e.g. e-mail,
 		// multicast log, etc.
 	}    
 } 
-
 
