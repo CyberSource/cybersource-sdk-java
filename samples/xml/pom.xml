@@ -11,7 +11,7 @@
     <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.0.1</version>
+            <version>6.1.0</version>
     </dependency> 
     <dependency>
             <groupId>commons-httpclient</groupId>
@@ -68,7 +68,40 @@
           </arguments>
         </configuration>
       </plugin>
-      <plugin>
+	  <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-dependency-plugin</artifactId>
+		<version>2.5.1</version>
+		<executions>
+		  <execution>
+			<phase>install</phase>
+			<goals>
+			  <goal>copy-dependencies</goal>
+			</goals>
+			<configuration>
+			  <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+			</configuration>
+		  </execution>
+		</executions>
+	  </plugin>
+	  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+		<version>2.4</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+			  <classpathPrefix>dependencies/</classpathPrefix>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+	 
+	 <!--Due to bcprov-jdk16-1.46.jar ::-> JCE authentication error . bcprov-jdk16-1.46.jar is a signed jar, and when we unpack it and include in our own jar file, then Java fails to validate the signature.  It's better to include it separately in the CLASSPATH.Hence using maven dependency pluging to copy dependencies and adding them to CLASSPATH.
+	 -->
+	 <!--
+     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.4.1</version>
@@ -107,6 +140,7 @@
           </execution>
         </executions>
       </plugin>
+	  -->
     </plugins>
   </build>
 </project>
