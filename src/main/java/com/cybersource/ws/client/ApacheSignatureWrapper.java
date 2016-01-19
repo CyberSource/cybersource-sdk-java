@@ -55,6 +55,12 @@ class ApacheSignatureWrapper {
     private static X509Certificate merchantCertificate = null;
     private static PrivateKey merchantPrivateKey = null;
     private static String currentMerchantId = null;
+    
+    // By default signature algorithm is set to null and during WSSecSignature build() Signature algorithm will set to "http://www.w3.org/2000/09/xmldsig#rsa-sha1" .
+    public static final String SIGNATURE_ALGORITHM = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+    // By default digest algorithm is set to "http://www.w3.org/2000/09/xmldsig#sha1"
+    public static final String DIGEST_ALGORITHM = "http://www.w3.org/2001/04/xmlenc#sha256";
+    
     // This is loaded by WSS4J but since we use it lets make sure its here
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -78,8 +84,12 @@ class ApacheSignatureWrapper {
         WSSecSignature wsSecSignature = new WSSecSignature();
         wsSecSignature.setX509Certificate(merchantCertificate);
         wsSecSignature.setUseSingleCertificate(true);
+        
+        //Added below lines for SHA256 support.Now request message will be signed with SHA256.
+        //If we don't set Digest and Signature algorithm values then it will use there default values, explained while declaration.
+        wsSecSignature.setDigestAlgo(DIGEST_ALGORITHM);
+        wsSecSignature.setSignatureAlgorithm(SIGNATURE_ALGORITHM);
         wsSecSignature.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
-
         WSEncryptionPart msgBodyPart = new WSEncryptionPart(WSConstants.ELEM_BODY, WSConstants.URI_SOAP11_ENV, "");
         wsSecSignature.setParts(Collections.singletonList(msgBodyPart));
 
