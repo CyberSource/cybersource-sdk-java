@@ -58,7 +58,8 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 ##Testing the Client
 	a. TESTING THE NAME-VALUE PAIR SAMPLE
 			1. Go to the cybersource-sdk-java-master/sample/nvp directory.
-			2. At a command prompt, type this line:
+			2. Use compileSample scripts to create classes directory.As it is not included in SDK.
+			3. Then at a command prompt, type this line:
 			 	Windows 	runSample.bat
 				Unix or Linux 	runSample.sh
 				
@@ -73,7 +74,8 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 			   
 	b. TESTING THE XML SAMPLE
 		   	1. Go to the cybersource-sdk-java-master/sample/xml directory.
-			2. At a command prompt, type this line:
+			2. Use compileSample scripts to create classes directory.As it is not included in SDK.
+			3. At a command prompt, type this line:
 			 	Windows 	runSample.bat
 				Unix or Linux 	runSample.sh
 				
