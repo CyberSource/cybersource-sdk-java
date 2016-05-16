@@ -17,4 +17,4 @@ else
 JAVAC_CMD=javac
 fi
 
-$JAVAC_CMD -d ./classes -classpath "$LOCAL_CP" src/com/cybersource/sample/AuthCaptureSample.java
+$JAVAC_CMD -d ./classes -classpath "$LOCAL_CP" src/main/java/com/cybersource/sample/AuthCaptureSample.java
