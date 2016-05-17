@@ -4,7 +4,7 @@ LOCAL_CP=
 LOCAL_CP=$LOCAL_CP:./classes
 
 # -----------------------------------------------------------------------------
-# Replace cybersource-sdk-java-6.1.0.jar with cybsclients15.jar in /lib directory when using Java SDK 1.6 or
+# Replace cybersource-sdk-java-6.1.1.jar with cybsclients15.jar in /lib directory when using Java SDK 1.6 or
 # later.
 # -----------------------------------------------------------------------------
 LOCAL_CP=$LOCAL_CP:../../lib/*

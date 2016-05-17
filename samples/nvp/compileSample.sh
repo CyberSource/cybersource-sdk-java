@@ -2,9 +2,9 @@
 
 LOCAL_CP=
 # -----------------------------------------------------------------------------
-# Replace this with cybersource-sdk-java-6.1.0.jar when using Java SDK 1.6 or later.
+# Replace this with cybersource-sdk-java-6.1.1.jar when using Java SDK 1.6 or later.
 # -----------------------------------------------------------------------------
-LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.1.0.jar
+LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.1.1.jar
 
 if test ! -d ./classes 
 then
