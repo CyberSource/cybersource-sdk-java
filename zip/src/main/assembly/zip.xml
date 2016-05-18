@@ -8,7 +8,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>cybersource-sdk-java-master/lib</outputDirectory>
+            <outputDirectory>cybersource-sdk-java/lib</outputDirectory>
             <includes>
                 <include>com.cybersource:cybersource-sdk-java</include>
                 <include>*:jar:*</include>
@@ -18,21 +18,21 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/../..</directory>
-            <outputDirectory>cybersource-sdk-java-master</outputDirectory>
+            <outputDirectory>cybersource-sdk-java</outputDirectory>
             <includes>
                 <include>License.txt</include>
             </includes>
         </fileSet>
 		<fileSet>
             <directory>${project.build.directory}/..</directory>
-            <outputDirectory>cybersource-sdk-java-master</outputDirectory>
+            <outputDirectory>cybersource-sdk-java</outputDirectory>
             <includes>
                 <include>README</include>
             </includes>
         </fileSet>
 		<fileSet>
             <directory>${project.build.directory}/../../samples</directory>
-            <outputDirectory>cybersource-sdk-java-master/samples</outputDirectory>
+            <outputDirectory>cybersource-sdk-java/samples</outputDirectory>
             <includes>
                 <include>**/*</include>
             </includes>
