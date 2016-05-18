@@ -2,9 +2,9 @@
 
 set LOCAL_CP=
 rem ----------------------------------------------------------------------------
-rem Replace this with cybersource-sdk-java-6.1.1.jar when using Java SDK 1.6 or later.
+rem Replace this with cybersource-sdk-java-6.1.0.jar when using Java SDK 1.6 or later.
 rem ----------------------------------------------------------------------------
-set LOCAL_CP=%LOCAL_CP%;../../lib/cybersource-sdk-java-6.1.1.jar
+set LOCAL_CP=%LOCAL_CP%;../../lib/cybersource-sdk-java-6.1.0.jar
 
 if not exist classes mkdir classes
 
