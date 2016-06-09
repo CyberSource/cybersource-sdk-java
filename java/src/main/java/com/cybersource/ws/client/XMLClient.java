@@ -18,6 +18,7 @@
 
 package com.cybersource.ws.client;
 
+import org.apache.ws.security.util.XMLUtils;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -30,6 +31,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -62,7 +64,7 @@ public class XMLClient {
 
     private static Document soapEnvelope;
     private static Exception initException = null;
-
+    
     static {
         try {
             // load the SOAP envelope document.
@@ -189,11 +191,14 @@ public class XMLClient {
         } catch (ConfigException e) {
             throw new ClientException(
                     e, con != null && con.isRequestSent(), logger);
-        } finally {
+        } catch (SignEncryptException e) {
+        	throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+		} finally {
             if (con != null) {
                 con.release();
             }
-        }
+       }
     }
 
 
@@ -312,11 +317,12 @@ public class XMLClient {
      * @param logger LoggerWrapper object to use for logging.
      * @return signed document.
      * @throws SignException if signing fails.
+     * @throws SignEncryptException 
      */
     private static Document soapWrapAndSign(
             Document doc, MerchantConfig mc, DocumentBuilder builder,
             LoggerWrapper logger)
-            throws SignException {
+            throws SignException, SignEncryptException {
         boolean logSignedData = mc.getLogSignedData();
 
         if (!logSignedData) {
@@ -355,16 +361,28 @@ public class XMLClient {
             throw new SignException(e);
         }
 
-        // sign wrapped Document object
-        logger.log(Logger.LT_INFO, "Signing request..." + xmlDocString);
-        Document signedDoc;
-
-        signedDoc = ApacheSignatureWrapper.soapWrapAndSign(xmlDocString, mc, logger);
-        if (logSignedData) {
-            logger.log(Logger.LT_REQUEST,
-                    Utility.nodeToString(signedDoc, PCI.REQUEST));
+        Document resultDocument = null;
+        SignedAndEncryptedMessageHandler handler = SignedAndEncryptedMessageHandler.getInstance(mc,logger);
+        
+        // 3/7/2016 change to support encrypted messages as well as signed - jeaton
+        if ( !mc.getUseSignAndEncrypted() ) {
+        	// sign wrapped Document object
+            logger.log(Logger.LT_INFO, "Signing request...");
+            resultDocument = handler.createSignedDoc(wrappedDoc,mc.getMerchantID(),null);
+            if (logSignedData) {
+                logger.log(Logger.LT_REQUEST,
+                        Utility.nodeToString(resultDocument, PCI.REQUEST));
+            }
+        } else {
+        	// sign and encrypt wrapped Document object
+            logger.log(Logger.LT_INFO, "Signing and encrypting request...");
+            resultDocument = handler.handleMessageCreation(wrappedDoc,mc.getMerchantID());
+            if (logSignedData) {
+                logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
+            }
         }
-        return signedDoc;
+        
+        return resultDocument;
     }
 
 

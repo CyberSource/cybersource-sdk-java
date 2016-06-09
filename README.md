@@ -75,7 +75,9 @@ You do not need to download and build the source to use the SDK but if you want 
 	   	
     d. Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the logDirectory value, even on Windows. The directory you specify must already exist.
 	   
-    e. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
+	e. Set useSignAndEncrypted to true,Mechanism to encrypt the signed Payload.
+ 
+    f. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 	   
 	NOTE:  sendToProduction is initially set to false.  Set it to true only
 	       when you are ready to send live transactions.

@@ -4,7 +4,7 @@ set LOCAL_CP=
 set LOCAL_CP=%LOCAL_CP%;classes
 
 rem ----------------------------------------------------------------------------
-rem Replace cybersource-sdk-java-6.1.0.jar with cybsclients15.jar in /lib directory when using Java SDK 1.6 or
+rem Replace cybersource-sdk-java-6.2.0.jar with cybsclients15.jar in /lib directory when using Java SDK 1.6 or
 rem later.
 rem If using this scripts outside zip package then give maven clean install. 
 rem This will generate all required dependencies under target/dependencies.These dependencies are used in CLASSPATH.

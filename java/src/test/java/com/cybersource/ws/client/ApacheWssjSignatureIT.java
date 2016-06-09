@@ -19,15 +19,20 @@
 package com.cybersource.ws.client;
 
 import com.cybersource.ws.client.*;
+
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
 
 /**
  * This class helps in testing Apache WebService Security Signature class
@@ -90,7 +95,15 @@ public class ApacheWssjSignatureIT {
                 = {config.getEffectiveNamespaceURI(),
                 Client.mapToString(requestMap, false, PCI.REQUEST)};
         String xmlString = MessageFormat.format(textXmlDoc, arguments);
-        Document doc = ApacheSignatureWrapper.soapWrapAndSign(xmlString, config, logger);
+        
+        DocumentBuilder builder = Utility.newDocumentBuilder();
+        StringReader sr = new StringReader( xmlString );
+        Document wrappedDoc = builder.parse( new InputSource( sr ) );
+        sr.close();
+        
+        SignedAndEncryptedMessageHandler handler = SignedAndEncryptedMessageHandler.getInstance(config,logger);
+        Document doc = handler.createSignedDoc(wrappedDoc,config.getMerchantID(),null);
+        //Document doc = ApacheSignatureWrapper.soapWrapAndSign(xmlString, config, logger);
 
         NodeList signatureElement = doc.getElementsByTagName("wsse:Security");
 
