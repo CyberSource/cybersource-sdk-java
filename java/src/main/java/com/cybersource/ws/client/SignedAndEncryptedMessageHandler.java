@@ -178,7 +178,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
         Document signedDoc = createSignedDoc(workingDocument,senderAlias,secHeader);
         
         WSSecDKEncrypt encrBuilder = new WSSecDKEncrypt();
-        encrBuilder.setSymmetricEncAlgorithm(WSConstants.AES_128);
+        encrBuilder.setSymmetricEncAlgorithm(WSConstants.AES_256);
         encrBuilder.setExternalKey(ek, tokenIdentifier);
         Document signedEncryptedDoc = null;
 
