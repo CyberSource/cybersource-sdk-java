@@ -63,8 +63,11 @@ public class MerchantConfig {
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
     private String effectivePassword;
+    private  boolean useSignAndEncrypted;
 
     // getter methods
+    public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
+    
     public String getMerchantID() {
         return merchantID;
     }
@@ -276,6 +279,8 @@ public class MerchantConfig {
 
         // compute and store effective password
         effectivePassword = password != null ? password : merchantID;
+        
+        useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
     }
 
     /**
@@ -436,6 +441,7 @@ public class MerchantConfig {
                                 ? "(masked)" : null);
             }
         }
+        appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
         return (sb.toString());
     }
 

@@ -19,13 +19,18 @@
 package com.cybersource.ws.client;
 
 
+import org.apache.ws.security.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.IOException;
+import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -106,8 +111,12 @@ public class Client {
             DocumentBuilder builder = Utility.newDocumentBuilder();
 
             Document signedDoc
-                    = soapWrapAndSign(request, mc, logger);
-
+                    = soapWrapAndSign(request, mc, builder,logger);
+            
+//          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
+//          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
+//          writer.close();
+            
             con = Connection.getInstance(mc, builder, logger);
             Document wrappedReply = con.post(signedDoc);
 
@@ -124,7 +133,13 @@ public class Client {
         } catch (ConfigException e) {
             throw new ClientException(
                     e, con != null && con.isRequestSent(), logger);
-        } finally {
+        } catch (SAXException e) {
+        	throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+		} catch (SignEncryptException e) {
+			throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+		} finally {
             if (con != null) {
                 con.release();
             }
@@ -148,16 +163,19 @@ public class Client {
      *
      * @param request Map object containing the request.
      * @param mc      MerchantConfig object.
+     * @param builder	    DocumentBuilder object.
      * @param logger  LoggerWrapper object to use for logging.
      * @return signed document.
      * @throws IOException   if reading from string fails.
      * @throws SignException if signing fails.
+     * @throws SAXException 
+     * @throws SignEncryptException 
      */
     private static Document soapWrapAndSign(
-            Map request, MerchantConfig mc,
+            Map request, MerchantConfig mc, DocumentBuilder builder,
             LoggerWrapper logger)
             throws
-            IOException, SignException {
+            IOException, SignException, SAXException, SignEncryptException {
         boolean logSignedData = mc.getLogSignedData();
         if (!logSignedData) {
             logger.log(
@@ -171,13 +189,33 @@ public class Client {
                 = {mc.getEffectiveNamespaceURI(),
                 mapToString(request, false, PCI.REQUEST)};
         String xmlString = MessageFormat.format(SOAP_ENVELOPE1, arguments);
-        doc = ApacheSignatureWrapper.soapWrapAndSign(xmlString, mc, logger);
+     // load XML string into a Document object
+        StringReader sr = new StringReader( xmlString );
+        Document wrappedDoc = builder.parse( new InputSource( sr ) );
+        sr.close();
 
-        if (logSignedData) {
-            logger.log(Logger.LT_REQUEST,
-                    Utility.nodeToString(doc, PCI.REQUEST));
+        Document resultDocument = null;
+        SignedAndEncryptedMessageHandler handler = SignedAndEncryptedMessageHandler.getInstance(mc,logger);
+        
+        // 3/7/2016 change to support encrypted messages as well as signed - jeaton
+        if ( !mc.getUseSignAndEncrypted() ) {
+            // sign Document object
+            logger.log(Logger.LT_INFO, "Signing request...");
+            resultDocument = handler.createSignedDoc(wrappedDoc,mc.getMerchantID(),null);
+            if (logSignedData) {
+                logger.log(Logger.LT_REQUEST,
+                        Utility.nodeToString(resultDocument, PCI.REQUEST));
+            }
+        } else {
+            logger.log(Logger.LT_INFO, "Signing and encrypting request...");
+            resultDocument = handler.handleMessageCreation(wrappedDoc,mc.getMerchantID());
+            if (logSignedData) {
+                logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
+            }
         }
-        return doc;
+        
+        //System.out.println(XMLUtils.PrettyDocumentToString(resultDocument));
+        return resultDocument ;
     }
 
 
@@ -192,6 +230,9 @@ public class Client {
      */
     private static HashMap soapUnwrap(
             Document doc, MerchantConfig mc, LoggerWrapper logger) {
+    	
+    	// 3/8/2016 if the message was encrypted we need to decrypt it
+    	
         boolean logSignedData = mc.getLogSignedData();
         if (logSignedData) {
             logger.log(Logger.LT_REPLY,

@@ -18,16 +18,22 @@
 
 package com.cybersource.ws.client;
 
-import com.cybersource.ws.client.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
-import java.io.File;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
 
 /**
  * This class helps in testing Apache WebService Security Signature class
@@ -42,11 +48,14 @@ public class ApacheWssjSignatureIT {
             "<nvpRequest xmlns=\"{0}\">\n{1}</nvpRequest>" +
             "\n</soap:Body>\n</soap:Envelope>";
 
-    @Test
-    public void testSoapWrapAndSign() throws Exception {
-    	
-    	// Sample Transadction Data is fed as HashMap input
-        HashMap<String, String> requestMap = new HashMap<String, String>();
+    private static Map<String,String> requestMap;
+    private SignedAndEncryptedMessageHandler handler;
+    private Document wrappedDoc;
+    private MerchantConfig config;
+    
+    @Before
+    public void setup() throws Exception{
+    	requestMap = new HashMap<String, String>();
         requestMap.put("ccAuthService_run", "true");
         requestMap.put("merchantReferenceCode", "your_reference_code");
         requestMap.put("billTo_firstName", "John");
@@ -73,9 +82,8 @@ public class ApacheWssjSignatureIT {
         requestMap.put("item_0_unitPrice", "12.34");
         requestMap.put("item_1_unitPrice", "56.78");
         requestMap.put("merchant_id", "your_merchant_id");
-
-
-       //Loading the properties file from src/test/resources
+        
+        //Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
 		if (in == null) {
@@ -84,16 +92,33 @@ public class ApacheWssjSignatureIT {
 		merchantProperties.load(in);
         Logger logger = new LoggerImpl(new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID")));
 
-        MerchantConfig config = new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID"));
+        config = new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID"));
 
         Object[] arguments
                 = {config.getEffectiveNamespaceURI(),
                 Client.mapToString(requestMap, false, PCI.REQUEST)};
         String xmlString = MessageFormat.format(textXmlDoc, arguments);
-        Document doc = ApacheSignatureWrapper.soapWrapAndSign(xmlString, config, logger);
-
+        
+        DocumentBuilder builder = Utility.newDocumentBuilder();
+        StringReader sr = new StringReader( xmlString );
+        wrappedDoc = builder.parse( new InputSource( sr ) );
+        sr.close();
+        
+        handler = SignedAndEncryptedMessageHandler.getInstance(config,logger);
+    }
+    
+    @Test
+    public void testSoapWrapAndSign() throws Exception {
+    	Document doc = handler.createSignedDoc(wrappedDoc,config.getMerchantID(),null);
         NodeList signatureElement = doc.getElementsByTagName("wsse:Security");
-
         assert (signatureElement.getLength() >= 1);
+    }
+    
+    @Test
+    public void testSoapWrapSignedAndEncrypt() throws Exception {
+    	Document doc = handler.handleMessageCreation(wrappedDoc, config.getMerchantID());
+        NodeList signatureElement = doc.getElementsByTagName("xenc:EncryptedKey");
+        assert (signatureElement.getLength() >= 1);
+        assertEquals("Id", signatureElement.item(0).getAttributes().item(0).getLocalName());
     }
 }
