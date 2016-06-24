@@ -195,10 +195,10 @@
             <artifactId>wss4j</artifactId>
             <version>1.5.0</version>
         </dependency>        
-       	<dependency>
-              <groupId>org.apache</groupId>
-			  <artifactId>xmlsec</artifactId>
-			  <version>1.3.0</version>
+        <dependency>
+            <groupId>xml-security</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>1.3.0</version>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>
