@@ -11,7 +11,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
         <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.1.0</version>
+            <version>6.2.0</version>
         </dependency> 
 ````
  Run mvn install, to install dependency
@@ -20,7 +20,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
 Add the dependency to your build.gradle
 ````
 dependencies {
-    compile 'com.cybersource:cybersource-sdk-java:6.1.0'
+    compile 'com.cybersource:cybersource-sdk-java:6.2.0'
     }
 ````
 ##Requirements
@@ -75,7 +75,9 @@ You do not need to download and build the source to use the SDK but if you want 
 	   	
     d. Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the logDirectory value, even on Windows. The directory you specify must already exist.
 	   
-    e. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
+	e. Set useSignAndEncrypted to true,Mechanism to encrypt the signed Payload.
+ 
+    f. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 	   
 	NOTE:  sendToProduction is initially set to false.  Set it to true only
 	       when you are ready to send live transactions.
