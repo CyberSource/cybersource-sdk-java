@@ -2,13 +2,13 @@
 
 LOCAL_CP=
 # -----------------------------------------------------------------------------
-# Replace this with cybersource-sdk-java-6.2.0.jar when using Java SDK 1.6 or later.
+# Replace this with cybersource-sdk-java-6.2.1.jar when using Java SDK 1.6 or later.
 # If using this scripts outside zip package then give maven clean install.
 # This will generate all required dependencies under target/dependencies.These dependencies are used in CLASSPATH.
 # -----------------------------------------------------------------------------
 
 if test -d ../../lib
-then LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.2.0.jar
+then LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.2.1.jar
 fi
 
 if test ! -d ../../lib
@@ -19,7 +19,7 @@ then
 		echo "Execute maven clean install , This will generate all required dependencies under target/dependencies!!"
 		exit 1
 	fi
-LOCAL_CP=$LOCAL_CP:target/dependencies/cybersource-sdk-java-6.2.0.jar
+LOCAL_CP=$LOCAL_CP:target/dependencies/cybersource-sdk-java-6.2.1.jar
 fi
 
 if test ! -d ./classes
