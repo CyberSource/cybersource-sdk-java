@@ -71,14 +71,14 @@ You do not need to download and build the source to use the SDK but if you want 
 	   
 	(Optional Additional Changes)
     c. Set targetAPIVersion to the latest version displayed at: https://<cybersource-host>/commerce/1.x/transactionProcessor/
-	   By default, it is set to the latest version when the package was created.
+       By default, it is set to the latest version when the package was created.
 	   	
     d. Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the logDirectory value, even on Windows. The directory you specify must already exist.
 	   
     e. Set useSignAndEncrypted to true,Mechanism to encrypt the signed Payload.For more information about MLE, see Message Level Encryption at bottom.
 	
-    f. Set "sendToAkamai" boolean flag with toggle value "true/false" so that the merchant can turn on/off routing transactions to Akamai.By default, it is set to false. 
-       "serverURL will be used, if if is mentioned.
+    f. Set "useAkamai" boolean flag with toggle value "true/false" so that the merchant can turn on/off routing transactions to Akamai. By default, it is set to false. 
+       "serverURL will be used, if it is mentioned.
 	
     g. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 	   

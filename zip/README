@@ -52,8 +52,8 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 	   
     e. Set useSignAndEncrypted to true,Mechanism to encrypt the signed Payload.
 	
-    f. Set "sendToAkamai" boolean flag with toggle value "true/false" so that the merchant can turn on/off routing transactions to Akamai.By default, it is set to false. 
-       "serverURL will be used, if if is mentioned.
+    f. Set "useAkamai" boolean flag with toggle value "true/false" so that the merchant can turn on/off routing transactions to Akamai. By default, it is set to false. 
+       "serverURL will be used, if it is mentioned.
 	   
     g. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
        
