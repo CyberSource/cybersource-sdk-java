@@ -42,7 +42,7 @@ public class MerchantConfig {
     private String keyAlias;
     private String keyPassword;
     private boolean sendToProduction;
-    private boolean sendToAkamai;
+    private boolean useAkamai;
     private String targetAPIVersion;
     private String keyFilename;
     private String serverURL;
@@ -95,8 +95,8 @@ public class MerchantConfig {
         return sendToProduction;
     }
 
-    public boolean getSendToAkamai() {
-        return sendToAkamai;
+    public boolean getUseAkamai() {
+        return useAkamai;
     }
     
     public String getTargetAPIVersion() {
@@ -167,7 +167,7 @@ public class MerchantConfig {
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
      * Otherwise, the effective server URL is derived from the values of
-     * sendToAkamai, sendToProduction and targetAPIVersion.
+     * useAkamai, sendToProduction and targetAPIVersion.
      *
      * @return the effective server URL.
      */
@@ -229,7 +229,7 @@ public class MerchantConfig {
         keyAlias = getProperty(merchantID, "keyAlias");
         keyPassword = getProperty(merchantID, "keyPassword");
         sendToProduction = getBooleanProperty(merchantID, "sendToProduction", false);
-        sendToAkamai = getBooleanProperty(merchantID, "sendToAkamai", false);
+        useAkamai = getBooleanProperty(merchantID, "useAkamai", false);
         targetAPIVersion = getProperty(merchantID, "targetAPIVersion");
         keyFilename = getProperty(merchantID, "keyFilename");
         serverURL = getProperty(merchantID, "serverURL");
@@ -277,7 +277,7 @@ public class MerchantConfig {
 
             Object[] arguments = {majorVersion};
             effectiveServerURL = MessageFormat.format(
-            		sendToAkamai
+            		useAkamai
 						?sendToProduction
 							?"https://ics2wsa.ic3.com/commerce/{0}.x/transactionProcessor"
 							:"https://ics2wstesta.ic3.com/commerce/{0}.x/transactionProcessor"
@@ -431,7 +431,7 @@ public class MerchantConfig {
         appendPair(sb, "keyAlias", keyAlias);
         appendPair(sb, "keyPassword", keyPassword);
         appendPair(sb, "sendToProduction", sendToProduction);
-        appendPair(sb, "sendToAkamai", sendToAkamai);
+        appendPair(sb, "useAkamai", useAkamai);
         appendPair(sb, "targetAPIVersion", targetAPIVersion);
         appendPair(sb, "keyFilename", keyFilename);
         appendPair(sb, "serverURL", serverURL);
