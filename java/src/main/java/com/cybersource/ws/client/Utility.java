@@ -428,7 +428,7 @@ public class Utility {
         // themselves.
         return (("1".equals(hasEscapes) ||
                 "true".equalsIgnoreCase(hasEscapes))
-                ? dest.toString() : StringEscapeUtils.escapeHtml((dest.toString())));
+                ? dest.toString() : StringEscapeUtils.escapeXml((dest.toString())));
     }
 
     
