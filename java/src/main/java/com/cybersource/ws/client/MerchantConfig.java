@@ -42,6 +42,7 @@ public class MerchantConfig {
     private String keyAlias;
     private String keyPassword;
     private boolean sendToProduction;
+    private boolean sendToAkamai;
     private String targetAPIVersion;
     private String keyFilename;
     private String serverURL;
@@ -94,6 +95,10 @@ public class MerchantConfig {
         return sendToProduction;
     }
 
+    public boolean getSendToAkamai() {
+        return sendToAkamai;
+    }
+    
     public String getTargetAPIVersion() {
         return targetAPIVersion;
     }
@@ -162,7 +167,7 @@ public class MerchantConfig {
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
      * Otherwise, the effective server URL is derived from the values of
-     * sendToProduction and targetAPIVersion.
+     * sendToAkamai, sendToProduction and targetAPIVersion.
      *
      * @return the effective server URL.
      */
@@ -224,6 +229,7 @@ public class MerchantConfig {
         keyAlias = getProperty(merchantID, "keyAlias");
         keyPassword = getProperty(merchantID, "keyPassword");
         sendToProduction = getBooleanProperty(merchantID, "sendToProduction", false);
+        sendToAkamai = getBooleanProperty(merchantID, "sendToAkamai", false);
         targetAPIVersion = getProperty(merchantID, "targetAPIVersion");
         keyFilename = getProperty(merchantID, "keyFilename");
         serverURL = getProperty(merchantID, "serverURL");
@@ -271,9 +277,13 @@ public class MerchantConfig {
 
             Object[] arguments = {majorVersion};
             effectiveServerURL = MessageFormat.format(
-                    sendToProduction
-                            ? "https://ics2ws.ic3.com/commerce/{0}.x/transactionProcessor"
-                            : "https://ics2wstest.ic3.com/commerce/{0}.x/transactionProcessor",
+            		sendToAkamai
+						?sendToProduction
+							?"https://ics2wsa.ic3.com/commerce/{0}.x/transactionProcessor"
+							:"https://ics2wstesta.ic3.com/commerce/{0}.x/transactionProcessor"
+						:sendToProduction
+							?"https://ics2ws.ic3.com/commerce/{0}.x/transactionProcessor"
+							:"https://ics2wstest.ic3.com/commerce/{0}.x/transactionProcessor",
                     arguments);
         }
 
@@ -421,6 +431,7 @@ public class MerchantConfig {
         appendPair(sb, "keyAlias", keyAlias);
         appendPair(sb, "keyPassword", keyPassword);
         appendPair(sb, "sendToProduction", sendToProduction);
+        appendPair(sb, "sendToAkamai", sendToAkamai);
         appendPair(sb, "targetAPIVersion", targetAPIVersion);
         appendPair(sb, "keyFilename", keyFilename);
         appendPair(sb, "serverURL", serverURL);

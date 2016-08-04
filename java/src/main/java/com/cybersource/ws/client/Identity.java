@@ -46,21 +46,24 @@ public class Identity {
     * @param x509Certificate 
     * @throws SignException 
     */
-   public Identity(MerchantConfig merchantConfig,X509Certificate x509Cert) throws SignException {
+   public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate) throws SignException {
 	   this.merchantConfig = merchantConfig;
-       this.x509Cert=x509Cert;
+       this.x509Cert=x509Certificate;
        setUpServer();
    }
 
    /**
     * Creates an Identity instance.this type of the instance can 
     * only be used to store merchant identity.
+    * 
+    * @param merchantConfig identity will be used for merchant specified in merchantConfig object.
     * @param x509Certificate 
+    * @param privateKey 
     * @throws SignException 
     */
-   public Identity(MerchantConfig merchantConfig,X509Certificate x509Cert, PrivateKey privateKey) throws SignException {
+   public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey) throws SignException {
 	   this.merchantConfig = merchantConfig;
-	   this.x509Cert = x509Cert;
+	   this.x509Cert = x509Certificate;
 	   this.privateKey = privateKey;
 	   setUpMerchant();
    }
