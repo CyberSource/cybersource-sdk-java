@@ -187,19 +187,14 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk16</artifactId>
-            <version>1.45</version>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.54</version>
         </dependency>
         <dependency>
-            <groupId>wss4j</groupId>
+            <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.15</version>
         </dependency>        
-        <dependency>
-            <groupId>xml-security</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>1.3.0</version>
-        </dependency>
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>

@@ -157,7 +157,12 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
                     " specified identity is null");
 
         WSSecHeader secHeader = new WSSecHeader();
-        secHeader.insertSecurityHeader(workingDocument);
+        try {
+            secHeader.insertSecurityHeader(workingDocument);
+        } catch (WSSecurityException e) {
+            logger.log(Logger.LT_EXCEPTION, "Failed while inserting security header for '" + senderAlias + "' with " + SERVER_ALIAS);
+            throw new SignException(e);
+        }
 
         //EncryptedKey
         WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
@@ -167,7 +172,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
         try {
             encrKeyBuilder.prepare(workingDocument, localKeyStoreHandler);
         } catch (WSSecurityException e) {
-        	logger.log(Logger.LT_EXCEPTION, "Key builder failed to create keys for , '" + senderAlias + "'" + " with " + SERVER_ALIAS);
+            logger.log(Logger.LT_EXCEPTION, "Key builder failed to create keys for '" + senderAlias + "' with " + SERVER_ALIAS);
             throw new SignEncryptException(e.getMessage(), e);
         }
 
@@ -180,12 +185,12 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
         WSSecDKEncrypt encrBuilder = new WSSecDKEncrypt();
         encrBuilder.setSymmetricEncAlgorithm(WSConstants.AES_256);
         encrBuilder.setExternalKey(ek, tokenIdentifier);
-        Document signedEncryptedDoc = null;
+        Document signedEncryptedDoc;
 
         try {
-            signedEncryptedDoc = encrBuilder.build(signedDoc,localKeyStoreHandler, secHeader);
-        } catch (WSSecurityException e) {
-        	logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + senderAlias + "'" + " with " + SERVER_ALIAS);
+            signedEncryptedDoc = encrBuilder.build(signedDoc, secHeader);
+        } catch (Exception e) {
+            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed request for '" + senderAlias + "' with " + SERVER_ALIAS);
             throw new SignEncryptException(e.getMessage(), e);
         }
 
@@ -195,28 +200,33 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
     }
 
 	public Document createSignedDoc(Document workingDocument,String senderAlias, WSSecHeader secHeader) throws SignException {
-		
-		if(secHeader==null){
-        	secHeader = new WSSecHeader();
-        	secHeader.insertSecurityHeader(workingDocument);
-    	}
-		
-		WSSecSignature sign = new WSSecSignature();
-	    sign.setUserInfo(senderAlias, senderAlias);
-	    sign.setSignatureAlgorithm(XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256);
-	    sign.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
-	    sign.setUseSingleCertificate(true);
-	    
-	    //Set which parts of the message to encrypt/sign.
-	    WSEncryptionPart msgBodyPart = new WSEncryptionPart(WSConstants.ELEM_BODY, WSConstants.URI_SOAP11_ENV, "");
+
+        if (secHeader == null) {
+            secHeader = new WSSecHeader();
+            try {
+                secHeader.insertSecurityHeader(workingDocument);
+            } catch (WSSecurityException e) {
+                logger.log(Logger.LT_EXCEPTION, "Failed while inserting security header for '" + senderAlias + "' with " + SERVER_ALIAS);
+                throw new SignException(e);
+            }
+        }
+
+        WSSecSignature sign = new WSSecSignature();
+        sign.setUserInfo(senderAlias, senderAlias);
+        sign.setSignatureAlgorithm(XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256);
+        sign.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
+        sign.setUseSingleCertificate(true);
+
+        //Set which parts of the message to encrypt/sign.
+        WSEncryptionPart msgBodyPart = new WSEncryptionPart(WSConstants.ELEM_BODY, WSConstants.URI_SOAP11_ENV, "");
         sign.setParts(new Vector(Collections.singletonList(msgBodyPart)));
-		try {
-	        return sign.build(workingDocument, localKeyStoreHandler, secHeader);
-		} catch (WSSecurityException e) {
-	        logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + senderAlias + "'");
-	        throw new SignException(e.getMessage());
-	   }
-	}
+        try {
+            return sign.build(workingDocument, localKeyStoreHandler, secHeader);
+        } catch (WSSecurityException e) {
+            logger.log(Logger.LT_EXCEPTION, "Failed while signing request for , '" + senderAlias + "'");
+            throw new SignException(e.getMessage());
+        }
+    }
 
 
 }

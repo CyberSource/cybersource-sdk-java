@@ -1,30 +1,14 @@
 package com.cybersource.ws.client;
 
-import org.apache.ws.security.components.crypto.AbstractCrypto;
-import org.apache.ws.security.components.crypto.CredentialException;
-import org.apache.ws.security.components.crypto.Merlin;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
 import java.security.PrivateKey;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.*;
 
 public class MessageHandlerKeyStoreTest{
 
