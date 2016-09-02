@@ -368,7 +368,7 @@ public class XMLClient {
         if ( !mc.getUseSignAndEncrypted() ) {
         	// sign wrapped Document object
             logger.log(Logger.LT_INFO, "Signing request...");
-            resultDocument = handler.createSignedDoc(wrappedDoc,mc.getMerchantID(),null);
+            resultDocument = handler.createSignedDoc(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword(),null);
             if (logSignedData) {
                 logger.log(Logger.LT_REQUEST,
                         Utility.nodeToString(resultDocument, PCI.REQUEST));
@@ -376,7 +376,7 @@ public class XMLClient {
         } else {
         	// sign and encrypt wrapped Document object
             logger.log(Logger.LT_INFO, "Signing and encrypting request...");
-            resultDocument = handler.handleMessageCreation(wrappedDoc,mc.getMerchantID());
+            resultDocument = handler.handleMessageCreation(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword());
             if (logSignedData) {
                 logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
             }

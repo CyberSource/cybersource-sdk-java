@@ -109,14 +109,14 @@ public class ApacheWssjSignatureIT {
     
     @Test
     public void testSoapWrapAndSign() throws Exception {
-    	Document doc = handler.createSignedDoc(wrappedDoc,config.getMerchantID(),null);
+    	Document doc = handler.createSignedDoc(wrappedDoc,config.getMerchantID(),config.getKeyPassword(),null);
         NodeList signatureElement = doc.getElementsByTagName("wsse:Security");
         assert (signatureElement.getLength() >= 1);
     }
     
     @Test
     public void testSoapWrapSignedAndEncrypt() throws Exception {
-    	Document doc = handler.handleMessageCreation(wrappedDoc, config.getMerchantID());
+    	Document doc = handler.handleMessageCreation(wrappedDoc, config.getMerchantID(),config.getKeyPassword());
         NodeList signatureElement = doc.getElementsByTagName("xenc:EncryptedKey");
         assert (signatureElement.getLength() >= 1);
         assertEquals("Id", signatureElement.item(0).getAttributes().item(0).getLocalName());
