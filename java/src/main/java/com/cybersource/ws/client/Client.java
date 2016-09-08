@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -182,7 +181,6 @@ public class Client {
                     Logger.LT_REQUEST,
                     mapToString(request, true, PCI.REQUEST));
         }
-        Document doc;
 
         // wrap in SOAP envelope
         Object[] arguments
@@ -201,14 +199,14 @@ public class Client {
         if ( !mc.getUseSignAndEncrypted() ) {
             // sign Document object
             logger.log(Logger.LT_INFO, "Signing request...");
-            resultDocument = handler.createSignedDoc(wrappedDoc,mc.getMerchantID(),null);
+            resultDocument = handler.createSignedDoc(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword(),null);
             if (logSignedData) {
                 logger.log(Logger.LT_REQUEST,
                         Utility.nodeToString(resultDocument, PCI.REQUEST));
             }
         } else {
             logger.log(Logger.LT_INFO, "Signing and encrypting request...");
-            resultDocument = handler.handleMessageCreation(wrappedDoc,mc.getMerchantID());
+            resultDocument = handler.handleMessageCreation(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword());
             if (logSignedData) {
                 logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
             }

@@ -66,7 +66,7 @@ public class ClientIT extends BaseTest {
         requestMap.put("purchaseTotals_currency", "USD");
         requestMap.put("item_0_unitPrice", "12.34");
         requestMap.put("item_1_unitPrice", "56.78");
-        requestMap.put("merchant_id", "your_merchant_id");
+        //requestMap.put("merchantID", "your_merchant_id");
 
 	    //Loading the properties file from src/test/resources
         Properties merchantProperties = new Properties();

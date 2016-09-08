@@ -11,7 +11,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
         <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.2.1</version>
+            <version>6.2.2</version>
         </dependency> 
 ````
  Run mvn install, to install dependency
@@ -20,7 +20,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
 Add the dependency to your build.gradle
 ````
 dependencies {
-    compile 'com.cybersource:cybersource-sdk-java:6.2.1'
+    compile 'com.cybersource:cybersource-sdk-java:6.2.2'
     }
 ````
 ##Requirements
