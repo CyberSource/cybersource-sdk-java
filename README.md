@@ -1,6 +1,6 @@
 #CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)]
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)]
 (https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ##Package Managers
@@ -11,7 +11,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
         <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.2.1</version>
+            <version>6.2.2</version>
         </dependency> 
 ````
  Run mvn install, to install dependency
@@ -20,7 +20,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
 Add the dependency to your build.gradle
 ````
 dependencies {
-    compile 'com.cybersource:cybersource-sdk-java:6.2.1'
+    compile 'com.cybersource:cybersource-sdk-java:6.2.2'
     }
 ````
 ##Requirements
@@ -103,6 +103,62 @@ You do not need to download and build the source to use the SDK but if you want 
         d. mvn failsafe:integration-test
            // Runs unit and integration tests. Note that integration tests require proper setup of test_cybs.properties
 
+##Testing the SDK 
+		
+We have two ways to test, One is using maven tool and other is to download the zip and use scripts to test.
+
+1.) Unzip the downloaded zip file into a directory of your choice.  It will create a directory called 
+    cybersource-sdk-java-master. 
+	
+	a. TESTING THE NAME-VALUE PAIR SAMPLE
+		. Go to the cybersource-sdk-java-master/sample/nvp directory.
+		. Use compileSample scripts to create classes directory.As it is not included in SDK.
+		. Then at a command prompt, type this line:
+			Windows 	runSample.bat
+			Unix or Linux 	runSample.sh
+				
+			If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
+			whatever java is in the path.
+			If the client is installed correctly, the requests and replies for a credit card authorization
+			and a follow-on capture appear.
+
+		. If you make any changes to the AuthCaptureSample.java sample, you
+		  must rebuild the sample before using it. Use the compileSample batch file or
+	 	  shell script provided in the sample directory.
+			   
+	b. TESTING THE XML SAMPLE
+		. Go to the cybersource-sdk-java-master/sample/xml directory.
+		. Use compileSample scripts to create classes directory.As it is not included in SDK.
+		. At a command prompt, type this line:
+			Windows 	runSample.bat
+			Unix or Linux 	runSample.sh
+				
+			If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
+			whatever java is in the path.
+			If the client is installed correctly, the requests and replies for a credit card authorization
+			and a follow-on capture appear.
+
+		. If you make any changes to the AuthSample.java sample, you
+		  must rebuild the sample before using it. Use the compileSample batch file or
+	          shell script provided in the sample directory.
+
+2.) Using samples and maven tool. samples is present at the same directory level as java and zip.
+	a.) Clone/Download the code from GitHub.
+	
+	b.) Go to the samples directory. then cd to nvp or xml which are present inside samples dir, choose any one and do     the same thing with other.
+	
+	c.) Sample project nvp and xml uses cybersource-sdk-java and 3rd party jars as dependent jar files. 
+	
+	d.) Build this project using Maven.
+		mvn install
+		
+	e.) If build is successful then it will put all jars inside cybersource-sdk-java/samples/nvp/target/dependencies 
+	    folder.
+	
+	f.) Edit cybs.properties and make the required changes:
+	
+	g.) Now use scripts to test.
+	
 ##Message Level Encryption
 
 	CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
@@ -117,8 +173,39 @@ You do not need to download and build the source to use the SDK but if you want 
 		5.	If merchant is reseller, the merchant must allow reseller to act upon their behalf and reseller must be configured as a reseller and the provided merchant must be configured as a merchant of this reseller. Additionally all above authorizations apply.
 
 	Cryptography Algorithms
-		CyberSource utilizes the following algorithms for this implementation. While others may work, the following are validated and recommended. SSL is used for transport security even with encrypted messages. CyberSource asymmetric keys are RSA 2048 keys and therefore your cryptography API should support 2048 bit RSA keys and signatures create with them. The messages are encrypted with a temporary derived key which is used per message. This derived key is AES 128 bit and utilizes CBC blocking mode for encryption. The derived key is encrypted with the recipient ( CyberSource ) public key. The key exchange algorithm used is RSA-OAEP.
+		CyberSource utilizes the following algorithms for this implementation. While others may work, the following are validated and recommended. SSL is used for transport security even with encrypted messages. CyberSource asymmetric keys are RSA 2048 keys and therefore your cryptography API should support 2048 bit RSA keys and signatures create with them. The messages are encrypted with a temporary derived key which is used per message. This derived key is AES 256 bit and utilizes CBC blocking mode for encryption. The derived key is encrypted with the recipient ( CyberSource ) public key. The key exchange algorithm used is RSA-OAEP.
   
+##Third Party jars
+	1.) org.apache.ws.security.wss4j:1.6.19
+	    The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications    
+	    from the OASIS Web Services Security TC.
+	    
+	2.) org.bouncycastle:bcprov-jdk15on:1.55
+		This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
+	
+	3.) org.apache.santuario:xmlsec:1.5.8
+		The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing, 
+		and supports XML Digital Signature APIs.
+	
+	4.) org.apache.commons:commons-lang3:3.4
+		Apache Commons Lang, a package of Java utility classes for the classes that are in java.lang's hierarchy, or are considered to be so standard as to justify existence in  
+		java.lang.
+	
+	5.) commons-httpclient:commons-httpclient:3.1
+		provides a framework by which new request types (methods) or HTTP extensions can be created easily.
+	
+	6.) commons-logging:commons-logging:jar:1.1.1
+		This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging 
+		systems.
+		
+	7.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21 . 
+	    slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
+	
+	8.) junit:junit:4.12
+		JUnit is a unit testing framework for Java.
+	
+	9.) org.mockito:mockito-all:1.10.19
+		Mock objects library for java  
 
 ##Documentation
 

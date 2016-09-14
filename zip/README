@@ -95,6 +95,55 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 			3. If you make any changes to the AuthSample.java sample, you
 			   must rebuild the sample before using it. Use the compileSample batch file or
 			   shell script provided in the sample directory.
+
+##Message Level Encryption
+
+	CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
+
+	Authentication Details
+		Message level encryption authenticates using the same mechanism as signed SOAP messages. The signature creation involves utilizing the merchants private key which combined with a hash of the message to be signed, can be validated with the merchants certificate and the message which was signed. 
+		The merchant certificate is included in the SOAP message for both signature and message level encryption. Message level encryption, encrypts a temporary message key for a specific recipient. This is done by encrypting the temporary message key with the recipient’s public certificate. Therefore only the party holding the private key (CyberSource) can decrypt the temporary message key. The merchant sending the request must be a valid merchant for the environment which the message is being processed in. After validating the merchant and retrieving the CyberSource copy of the merchant certificate from our database, these additional authentication steps are performed;
+		1.	The certificate sent in the message must have valid trust chain with the CyberSource certificate authority as the root signer.
+		2.	A certificate belonging to the merchant which sent the message must exist within our database, having the exact serial number of the certificate provided. 
+		3.	Our record of the certificate must have a valid start and end date for the transaction time sent.
+		4.	Our record of the certificate must have a “active” state (ie. Not deactivated by support).
+		5.	If merchant is reseller, the merchant must allow reseller to act upon their behalf and reseller must be configured as a reseller and the provided merchant must be configured as a merchant of this reseller. Additionally all above authorizations apply.
+
+	Cryptography Algorithms
+		CyberSource utilizes the following algorithms for this implementation. While others may work, the following are validated and recommended. SSL is used for transport security even with encrypted messages. CyberSource asymmetric keys are RSA 2048 keys and therefore your cryptography API should support 2048 bit RSA keys and signatures create with them. The messages are encrypted with a temporary derived key which is used per message. This derived key is AES 256 bit and utilizes CBC blocking mode for encryption. The derived key is encrypted with the recipient ( CyberSource ) public key. The key exchange algorithm used is RSA-OAEP.
+  
+##Third Party jars
+	1.) org.apache.ws.security.wss4j:1.6.19
+	    The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications    
+	    from the OASIS Web Services Security TC.
+	    
+	2.) org.bouncycastle:bcprov-jdk15on:1.55
+		This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
+	
+	3.) org.apache.santuario:xmlsec:1.5.8
+		The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing, 
+		and supports XML Digital Signature APIs.
+	
+	4.) org.apache.commons:commons-lang3:3.4
+		Apache Commons Lang, a package of Java utility classes for the classes that are in java.lang's hierarchy, or are considered to be so standard as to justify existence in  
+		java.lang.
+	
+	5.) commons-httpclient:commons-httpclient:3.1
+		provides a framework by which new request types (methods) or HTTP extensions can be created easily.
+	
+	6.) commons-logging:commons-logging:jar:1.1.1
+		This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging 
+		systems.
+		
+	7.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21 . 
+	    slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
+	
+	8.) junit:junit:4.12
+		JUnit is a unit testing framework for Java.
+	
+	9.) org.mockito:mockito-all:1.10.19
+		Mock objects library for java  
+		
 ##Documentation
 
 For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>
