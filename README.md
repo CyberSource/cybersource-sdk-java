@@ -180,7 +180,7 @@ We have two ways to test, One is using maven tool and other is to download the z
 	    The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications    
 	    from the OASIS Web Services Security TC.
 	    
-	2.) org.bouncycastle:bcprov-jdk15on:1.55
+	2.) org.bouncycastle:bcprov-jdk15on:1.54
 		This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
 	
 	3.) org.apache.santuario:xmlsec:1.5.8
