@@ -19,6 +19,7 @@
 package com.cybersource.ws.client;
 
 import java.io.File;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Properties;
 
@@ -38,6 +39,7 @@ public class MerchantConfig {
     private final Properties props;
 
     private final String merchantID;
+    private URI keyUri;
     private String keysDirectory;
     private String keyAlias;
     private String keyPassword;
@@ -71,6 +73,10 @@ public class MerchantConfig {
     
     public String getMerchantID() {
         return merchantID;
+    }
+
+    public URI getKeyUri() {
+        return keyUri;
     }
 
     public String getKeysDirectory() {
@@ -231,6 +237,7 @@ public class MerchantConfig {
         sendToProduction = getBooleanProperty(merchantID, "sendToProduction", false);
         sendToAkamai = getBooleanProperty(merchantID, "sendToAkamai", false);
         targetAPIVersion = getProperty(merchantID, "targetAPIVersion");
+        keyUri = (URI) props.getOrDefault("keyFileUri", null);
         keyFilename = getProperty(merchantID, "keyFilename");
         serverURL = getProperty(merchantID, "serverURL");
         namespaceURI = getProperty(merchantID, "namespaceURI");
