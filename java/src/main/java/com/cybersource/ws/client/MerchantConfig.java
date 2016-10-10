@@ -237,7 +237,9 @@ public class MerchantConfig {
         sendToProduction = getBooleanProperty(merchantID, "sendToProduction", false);
         sendToAkamai = getBooleanProperty(merchantID, "sendToAkamai", false);
         targetAPIVersion = getProperty(merchantID, "targetAPIVersion");
-        keyUri = (URI) props.getOrDefault("keyFileUri", null);
+        if (props.containsKey("keyFileUri")) {
+            keyUri = (URI) props.get("keyFileUri");
+        }
         keyFilename = getProperty(merchantID, "keyFilename");
         serverURL = getProperty(merchantID, "serverURL");
         namespaceURI = getProperty(merchantID, "namespaceURI");
