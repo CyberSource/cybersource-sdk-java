@@ -193,7 +193,13 @@ public class Client {
         sr.close();
 
         Document resultDocument = null;
+        long timeNow = System.currentTimeMillis();
+        logger.log(Logger.LT_INFO, "Client, Start of getInstance Call, Timer Start in ms	" + timeNow + "For merchant " + mc.getMerchantID());
+        
         SignedAndEncryptedMessageHandler handler = SignedAndEncryptedMessageHandler.getInstance(mc,logger);
+        
+        long endTime = System.currentTimeMillis();
+        logger.log(Logger.LT_INFO, "Client, End of getInstance Call, time taken in ms	" + (endTime-timeNow) + "For merchant " + mc.getMerchantID());
         
         // 3/7/2016 change to support encrypted messages as well as signed - jeaton
         if ( !mc.getUseSignAndEncrypted() ) {

@@ -22,19 +22,19 @@ import java.util.TimeZone;
 public class Identity { 
    
    //Our p12 files do not contain an alias as a normal name, its the common name and serial number
-   public String name = null;
+   private String name = null;
    
    // we need to create alias for our keystores, it looks like "serialNumber=4032987129910179089277,CN=jasoneatoncorp"
-   protected String keyAlias = null;
+   private String keyAlias = null;
    
    // for an unknown reason the serial number of the certificate is set incorrectly, we must parse it from DN
-   protected String serialNumber = null;
+   private String serialNumber = null;
    
-   protected X509Certificate x509Cert =null;
+   private X509Certificate x509Cert =null;
    
-   protected PrivateKey privateKey = null;
+   private PrivateKey privateKey = null;
    
-   protected MerchantConfig merchantConfig = null;
+   private MerchantConfig merchantConfig = null;
    
    private static final String SERVER_ALIAS = "CyberSource_SJC_US";
    

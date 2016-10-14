@@ -25,11 +25,11 @@ public class MessageHandlerKeyStoreTest{
     	Mockito.when(identity.getX509Cert()).thenReturn(x509Cert);
     	Mockito.when(identity.getName()).thenReturn("MahenCertTest");
 
-    	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore(logger);
+    	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore();
    
     	MessageHandlerKeyStore spyMhKeyStore = Mockito.spy(mhKeyStore);
     	Mockito.when(spyMhKeyStore.getKeyStore()).thenReturn(myKeystore);
-    	spyMhKeyStore.addIdentityToKeyStore(identity);
+    	spyMhKeyStore.addIdentityToKeyStore(identity,logger);
     	Mockito.verify(spyMhKeyStore).getKeyStore();
     }
 	
@@ -48,10 +48,10 @@ public class MessageHandlerKeyStoreTest{
     	Mockito.when(identity.getX509Cert()).thenReturn(x509Cert);
     	Mockito.when(identity.getName()).thenReturn("MahenCertTest");
 
-    	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore(logger);    	
+    	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore();    	
     	MessageHandlerKeyStore spyMhKeyStore = Mockito.spy(mhKeyStore);
     	Mockito.when(spyMhKeyStore.getKeyStore()).thenReturn(myKeystore);
-    	spyMhKeyStore.addIdentityToKeyStore(identity);
+    	spyMhKeyStore.addIdentityToKeyStore(identity,logger);
     }
     
     private static PrivateKey instPrivateKey(PrivateKey pkey) throws Exception{
