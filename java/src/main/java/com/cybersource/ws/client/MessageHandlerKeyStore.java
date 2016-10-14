@@ -13,17 +13,12 @@ import java.util.Properties;
  */
 public class MessageHandlerKeyStore extends Merlin {
 
-    Logger logger = null;
-
-    public MessageHandlerKeyStore(Logger logger) throws CredentialException, IOException {
+	public MessageHandlerKeyStore() throws CredentialException, IOException {
         super(null);
         properties = new Properties();
-        this.logger = logger;
     }
 
-
-
-    public void addIdentityToKeyStore(Identity id) throws SignEncryptException {
+    public void addIdentityToKeyStore(Identity id, Logger logger) throws SignEncryptException {
         if (id == null)
             return;
         X509Certificate certificate = id.getX509Cert();
