@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -98,7 +99,19 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
         }
 		
         try {
-            merchantKeyStore.load(new FileInputStream(merchantConfig.getKeyFile()), merchantConfig.getKeyPassword().toCharArray());
+            URI keyUri = merchantConfig.getKeyUri();
+            if (keyUri != null) {
+                if ("classpath".equalsIgnoreCase(keyUri.getScheme())) {
+                    merchantKeyStore.load(
+                            SignedAndEncryptedMessageHandler.class.getResourceAsStream(keyUri.getPath()),
+                            merchantConfig.getKeyPassword().toCharArray()
+                    );
+                } else {
+                    throw new IllegalArgumentException("Unsupported URI scheme for key file.");
+                }
+            } else {
+                merchantKeyStore.load(new FileInputStream(merchantConfig.getKeyFile()), merchantConfig.getKeyPassword().toCharArray());
+            }
         } catch (IOException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
             throw new SignException(e);
