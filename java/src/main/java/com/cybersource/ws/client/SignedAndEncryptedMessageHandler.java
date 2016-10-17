@@ -21,7 +21,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -31,9 +33,9 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
 
     private static final String KEY_FILE_TYPE = "PKCS12";
     
-    public static List<Identity> identities = new ArrayList<Identity>();
+    private List<Identity> identities = new ArrayList<Identity>();
     
-	private static String currentMerchantId = null;
+	private static Set<String> currentMerchantId = new HashSet<String>();
 	
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
     
@@ -52,7 +54,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
          // load keystore from disk p12 file (not keystore)
         loadMerchantP12File(merchantConfig, logger);
         for(int pos=0;pos<identities.size();pos++) {
-            localKeyStoreHandler.addIdentityToKeyStore(identities.get(pos));
+            localKeyStoreHandler.addIdentityToKeyStore(identities.get(pos),logger);
         }
     }
 
@@ -69,10 +71,10 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
     * @param logger - logger instance
     * @throws SignException - Signature exception
     */
-   private static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException {
+   private void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException {
        // Load the KeyStore and get the signing key and certificate do this once only
        // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
-       if(  !merchantConfig.getMerchantID().equals(currentMerchantId)){
+       if(!currentMerchantId.contains(merchantConfig.getMerchantID())){
        	readAndStoreCertificateAndPrivateKey( merchantConfig,  logger);
        }
    }
@@ -84,7 +86,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
     * @throws SignException
     */
    
-    private static void readAndStoreCertificateAndPrivateKey(
+    private void readAndStoreCertificateAndPrivateKey(
 			MerchantConfig merchantConfig, Logger logger) throws SignException {
     	KeyStore merchantKeyStore;
         try {
@@ -142,7 +144,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
                 logger.log(Logger.LT_EXCEPTION, "No valid entries found in the KeyStore, check alias, '" + merchantConfig.getKeyAlias() + "'");
                 throw new SignException("No valid entries found in the KeyStore, check alias, '" + merchantConfig.getKeyAlias() + "'");
             }
-            currentMerchantId = merchantConfig.getMerchantID();
+            currentMerchantId.add(merchantConfig.getMerchantID());
         } catch (KeyStoreException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
             throw new SignException(e);

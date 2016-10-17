@@ -14,16 +14,24 @@ import java.security.cert.CertificateException;
  */
 public class BaseMessageHandler {
 
-    MessageHandlerKeyStore localKeyStoreHandler = null;
+    static MessageHandlerKeyStore localKeyStoreHandler = null;
     Logger logger = null;
+    static KeyStore keyStore;
+    
+    static {
+    	try {
+			initKeystore();
+		} catch (Exception e) {
+			localKeyStoreHandler=null;
+		}
+    }
+    
     BaseMessageHandler(Logger logger) throws SignEncryptException {
         if (logger != null) this.logger = logger;
-
         try {
-            localKeyStoreHandler = new MessageHandlerKeyStore(logger);
-            KeyStore keyStore = KeyStore.getInstance("jks");
-            keyStore.load(null, null);
-            localKeyStoreHandler.setKeyStore(keyStore);
+        	if(localKeyStoreHandler==null){
+         	   initKeystore();
+            }
         } catch (CredentialException e) {
             throw new SignEncryptException("BaseMessageHandler, " +
                     "cannot instantiate class with keystore error.", e);
@@ -42,5 +50,13 @@ public class BaseMessageHandler {
         }
     }
 
-    public void addIdentityToKeyStore( Identity id ) throws SignEncryptException { localKeyStoreHandler.addIdentityToKeyStore(id);}
+    private static void initKeystore() throws KeyStoreException, CredentialException, IOException, NoSuchAlgorithmException, CertificateException{
+			keyStore = KeyStore.getInstance("jks");
+			keyStore.load(null, null);
+			localKeyStoreHandler = new MessageHandlerKeyStore();
+			localKeyStoreHandler.setKeyStore(keyStore);
+		
+    }
+    
+    public void addIdentityToKeyStore(Identity id , Logger logger) throws SignEncryptException { localKeyStoreHandler.addIdentityToKeyStore(id,logger);}
 }
