@@ -65,9 +65,17 @@ public class MerchantConfig {
     private String effectiveNamespaceURI;
     private String effectivePassword;
     private  boolean useSignAndEncrypted;
-
+    
+    // Retry configuration
+    private int numberOfRetries = 0 ;
+    //In milliseconds
+    private int retryInterval= 10 * 1000;
+    
+    
     // getter methods
     public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
+    
+    
     
     public String getMerchantID() {
         return merchantID;
@@ -291,7 +299,16 @@ public class MerchantConfig {
         effectivePassword = password != null ? password : merchantID;
         
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
-    }
+        
+        boolean allowRetry = getBooleanProperty(merchantID, "allowRetry", true);
+        if(allowRetry){
+        	numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 1);
+            retryInterval = getIntegerProperty(merchantID, "retryInterval", 10) * 1000;
+        	if( numberOfRetries < 1 || numberOfRetries > 3 || retryInterval <= 0){
+        		throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
+        	}
+        }
+   }
 
     /**
      * Returns a File object representing the key file.  If a
@@ -453,6 +470,8 @@ public class MerchantConfig {
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
+        appendPair(sb, "numberOfRetries", numberOfRetries);
+        appendPair(sb, "retryInterval", retryInterval);
         return (sb.toString());
     }
 
@@ -502,4 +521,13 @@ public class MerchantConfig {
             throw new ConfigException(prop + " has an invalid value.");
         }
     }
+
+    public int getNumberOfRetries() {
+		return numberOfRetries;
+	}
+
+    public int getRetryInterval() {
+		return retryInterval;
+	}
+
 }

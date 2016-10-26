@@ -3,6 +3,7 @@ package com.cybersource.ws.client;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.components.crypto.CredentialException;
 import org.apache.ws.security.message.WSSecEncrypt;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.message.WSSecSignature;
@@ -18,80 +19,89 @@ import java.security.Security;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
-/**
- * Created by jeaton on 3/1/2016.
- */
-public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
+public class SecurityUtil {
 
     private static final String KEY_FILE_TYPE = "PKCS12";
     
-    private List<Identity> identities = new ArrayList<Identity>();
-    
-	private static Set<String> currentMerchantId = new HashSet<String>();
-	
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
     
+    private static MessageHandlerKeyStore localKeyStoreHandler = null;
+    
+    //mapping between IdentityName and Identity
+    private static ConcurrentHashMap<String, Identity> identities = new ConcurrentHashMap<String, Identity>();
+    
     // By default signature algorithm is set to null and during WSSecSignature build() Signature algorithm will set to "http://www.w3.org/2000/09/xmldsig#rsa-sha1" .
-    public static final String SIGNATURE_ALGORITHM = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+    private static final String SIGNATURE_ALGORITHM = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
     // By default digest algorithm is set to "http://www.w3.org/2000/09/xmldsig#sha1"
-    public static final String DIGEST_ALGORITHM = "http://www.w3.org/2001/04/xmlenc#sha256";
+    private static final String DIGEST_ALGORITHM = "http://www.w3.org/2001/04/xmlenc#sha256";
+    
+    private static BouncyCastleProvider bcProvider = new BouncyCastleProvider();
     
 	// This is loaded by WSS4J but since we use it lets make sure its here
     static {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(bcProvider);
+        try {
+			initKeystore();
+		} catch (Exception e) {
+			localKeyStoreHandler=null;
+		}
     }
     
-    private SignedAndEncryptedMessageHandler(MerchantConfig merchantConfig, Logger logger) throws SignEncryptException, SignException {
-        super(logger);
-         // load keystore from disk p12 file (not keystore)
-        loadMerchantP12File(merchantConfig, logger);
-        for(int pos=0;pos<identities.size();pos++) {
-            localKeyStoreHandler.addIdentityToKeyStore(identities.get(pos),logger);
-        }
+    private static void initKeystore() throws KeyStoreException, CredentialException, IOException, NoSuchAlgorithmException, CertificateException{
+		KeyStore keyStore = KeyStore.getInstance("jks");
+		keyStore.load(null, null);
+		localKeyStoreHandler = new MessageHandlerKeyStore();
+		localKeyStoreHandler.setKeyStore(keyStore);
     }
-
-    static SignedAndEncryptedMessageHandler getInstance(MerchantConfig merchantConfig, Logger logger)
-            throws SignEncryptException, SignException {
-        SignedAndEncryptedMessageHandler signedAndEncryptedMessageHandler = new SignedAndEncryptedMessageHandler(merchantConfig,logger);
-        return signedAndEncryptedMessageHandler;
-    }
-    
+        
     /**
     * Method loads the Merchant P12 key.
     *  IMPORTANT :This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key 
     * @param merchantConfig - Merchant Config 
     * @param logger - logger instance
     * @throws SignException - Signature exception
+    * @throws SignEncryptException 
+     * @throws ConfigException 
+     * @throws IOException 
+     * @throws CredentialException 
     */
-   private void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException {
-       // Load the KeyStore and get the signing key and certificate do this once only
+   public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException {
+	   
+	   // Load the KeyStore and get the signing key and certificate do this once only
        // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
-       if(!currentMerchantId.contains(merchantConfig.getMerchantID())){
-       	readAndStoreCertificateAndPrivateKey( merchantConfig,  logger);
+	   
+	   if(identities.get(merchantConfig.getMerchantID()) == null){
+			try {
+				if (localKeyStoreHandler == null)
+					initKeystore();
+			} catch (Exception e) {
+				logger.log(Logger.LT_EXCEPTION,
+						"SecurityUtil, cannot instantiate class with keystore error. "
+								+ e.getMessage());
+				throw new SignException(e.getMessage());
+			}
+          	readAndStoreCertificateAndPrivateKey(merchantConfig, logger);
        }
-   }
+    }
    
    /**
 	 *Reads the Certificate or Public key  and Private from the P12 key .
     * @param merchantConfig - Merchant Config details
     * @param logger - logger object
     * @throws SignException
+    * @throws SignEncryptException 
     */
    
-    private void readAndStoreCertificateAndPrivateKey(
-			MerchantConfig merchantConfig, Logger logger) throws SignException {
+    private static void readAndStoreCertificateAndPrivateKey(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException {
     	KeyStore merchantKeyStore;
         try {
             merchantKeyStore = KeyStore.getInstance(KEY_FILE_TYPE,
-                    new BouncyCastleProvider());
+            		bcProvider);
         } catch (KeyStoreException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while instantiating KeyStore");
             throw new SignException(e);
@@ -134,31 +144,30 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
                         logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
                         throw new SignException(e);
                     }
-            		identities.add(new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey()));
+            		
+            		Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey());
+            		localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+            		identities.put(identity.getName(), identity);
             		continue;
             	}
-				identities.add(new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias)));
-            }
-            
-            if (identities == null || identities.isEmpty()) {
-                logger.log(Logger.LT_EXCEPTION, "No valid entries found in the KeyStore, check alias, '" + merchantConfig.getKeyAlias() + "'");
-                throw new SignException("No valid entries found in the KeyStore, check alias, '" + merchantConfig.getKeyAlias() + "'");
-            }
-            currentMerchantId.add(merchantConfig.getMerchantID());
+				Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias));
+        		localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+        		identities.put(identity.getName(), identity);
+			}
         } catch (KeyStoreException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
             throw new SignException(e);
         }
 	}
     
-    public Document handleMessageCreation(Document workingDocument, String senderAlias,String password) throws SignEncryptException, SignException{
-        if (senderAlias == null)
-            throw new SignEncryptException("SignedAndEncryptedMessageHandler - handleMessageCreation," +
-                    " senderAlias is null");
+    
+    public static Document handleMessageCreation(Document signedDoc, String merchantID, Logger logger) throws SignEncryptException, SignException{
+    	
+    	logger.log(Logger.LT_INFO, "Encrypting Signed doc ...");
 
 	    WSSecHeader secHeader = new WSSecHeader();
 	    try {
-	      secHeader.insertSecurityHeader(workingDocument);
+	      secHeader.insertSecurityHeader(signedDoc);
 	    } catch (WSSecurityException e) {
 	        logger.log(Logger.LT_EXCEPTION, "Exception while adding docuemnt in soap securiy header for MLE");
 	        throw new SignException(e);
@@ -167,7 +176,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
         WSSecEncrypt encrBuilder = new WSSecEncrypt();
         //Set the user name to get the encryption certificate. 
         //The public key of this certificate is used, thus no password necessary. The user name is a keystore alias usually.
-        encrBuilder.setUserInfo(SERVER_ALIAS);
+        encrBuilder.setUserInfo(identities.get(SERVER_ALIAS).getKeyAlias());
         
         /*This is to reference a public key or certificate when signing or encrypting a SOAP message.
         *The following valid values for these configuration items are:
@@ -183,7 +192,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
 
         
         //Create signed document
-        Document signedDoc = createSignedDoc(workingDocument,senderAlias,password,secHeader);
+        //Document signedDoc = createSignedDoc(workingDocument,senderAlias,password,secHeader);
 
         Document signedEncryptedDoc;
 		try {
@@ -193,26 +202,28 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
 	        // encrypted using the public key of the receiver
 			signedEncryptedDoc = encrBuilder.build(signedDoc, localKeyStoreHandler, secHeader);
 		} catch (WSSecurityException e) {
-			logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + senderAlias + "'" + " with " + SERVER_ALIAS);
-			throw new SignEncryptException(e.getMessage(), e);
+			logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantID + "'" + " with " + SERVER_ALIAS);
+			throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantID + "'" + " with " + SERVER_ALIAS, e);
 		}
         encrBuilder.prependToHeader(secHeader);
         return signedEncryptedDoc;
     }
 	
-	public Document createSignedDoc(Document workingDocument,String senderAlias, String password,WSSecHeader secHeader) throws SignException {
+	public static Document createSignedDoc(Document workingDocument,String merchantID, String password,Logger logger) throws SignException {
 		
-		if(secHeader==null){
-			try {
-        	secHeader = new WSSecHeader();
-        	secHeader.insertSecurityHeader(workingDocument);
-			} catch (WSSecurityException e) {
-	            logger.log(Logger.LT_EXCEPTION, "Exception while signing XML document");
-	            throw new SignException(e);
-	        }
-    	}
+		logger.log(Logger.LT_INFO, "Signing request...");
+		
+		WSSecHeader secHeader = new WSSecHeader();
+		try {
+			secHeader.insertSecurityHeader(workingDocument);
+		} catch (WSSecurityException e) {
+			logger.log(Logger.LT_EXCEPTION,
+					"Exception while signing XML document");
+			throw new SignException(e);
+		}
+
 		WSSecSignature sign = new WSSecSignature();
-		sign.setUserInfo(senderAlias, password);
+		sign.setUserInfo(identities.get(merchantID).getKeyAlias(), password);
 	    sign.setDigestAlgo(DIGEST_ALGORITHM);
 	    sign.setSignatureAlgorithm(SIGNATURE_ALGORITHM);
 	    sign.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
@@ -224,7 +235,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
 		try {
 	        return sign.build(workingDocument, localKeyStoreHandler, secHeader);
 		} catch (WSSecurityException e) {
-	        logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + senderAlias + "'");
+	        logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + merchantID + "'");
 	        throw new SignException(e.getMessage());
 	   }
 	}
