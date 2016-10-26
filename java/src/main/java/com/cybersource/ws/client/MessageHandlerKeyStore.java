@@ -26,9 +26,9 @@ public class MessageHandlerKeyStore extends Merlin {
         try {
             if (privateKey != null) {
                 X509Certificate[] certChain = {certificate};
-                getKeyStore().setKeyEntry(id.getName(), privateKey, id.getName().toCharArray(), certChain);
+                getKeyStore().setKeyEntry(id.getKeyAlias(), privateKey, id.getName().toCharArray(), certChain);
             } else {
-                getKeyStore().setCertificateEntry(id.getName(), certificate);
+                getKeyStore().setCertificateEntry(id.getKeyAlias(), certificate);
             }
         } catch (KeyStoreException e) {
         	logger.log(Logger.LT_EXCEPTION, "MessageHandlerKeyStore cannot parse identity, " + id + "'");

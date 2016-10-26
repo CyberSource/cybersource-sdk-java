@@ -11,7 +11,7 @@
       <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.2.3</version>
+            <version>6.2.4</version>
       </dependency> 
       <dependency>
             <groupId>commons-httpclient</groupId>
@@ -34,16 +34,6 @@
           <artifactId>wss4j</artifactId>
           <version>1.6.19</version>
       </dependency>        
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.7.21</version>
-      </dependency>
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-jcl</artifactId>
-          <version>1.7.21</version>
-      </dependency>
       <dependency>
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-lang3</artifactId>
@@ -98,52 +88,6 @@
           </archive>
         </configuration>
       </plugin>
-	  
-	  <!--
-	  Due to bcprov-jdk16-1.46.jar ::-> JCE authentication error . bcprov-jdk16-1.46.jar is a signed jar, and when we unpack it and include in our own jar file, then Java fails to validate the signature.  
-	  It's better to include it separately in the CLASSPATH.Hence using maven dependency pluging to copy dependencies and adding them to CLASSPATH.
-	  -->
-	  <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>2.4.1</version>
-        <configuration>
-              <finalName>AuthCaptureSample</finalName>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
-              <artifactSet>
-                <includes>
-                  <include>*:*</include>
-                </includes>
-              </artifactSet>
-              <filters>
-                <filter>
-                  <artifact>*:*</artifact>
-                  <excludes>
-                    <exclude>META-INF/*.SF</exclude>
-                    <exclude>META-INF/*.DSA</exclude>
-                    <exclude>META-INF/*.RSA</exclude>
-                  </excludes>
-                </filter>
-              </filters>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.cybersource.sample.AuthCaptureSample</mainClass>
-                </transformer>
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-	  -->
     </plugins>
   </build>
 </project>

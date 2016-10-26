@@ -1,17 +1,132 @@
+/*
+* Copyright 2003-2014 CyberSource Corporation
+*
+* THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
+* AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
+* DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
+* COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
+* EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
+* WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
+* DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+* SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
+* OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
+* ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
+* DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
+* DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
+* WITH ANY PARTICULAR OPERATING SYSTEM.
+*/
+
 package com.cybersource.ws.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
+import java.io.InputStream;
+import java.io.StringReader;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
+import javax.xml.parsers.DocumentBuilder;
 
-public class MessageHandlerKeyStoreTest{
+public class SecurityUtilTest {
+
+    private static final String textXmlDoc = "<soap:Envelope xmlns:soap=\"" +
+            "http://schemas.xmlsoap.org/soap/envelope/\">\n<soap:Body id=\"body1\">\n" +
+            "<nvpRequest xmlns=\"{0}\">\n{1}</nvpRequest>" +
+            "\n</soap:Body>\n</soap:Envelope>";
+
+    private static Map<String,String> requestMap;
+    private Document wrappedDoc;
+    private MerchantConfig config;
+    private Properties merchantProperties;
+    private Logger logger;
+    
+    @Before
+    public void setup() throws Exception{
+    	requestMap = new HashMap<String, String>();
+        requestMap.put("ccAuthService_run", "true");
+        requestMap.put("merchantReferenceCode", "your_reference_code");
+        requestMap.put("billTo_firstName", "John");
+        requestMap.put("billTo_lastName", "Doe");
+        requestMap.put("billTo_street1", "1295 Charleston Road");
+        requestMap.put("billTo_city", "Mountain View");
+        requestMap.put("billTo_state", "CA");
+        requestMap.put("billTo_postalCode", "94043");
+        requestMap.put("billTo_country", "US");
+        requestMap.put("billTo_email", "nobody@cybersource.com");
+        requestMap.put("billTo_ipAddress", "10.7.7.7");
+        requestMap.put("billTo_phoneNumber", "650-965-6000");
+        requestMap.put("shipTo_firstName", "Jane");
+        requestMap.put("shipTo_lastName", "Doe");
+        requestMap.put("shipTo_street1", "100 Elm Street");
+        requestMap.put("shipTo_city", "San Mateo");
+        requestMap.put("shipTo_state", "CA");
+        requestMap.put("shipTo_postalCode", "94401");
+        requestMap.put("shipTo_country", "US");
+        requestMap.put("card_accountNumber", "4111111111111111");
+        requestMap.put("card_expirationMonth", "12");
+        requestMap.put("card_expirationYear", "2020");
+        requestMap.put("purchaseTotals_currency", "USD");
+        requestMap.put("item_0_unitPrice", "12.34");
+        requestMap.put("item_1_unitPrice", "56.78");
+        requestMap.put("merchant_id", "cybs_test_ashish");
+        
+        //Loading the properties file from src/test/resources
+        merchantProperties = new Properties();
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
+		if (in == null) {
+			throw new RuntimeException("Unable to load test_cybs.properties file");
+		}
+		merchantProperties.load(in);
+        logger = new LoggerImpl(new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID")));
+
+        config = new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID"));
+
+        Object[] arguments
+                = {config.getEffectiveNamespaceURI(),
+                Client.mapToString(requestMap, false, PCI.REQUEST)};
+        String xmlString = MessageFormat.format(textXmlDoc, arguments);
+        
+        DocumentBuilder builder = Utility.newDocumentBuilder();
+        StringReader sr = new StringReader( xmlString );
+        wrappedDoc = builder.parse( new InputSource( sr ) );
+        sr.close();
+        SecurityUtil.loadMerchantP12File(config,logger);
+    }
+    
+    @Test
+    public void testSoapWrapAndSign() throws Exception {
+    	Document doc = SecurityUtil.createSignedDoc(wrappedDoc,config.getMerchantID(),config.getKeyPassword(),logger);
+        NodeList signatureElement = doc.getElementsByTagName("wsse:Security");
+        assert (signatureElement.getLength() >= 1);
+    }
+    
+    @Test
+    public void testSoapWrapSignedAndEncrypt() throws Exception {
+    	Document signedDoc = SecurityUtil.createSignedDoc(wrappedDoc,config.getMerchantID(),config.getKeyPassword(),logger);
+        NodeList signatureElement = signedDoc.getElementsByTagName("wsse:Security");
+        assert (signatureElement.getLength() >= 1);
+    	Document doc = SecurityUtil.handleMessageCreation(wrappedDoc, config.getMerchantID(),logger);
+        NodeList signatureElementEnc = doc.getElementsByTagName("xenc:EncryptedKey");
+        assert (signatureElementEnc.getLength() >= 1);
+        assertEquals("Id", signatureElementEnc.item(0).getAttributes().item(0).getLocalName());
+    }
 
 	@Test
     public void testServerIdentityToKeyStore() throws Exception{
@@ -24,9 +139,9 @@ public class MessageHandlerKeyStoreTest{
         Mockito.when(identity.getPrivateKey()).thenReturn(null);
     	Mockito.when(identity.getX509Cert()).thenReturn(x509Cert);
     	Mockito.when(identity.getName()).thenReturn("MahenCertTest");
-
-    	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore();
-   
+    	Mockito.when(identity.getKeyAlias()).thenReturn("MahenCertTest");
+    	
+    	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore();  
     	MessageHandlerKeyStore spyMhKeyStore = Mockito.spy(mhKeyStore);
     	Mockito.when(spyMhKeyStore.getKeyStore()).thenReturn(myKeystore);
     	spyMhKeyStore.addIdentityToKeyStore(identity,logger);
@@ -47,7 +162,8 @@ public class MessageHandlerKeyStoreTest{
     	Mockito.when(identity.getPrivateKey()).thenReturn(newPkay);
     	Mockito.when(identity.getX509Cert()).thenReturn(x509Cert);
     	Mockito.when(identity.getName()).thenReturn("MahenCertTest");
-
+    	Mockito.when(identity.getKeyAlias()).thenReturn("MahenCertTest");
+    	
     	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore();    	
     	MessageHandlerKeyStore spyMhKeyStore = Mockito.spy(mhKeyStore);
     	Mockito.when(spyMhKeyStore.getKeyStore()).thenReturn(myKeystore);
@@ -62,4 +178,5 @@ public class MessageHandlerKeyStoreTest{
         return privateKey;
     }
     
+
 }
