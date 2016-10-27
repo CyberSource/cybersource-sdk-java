@@ -44,7 +44,7 @@ import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 
-public class SecurityUtilTest {
+public class SecurityUtilIT {
 
     private static final String textXmlDoc = "<soap:Envelope xmlns:soap=\"" +
             "http://schemas.xmlsoap.org/soap/envelope/\">\n<soap:Body id=\"body1\">\n" +
