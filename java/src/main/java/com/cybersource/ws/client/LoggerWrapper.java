@@ -18,6 +18,8 @@
 
 package com.cybersource.ws.client;
 
+import org.apache.commons.lang3.time.StopWatch;
+
 /**
  * An internal class used by the clients to encapsulate the logger, primarily
  * to avoid having to check if the Logger object is null before logging.  It
@@ -26,7 +28,8 @@ package com.cybersource.ws.client;
  */
 public class LoggerWrapper implements Logger {
     private Logger logger = null;
-
+    private MyStopWatch stopWatch = new MyStopWatch();
+  
     /**
      * Constructor.
      *
@@ -53,10 +56,12 @@ public class LoggerWrapper implements Logger {
             logger = _logger;
             prepare = _prepare;
             logTranStart = _logTranStart;
+            stopWatch.start();
         } else if (mc.getEnableLog()) {
             logger = new LoggerImpl(mc);
             prepare = true;
             logTranStart = true;
+            stopWatch.start();
         }
 
         if (prepare) {
@@ -66,6 +71,7 @@ public class LoggerWrapper implements Logger {
         if (logTranStart) {
             logTransactionStart();
         }
+        
     }
 
     /**
@@ -100,6 +106,23 @@ public class LoggerWrapper implements Logger {
             logger.log(type, text);
         }
     }
+    
+    /**
+     * Calls the encapsulated Logger object's log() method.
+     *
+     * @param type the log entry type.
+     * @param text the actual text to be logged.
+     * @param splitTimer to log split time.
+     */
+	public void log(String type, String text, boolean splitTimer) {
+		if (logger != null) {
+			if (splitTimer) {
+				logger.log(type, text + stopWatch.getMethodElapsedTime() + "ms");
+			} else {
+				logger.log(type, text + stopWatch.getElapsedTimeForTransaction() + "ms");
+			}
+		}
+	}
 
     /**
      * Returns the encapsulated Logger object.
@@ -108,5 +131,14 @@ public class LoggerWrapper implements Logger {
      */
     public Logger getLogger() {
         return logger;
+    }
+
+    /**
+     * Returns the encapsulated StopWatch object.
+     *
+     * @return the encapsulated StopWatch object.
+     */
+    public MyStopWatch getStopWatch() {
+        return stopWatch;
     }
 }

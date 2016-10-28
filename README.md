@@ -11,7 +11,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
         <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.2.3</version>
+            <version>6.2.4</version>
         </dependency> 
 ````
  Run mvn install, to install dependency
@@ -20,7 +20,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
 Add the dependency to your build.gradle
 ````
 dependencies {
-    compile 'com.cybersource:cybersource-sdk-java:6.2.3'
+    compile 'com.cybersource:cybersource-sdk-java:6.2.4'
     }
 ````
 ##Requirements
@@ -85,8 +85,11 @@ You do not need to download and build the source to use the SDK but if you want 
        By default, it is set to true.
        
     h. "serverURL" config parameter will take precedence over sendToProduction and sendToAkamai config parameters. By default the "serverURL" configuration is commented out. 
+    
+    i. Set allowRetry config parameter to "true/false" to enable retry mechanism. By default, allowRetry is set to true.
+       Set integer values for config parameter numberOfRetries &  retryInterval to configure the retry behavior. Refer to the "Retry Pattern" section below.
         
-    i. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
+    j. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
 	
 4. Build this project using Maven.
@@ -175,6 +178,13 @@ We have two ways to test, One is using maven tool and other is to download the z
 	Cryptography Algorithms
 		CyberSource utilizes the following algorithms for this implementation. While others may work, the following are validated and recommended. SSL is used for transport security even with encrypted messages. CyberSource asymmetric keys are RSA 2048 keys and therefore your cryptography API should support 2048 bit RSA keys and signatures create with them. The messages are encrypted with a temporary derived key which is used per message. This derived key is AES 256 bit and utilizes CBC blocking mode for encryption. The derived key is encrypted with the recipient ( CyberSource ) public key. The key exchange algorithm used is RSA-OAEP.
   
+##RETRY PATTERN
+
+	Retry Pattern Allows to retry sending a failed request. To Enable or disable retry mechanism set the allowRetry config parameter to "true or false". 
+	By default, allowRetry is set to true. The system will retry the failed request multiple times as configured in the config parameter 'numberOfRetries'. 
+	numberOfRetries (Number of retries) should be set between 1 to 3. By default numberOfRetries will be set to 1. User can set a delay in between the retry 
+	attempts using the config parameter 'retryInterval'. The default value for this parameter is 10 which means a delay of 10 seconds between the retry attempts.
+
 ##Third Party jars
 	1.) org.apache.ws.security.wss4j:1.6.19
 	    The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications    
@@ -197,14 +207,11 @@ We have two ways to test, One is using maven tool and other is to download the z
 	6.) commons-logging:commons-logging:jar:1.1.1
 		This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging 
 		systems.
-		
-	7.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21 . 
-	    slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
 	
-	8.) junit:junit:4.12
+	7.) junit:junit:4.12
 		JUnit is a unit testing framework for Java.
 	
-	9.) org.mockito:mockito-all:1.10.19
+	8.) org.mockito:mockito-all:1.10.19
 		Mock objects library for java  
 
 ##Documentation
