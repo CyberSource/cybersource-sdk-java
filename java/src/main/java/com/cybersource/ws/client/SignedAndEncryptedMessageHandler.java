@@ -20,10 +20,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -34,8 +35,14 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
     private static final String KEY_FILE_TYPE = "PKCS12";
     
     private List<Identity> identities = new ArrayList<Identity>();
-    
-	private static Set<String> currentMerchantId = new HashSet<String>();
+
+    private static Set<MerchantConfig> currentMerchantConfig = new TreeSet<MerchantConfig>(new Comparator<MerchantConfig>() {
+        @Override
+        public int compare(MerchantConfig mc1, MerchantConfig mc2) {
+            int res1 = mc1.getMerchantID().compareTo(mc2.getMerchantID());
+            return  res1 != 0 ? res1 : ((Boolean)mc1.getSendToProduction()).compareTo(mc2.getSendToProduction() );
+        }
+    });
 	
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
     
@@ -74,7 +81,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
    private void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException {
        // Load the KeyStore and get the signing key and certificate do this once only
        // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
-       if(!currentMerchantId.contains(merchantConfig.getMerchantID())){
+       if(!currentMerchantConfig.contains(merchantConfig)){
        	readAndStoreCertificateAndPrivateKey( merchantConfig,  logger);
        }
    }
@@ -144,7 +151,7 @@ public class SignedAndEncryptedMessageHandler extends BaseMessageHandler {
                 logger.log(Logger.LT_EXCEPTION, "No valid entries found in the KeyStore, check alias, '" + merchantConfig.getKeyAlias() + "'");
                 throw new SignException("No valid entries found in the KeyStore, check alias, '" + merchantConfig.getKeyAlias() + "'");
             }
-            currentMerchantId.add(merchantConfig.getMerchantID());
+            currentMerchantConfig.add(merchantConfig);
         } catch (KeyStoreException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
             throw new SignException(e);
