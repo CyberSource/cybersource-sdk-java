@@ -1,6 +1,6 @@
 #CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/mahendya/cybersource-sdk-java.png?branch=future)]
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)]
 (https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ##Package Managers
