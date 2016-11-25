@@ -21,6 +21,7 @@ package com.cybersource.ws.client;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * An internal class used by the clients to hold and derive the properties
@@ -34,7 +35,8 @@ public class MerchantConfig {
 
     private final static int DEFAULT_TIMEOUT = 130;
     private final static int DEFAULT_PROXY_PORT = 8080;
-
+    private UUID uniqueKey=UUID.randomUUID(); 
+    
     private final Properties props;
 
     private final String merchantID;
@@ -66,10 +68,10 @@ public class MerchantConfig {
     private String effectivePassword;
     private  boolean useSignAndEncrypted;
     
-    // Retry configuration
-    private int numberOfRetries = 0 ;
-    //In milliseconds
-    private int retryInterval= 10 * 1000;
+    //Retry Pattern
+    private int numberOfRetries = 0;   
+    private long retryInterval  = 0;
+    private boolean allowRetry=true;
     
     
     // getter methods
@@ -300,13 +302,14 @@ public class MerchantConfig {
         
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
         
-        boolean allowRetry = getBooleanProperty(merchantID, "allowRetry", true);
-        if(allowRetry){
-        	numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 1);
-            retryInterval = getIntegerProperty(merchantID, "retryInterval", 10) * 1000;
-        	if( numberOfRetries < 1 || numberOfRetries > 3 || retryInterval <= 0){
-        		throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
-        	}
+        allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
+        if (useHttpClient && allowRetry) {
+            numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 5);
+            if(numberOfRetries>0)
+          	  retryInterval = getIntegerProperty(merchantID, "retryInterval", 5) *1000;
+            if( numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0){
+                throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
+            }
         }
    }
 
@@ -458,6 +461,11 @@ public class MerchantConfig {
         appendPair(sb, "logFilename", logFilename);
         appendPair(sb, "logMaximumSize", logMaximumSize);
         appendPair(sb, "useHttpClient", useHttpClient);
+        if(useHttpClient){
+            appendPair(sb, "allowRetry", allowRetry);
+            appendPair(sb, "RetryCount", numberOfRetries);
+            appendPair(sb, "RetryInterval", retryInterval);
+        }
         appendPair(sb, "timeout", timeout);
         if (proxyHost != null) {
             appendPair(sb, "proxyHost", proxyHost);
@@ -470,11 +478,14 @@ public class MerchantConfig {
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
-        appendPair(sb, "numberOfRetries", numberOfRetries);
-        appendPair(sb, "retryInterval", retryInterval);
         return (sb.toString());
     }
 
+	private void appendPair(StringBuffer sb, String key, long retryInterval2) {
+		appendPair(sb, key, String.valueOf(retryInterval2));
+
+	}
+	
     private static void appendPair(StringBuffer sb, String key, boolean value) {
         appendPair(sb, key, String.valueOf(value));
     }
@@ -522,12 +533,24 @@ public class MerchantConfig {
         }
     }
 
-    public int getNumberOfRetries() {
+	public UUID getUniqueKey() {
+		return uniqueKey;
+	}
+
+	public int getNumberOfRetries() {
 		return numberOfRetries;
 	}
 
-    public int getRetryInterval() {
+	public long getRetryInterval() {
 		return retryInterval;
+	}
+
+	public boolean isAllowRetry() {
+		return allowRetry;
+	}
+
+	public void setAllowRetry(boolean allowRetry) {
+		this.allowRetry = allowRetry;
 	}
 
 }

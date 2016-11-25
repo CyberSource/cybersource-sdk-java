@@ -61,8 +61,9 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
        
     h. "serverURL" config parameter will take precedence over sendToProduction and sendToAkamai config parameters. By default the "serverURL" configuration is commented out. 
     
-    i. Set allowRetry config parameter to "true/false" to enable retry mechanism. By default, allowRetry is set to true.
-       Set integer values for config parameter numberOfRetries &  retryInterval to configure the retry behavior. Refer to the "Retry Pattern" section below.
+    i. "allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry. 
+       Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
+       1 to 5 any other value will throw an Error Message. Refer to the "Retry Pattern" section below.
         
     j. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
@@ -118,10 +119,12 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 
 ##RETRY PATTERN
 	
-	Retry Pattern Allows to retry sending a failed request. To Enable or disable retry mechanism set the allowRetry config parameter to "true or false". 
-	By default, allowRetry is set to true. The system will retry the failed request multiple times as configured in the config parameter 'numberOfRetries'. 
-	numberOfRetries (Number of retries) should be set between 1 to 3. By default numberOfRetries will be set to 1. User can set a delay in between the retry 
-	attempts using the config parameter 'retryInterval'. The default value for this parameter is 10 which means a delay of 10 seconds between the retry attempts.
+	Retry Pattern Allows to retry sending a failed request and it will only work with useHttpClient=true, allowRetry flag enables the retry mechanism. 
+	set the value of allowRetry parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant 
+	in the config parameter 'numberOfRetries'. 
+	
+	numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 5. User can set a delay in between the retry attempts. 
+	Config parameter for this property is 'retryInterval' in cybs.property file. The default value for 'retryInterval' parameter is 5 which means a delay of 5 seconds.
 	
 ##Third Party jars
 	1.) org.apache.ws.security.wss4j:1.6.19
