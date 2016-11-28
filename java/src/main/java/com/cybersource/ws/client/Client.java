@@ -180,8 +180,11 @@ public class Client {
         boolean logSignedData = mc.getLogSignedData();
         if (!logSignedData) {
             logger.log(
-                    Logger.LT_REQUEST,
-                    mapToString(request, true, PCI.REQUEST));
+            		Logger.LT_REQUEST,
+            		"UUID   >  "+(mc.getUniqueKey()).toString() + "\n" +
+            		"Input request is" + "\n" +
+            		"======================================= \n"
+            		+ mapToString(request, true, PCI.REQUEST));
         }
         
         Document wrappedDoc = soapWrap(request, mc, builder,logger);

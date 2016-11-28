@@ -91,33 +91,22 @@ abstract class Connection {
      */
     public Document post(Document request)
             throws ClientException, FaultException {
-    	for (int i=0; i<=mc.getNumberOfRetries(); i++) {
-			try {
-				postDocument(request);
-				break;
-			} catch (IOException e) {
-				logger.log(Logger.LT_INFO, "Attempt to post document failed. Number of retry attempts made " + i);
-				if(i==mc.getNumberOfRetries()) throw new ClientException(e, isRequestSent(), logger);
-				try {
-					Thread.sleep((long) mc.getRetryInterval());
-				}catch (InterruptedException ex) {
-					logger.log(Logger.LT_INFO, "Waiting for the next attempt to made after " +mc.getRetryInterval() );
-				} 
-			} catch (TransformerConfigurationException e) {
-				throw new ClientException(e, isRequestSent(), logger);
-			} catch (TransformerException e) {
-				throw new ClientException(e, isRequestSent(), logger);
-			}
-			
-		} 
-		checkForFault();
-   		try {
-			return parseReceivedDocument();
-		}catch (IOException e) {
-			throw new ClientException(e, isRequestSent(), logger);
-		}catch (SAXException e) {
-			throw new ClientException(e, isRequestSent(), logger);
-		}}
+        try {
+            postDocument(request);
+            checkForFault();
+            return (parseReceivedDocument());
+        } catch (IOException e) {
+            throw new ClientException(e, isRequestSent(), logger);
+        } catch (TransformerConfigurationException e) {
+            throw new ClientException(e, isRequestSent(), logger);
+        } catch (TransformerException e) {
+            throw new ClientException(e, isRequestSent(), logger);
+        } catch (SAXException e) {
+            throw new ClientException(e, isRequestSent(), logger);
+        }
+
+    }
+
 
     /**
      * Validate the Http response for any faults returned from the server. 
