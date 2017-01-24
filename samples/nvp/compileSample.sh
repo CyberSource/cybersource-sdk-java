@@ -33,5 +33,5 @@ else
 JAVAC_CMD=javac
 fi
 
-$JAVAC_CMD  -source 1.8  -d ./classes -classpath "$LOCAL_CP" src/main/java/com/cybersource/sample/RunSample.java
+$JAVAC_CMD  -d ./classes -classpath "$LOCAL_CP" src/main/java/com/cybersource/sample/RunSample.java
 
