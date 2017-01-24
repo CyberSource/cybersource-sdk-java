@@ -64,19 +64,28 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
     i. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
 ##Testing the Client
+* If in the Request, a key called "_has_escapes" is present and is set
+     * to "1", we will not escape the special characters.  Basically, the
+     * merchant is saying that they have escaped the characters themselves.
+     * This might prove useful for more advanced users of the Basic client.
+     
+     Note: The Script will take Service_name as program argument. Service Name can 
+	    be auth, auth_reversal, capture, sale, emv_auth, credit. If no argument is passed the script
+	    will terminate the program.
+	    
 	a. TESTING THE NAME-VALUE PAIR SAMPLE
 			1. Go to the cybersource-sdk-java-master/sample/nvp directory.
 			2. Use compileSample scripts to create classes directory.As it is not included in SDK.
 			3. Then at a command prompt, type this line:
-			 	Windows 	runSample.bat
-				Unix or Linux 	runSample.sh
+			 	Windows 	runSample.bat <service_name>
+				Unix or Linux 	runSample.sh <service_name>
 				
 				If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
 				whatever java is in the path.
 				If the client is installed correctly, the requests and replies for a credit card authorization
 				and a follow-on capture appear.
 
-			3. If you make any changes to the AuthCaptureSample.java sample, you
+			3. If you make any changes to the RunSample.java sample, you
 			   must rebuild the sample before using it. Use the compileSample batch file or
 			   shell script provided in the sample directory.
 			   
@@ -84,15 +93,15 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 		   	1. Go to the cybersource-sdk-java-master/sample/xml directory.
 			2. Use compileSample scripts to create classes directory.As it is not included in SDK.
 			3. At a command prompt, type this line:
-			 	Windows 	runSample.bat
-				Unix or Linux 	runSample.sh
+			 	Windows 	runSample.bat <Service_name>
+				Unix or Linux 	runSample.sh <service_name>
 				
 				If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
 				whatever java is in the path.
 				If the client is installed correctly, the requests and replies for a credit card authorization
 				and a follow-on capture appear.
 
-			3. If you make any changes to the AuthSample.java sample, you
+			3. If you make any changes to the RunSample.java sample, you
 			   must rebuild the sample before using it. Use the compileSample batch file or
 			   shell script provided in the sample directory.
 

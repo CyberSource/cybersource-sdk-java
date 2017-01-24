@@ -41,6 +41,13 @@ else
 JAVA_CMD=java
 fi
 
+
+if [ -z "$1"];
+then
+echo "No service_name was mentioned ... terminating program"
+exit 1
+fi
+
 $JAVA_CMD -version
-$JAVA_CMD -cp "$LOCAL_CP" com.cybersource.sample.AuthCaptureSample
+$JAVA_CMD -cp "$LOCAL_CP" com.cybersource.sample.RunSample $1
 

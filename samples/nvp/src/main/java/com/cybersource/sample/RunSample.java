@@ -11,10 +11,21 @@ import java.util.Properties;
 
 import com.cybersource.ws.client.*;
 
+
 /**
  * Sample class that demonstrates how to call Credit Card Authorization.
  */
 public class RunSample {
+	public enum sample{ auth, capture, emv_auth, credit, auth_reversal, sale;
+	 public static int enum_exist(String str) {
+		    for (sample me : sample.values()) {
+		        if (me.name().equalsIgnoreCase(str))
+		            return me.ordinal();
+		    }
+		    return -1;
+		}
+
+	 }
 	Properties cybsProps = new Properties();
 	private static final String PROPERTIES="cybs.properties";
 	static String authDecision;
@@ -30,9 +41,7 @@ public class RunSample {
 	 */
 	public static void main(String[] args) {
 
-		String argument = Arrays.toString(args);
-		argument = argument.substring(1, argument.length() - 1);
-		System.out.println("argument " + argument);
+		String argument=args[0];
 		Properties props = readProperty(argument + ".properties");
 		@SuppressWarnings("unchecked")
 		
@@ -41,14 +50,14 @@ public class RunSample {
 
 		Properties cybProperties = new Properties();
 		cybProperties = readCybsProperty(PROPERTIES);
+		int choice =sample.enum_exist(argument);
+		switch (choice) {
 		
-		switch (argument) {
-		
-		case "auth":
+		case 0:
 			requestID = runAuth(cybProperties);
 			break;
 		
-		case "capture":
+		case 1:
 			requestID = runAuth(cybProperties);
 			System.out.println("Request ID is " + requestID);
 			if (!("null".equals(requestID))) {
@@ -56,11 +65,11 @@ public class RunSample {
 			}
 			break;
 		
-		case "emv_auth":
+		case 2:
 			emvrequestID = runAuthEMV(cybProperties,argument);
 			break;
 		
-		case "credit":
+		case 3:
 			requestID = runAuth(cybProperties );
 			System.out.println("Request ID is " + requestID);
 			if (!("null".equals(requestID))) {
@@ -70,19 +79,58 @@ public class RunSample {
 			}
 			break;
 
-		case "auth_reversal":
+		case 4:
 			requestID = runAuth(cybProperties);
 			if (!("null".equals(requestID))) {
 				runAuthReversal(cybProperties, requestID, argument);
 			}
 			break;
-		
+		case 5:
+			runSale(cybProperties);
+			break;
+		case -1:
+			System.out.println(" \t\t Enter the correct Service_name\n\n "+
+					"\t\t while running the Script enter the service_name \n\n"+
+					"\t\t for example to run a auth transaction enter the following command: \n"+
+					"\t\t\t  for windows : runSample <service_name> \n "+
+					"\t\t\t  for linux : ./runSample.sh <service_name>  \n"+
+					"\t\t service name argument can be auth,sale,credit,authreversal,capture,emv_auth \n"+
+					"\t\t NOTE: if no argument is entered the script will terminate the program");
+			break;
 		default:
 			break;
 
 		}
 	}
+	public static String runSale(Properties props) {
+		String requestID = null;
+		Properties saleProps = new Properties();
+		saleProps = readProperty("sale.properties");
+		HashMap<String, String> request = new HashMap<String, String>(
+				(Map) saleProps);
+		System.out.println("Properties Object --> " + request);
+		try {
+			displayMap("CREDIT CARD SALE REQUEST:", request);
+			// run transaction now
+			Map<String, String> reply = Client.runTransaction(request, props);
+			displayMap("CREDIT CARD SALE REPLY:", reply);
+				requestID = (String) reply.get("requestID");
+				System.out.println("Sale completed " +requestID);
 
+		} catch (ClientException e) {
+			System.out.println(e.getMessage());
+			if (e.isCritical()) {
+				handleCriticalException(e, request);
+			}
+		} catch (FaultException e) {
+			System.out.println(e.getMessage());
+			if (e.isCritical()) {
+				handleCriticalException(e, request);
+			}
+		}
+
+		return (requestID);
+	}
 	/**
 	 * Runs Credit Card Authorization.
 	 * 
@@ -90,7 +138,7 @@ public class RunSample {
 	 *            Properties object.
 	 * @return the requestID.
 	 */
-	@SuppressWarnings("unchecked")
+	
 	public static String runAuth(Properties props) {
 		String requestID = null;
 		Properties authProps = new Properties();

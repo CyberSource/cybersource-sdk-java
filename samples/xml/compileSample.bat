@@ -21,7 +21,7 @@ if "%JAVA_HOME%" == "" (
    set JAVAC_CMD="%JAVA_HOME%"\bin\javac
 )
 
-%JAVAC_CMD% -d classes -classpath "%LOCAL_CP%" src/main/java/com/cybersource/sample/AuthSample.java
+%JAVAC_CMD% -d classes -classpath "%LOCAL_CP%" src/main/java/com/cybersource/sample/RunSample.java
 goto eof
 
 :error

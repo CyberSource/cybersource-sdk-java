@@ -17,3 +17,10 @@
 #########
 
 target/
+
+.classpath
+.settings/
+logs/
+.project
+.DS_STORE
+

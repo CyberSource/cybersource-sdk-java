@@ -41,6 +41,14 @@ else
 JAVA_CMD=java
 fi
 
+echo "argument passed $1"
+if [ -z "$1"];
+then
+echo "No Service Name entered ... program terminating"
+exit 1
+fi
+
+
 $JAVA_CMD -version
-$JAVA_CMD -cp "$LOCAL_CP" com.cybersource.sample.AuthSample
+$JAVA_CMD -cp "$LOCAL_CP" com.cybersource.sample.RunSample $1
 

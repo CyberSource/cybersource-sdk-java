@@ -25,13 +25,22 @@ if "%JAVA_HOME%" == "" (
    set JAVA_CMD="%JAVA_HOME%"\bin\java
 )
 
+read -p "Enter Service Name" service_name
+
+if %service_name==""(
+echo "No Service Name entered ... Program terminating"
+goto eof
+)
+
 %JAVA_CMD% -version
-%JAVA_CMD% -cp "%LOCAL_CP%" com.cybersource.sample.AuthCaptureSample
+%JAVA_CMD% -cp "%LOCAL_CP%" com.cybersource.sample.RunSample %service_name
 goto eof
 
 :compile_error
 echo "Classes are missing . execute compileSample script."
 goto eof
+
+
 
 :error
 echo "Dependencies are missing."
