@@ -21,6 +21,7 @@ package com.cybersource.ws.client;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * An internal class used by the clients to hold and derive the properties
@@ -34,7 +35,8 @@ public class MerchantConfig {
 
     private final static int DEFAULT_TIMEOUT = 130;
     private final static int DEFAULT_PROXY_PORT = 8080;
-
+    private UUID uniqueKey=UUID.randomUUID(); 
+    
     private final Properties props;
 
     private final String merchantID;
@@ -48,6 +50,8 @@ public class MerchantConfig {
     private String serverURL;
     private String namespaceURI;
     private String password;
+    private boolean enablejdkcert;
+    private boolean cacert;
     private boolean enableLog;
     private boolean logSignedData;
     private String logDirectory;
@@ -59,15 +63,24 @@ public class MerchantConfig {
     private int proxyPort;
     private String proxyUser;
     private String proxyPassword;
+    private String cacertpassword;
 
     // computed values
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
     private String effectivePassword;
     private  boolean useSignAndEncrypted;
-
+    
+    //Retry Pattern
+    private int numberOfRetries = 0;   
+    private long retryInterval  = 0;
+    private boolean allowRetry=true;
+    
+    
     // getter methods
     public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
+    
+    
     
     public String getMerchantID() {
         return merchantID;
@@ -247,7 +260,9 @@ public class MerchantConfig {
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
         proxyPassword = getProperty(merchantID, "proxyPassword");
-
+        enablejdkcert = getBooleanProperty(merchantID, "enablejdkcert", false);
+        cacert=getBooleanProperty(merchantID, "cacert", false);
+        cacertpassword=getProperty(merchantID,"cacertpassword","changeit");
         // compute and store effective namespace URI
 
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -291,7 +306,17 @@ public class MerchantConfig {
         effectivePassword = password != null ? password : merchantID;
         
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
-    }
+        
+        allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
+        if (useHttpClient && allowRetry) {
+            numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 5);
+            if(numberOfRetries>0)
+          	  retryInterval = getIntegerProperty(merchantID, "retryInterval", 5) *1000;
+            if( numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0){
+                throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
+            }
+        }
+   }
 
     /**
      * Returns a File object representing the key file.  If a
@@ -441,6 +466,11 @@ public class MerchantConfig {
         appendPair(sb, "logFilename", logFilename);
         appendPair(sb, "logMaximumSize", logMaximumSize);
         appendPair(sb, "useHttpClient", useHttpClient);
+        if(useHttpClient){
+            appendPair(sb, "allowRetry", allowRetry);
+            appendPair(sb, "RetryCount", numberOfRetries);
+            appendPair(sb, "RetryInterval", retryInterval);
+        }
         appendPair(sb, "timeout", timeout);
         if (proxyHost != null) {
             appendPair(sb, "proxyHost", proxyHost);
@@ -456,6 +486,11 @@ public class MerchantConfig {
         return (sb.toString());
     }
 
+	private void appendPair(StringBuffer sb, String key, long retryInterval2) {
+		appendPair(sb, key, String.valueOf(retryInterval2));
+
+	}
+	
     private static void appendPair(StringBuffer sb, String key, boolean value) {
         appendPair(sb, key, String.valueOf(value));
     }
@@ -502,4 +537,35 @@ public class MerchantConfig {
             throw new ConfigException(prop + " has an invalid value.");
         }
     }
+
+	public UUID getUniqueKey() {
+		return uniqueKey;
+	}
+
+	public int getNumberOfRetries() {
+		return numberOfRetries;
+	}
+
+	public long getRetryInterval() {
+		return retryInterval;
+	}
+
+	public boolean isAllowRetry() {
+		return allowRetry;
+	}
+
+	public void setAllowRetry(boolean allowRetry) {
+		this.allowRetry = allowRetry;
+	}
+
+	public boolean getcacert() {
+		return cacert;
+	}
+
+	public boolean getEnablejdkcert() {
+		return enablejdkcert;
+	}
+	public String getcacertpassword(){
+		return cacertpassword;
+	}
 }

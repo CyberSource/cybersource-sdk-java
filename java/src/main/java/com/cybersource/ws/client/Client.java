@@ -26,13 +26,20 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.security.cert.X509Certificate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.security.KeyStore;
+import java.security.cert.PKIXParameters;
+import java.security.cert.TrustAnchor;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -118,8 +125,10 @@ public class Client {
             
             con = Connection.getInstance(mc, builder, logger);
             Document wrappedReply = con.post(signedDoc);
-
-            return (soapUnwrap(wrappedReply, mc, logger));
+            Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
+            logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ",false);
+            
+            return replyMap;
         } catch (IOException e) {
             throw new ClientException(
                     e, con != null && con.isRequestSent(), logger);
@@ -178,51 +187,54 @@ public class Client {
         boolean logSignedData = mc.getLogSignedData();
         if (!logSignedData) {
             logger.log(
-                    Logger.LT_REQUEST,
-                    mapToString(request, true, PCI.REQUEST));
+            		Logger.LT_REQUEST,
+            		"UUID   >  "+(mc.getUniqueKey()).toString() + "\n" +
+            		"Input request is" + "\n" +
+            		"======================================= \n"
+            		+ mapToString(request, true, PCI.REQUEST));
+        }
+        
+        Document wrappedDoc = soapWrap(request, mc, builder,logger);
+        logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true); 
+        
+        Document resultDocument = null;
+        if(mc.getEnablejdkcert()){
+        	SecurityUtil.readJdkCert(mc,logger);
+        }
+        else{
+        	SecurityUtil.loadMerchantP12File(mc,logger);
+        	logger.log(Logger.LT_INFO, "Client, End of loadMerchantP12File   ", true);       
+        }
+        // sign Document object
+        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc, mc.getMerchantID(), mc.getKeyPassword(), logger);
+        logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
+
+        if ( mc.getUseSignAndEncrypted() ) {
+        	// Encrypt signed Document
+            resultDocument = SecurityUtil.handleMessageCreation(resultDocument, mc.getMerchantID(), logger);
+            logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
+        }
+        if (logSignedData) {
+           logger.log(Logger.LT_REQUEST,Utility.nodeToString(resultDocument, PCI.REQUEST));
+        	//logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
         }
 
-        // wrap in SOAP envelope
+        return resultDocument ;
+    }
+
+    private static Document soapWrap(Map request, MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws SAXException, IOException{
+    	// wrap in SOAP envelope
         Object[] arguments
                 = {mc.getEffectiveNamespaceURI(),
                 mapToString(request, false, PCI.REQUEST)};
         String xmlString = MessageFormat.format(SOAP_ENVELOPE1, arguments);
-     // load XML string into a Document object
+        // load XML string into a Document object
         StringReader sr = new StringReader( xmlString );
         Document wrappedDoc = builder.parse( new InputSource( sr ) );
-        sr.close();
-
-        Document resultDocument = null;
-        long timeNow = System.currentTimeMillis();
-        logger.log(Logger.LT_INFO, "Client, Start of getInstance Call, Timer Start in ms	" + timeNow + "For merchant " + mc.getMerchantID());
-        
-        SignedAndEncryptedMessageHandler handler = SignedAndEncryptedMessageHandler.getInstance(mc,logger);
-        
-        long endTime = System.currentTimeMillis();
-        logger.log(Logger.LT_INFO, "Client, End of getInstance Call, time taken in ms	" + (endTime-timeNow) + "For merchant " + mc.getMerchantID());
-        
-        // 3/7/2016 change to support encrypted messages as well as signed - jeaton
-        if ( !mc.getUseSignAndEncrypted() ) {
-            // sign Document object
-            logger.log(Logger.LT_INFO, "Signing request...");
-            resultDocument = handler.createSignedDoc(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword(),null);
-            if (logSignedData) {
-                logger.log(Logger.LT_REQUEST,
-                        Utility.nodeToString(resultDocument, PCI.REQUEST));
-            }
-        } else {
-            logger.log(Logger.LT_INFO, "Signing and encrypting request...");
-            resultDocument = handler.handleMessageCreation(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword());
-            if (logSignedData) {
-                logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
-            }
-        }
-        
-        //System.out.println(XMLUtils.PrettyDocumentToString(resultDocument));
-        return resultDocument ;
+        sr.close(); 
+        return wrappedDoc;
     }
-
-
+    
     /**
      * Extracts the content of the SOAP body from the given Document object
      * inside a SOAP envelope.
