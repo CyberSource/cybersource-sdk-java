@@ -1,0 +1,454 @@
+2017-01-18 20:12:36.757 main FILESTART> CYBERSOURCE LOG FILE
+
+2017-01-18 20:12:36.760 main TRANSTART> =======================================
+2017-01-18 20:12:36.763 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-18 20:12:36.809 main REQUEST  > 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-01-18 20:12:36.826 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484750556826For merchant 
+2017-01-18 20:12:37.201 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-18 20:12:37.207 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:104)
+	at com.cybersource.sample.RunSample.main(RunSample.java:48)
+
+
+2017-01-18 22:20:39.144 main TRANSTART> =======================================
+2017-01-18 22:20:39.148 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-18 22:20:39.191 main REQUEST  > 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-01-18 22:20:39.202 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484758239202For merchant 
+2017-01-18 22:20:39.509 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-18 22:20:39.514 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:104)
+	at com.cybersource.sample.RunSample.main(RunSample.java:48)
+
+
+2017-01-18 22:21:10.088 main TRANSTART> =======================================
+2017-01-18 22:21:10.118 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-18 22:21:10.161 main REQUEST  > 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-01-18 22:21:10.173 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484758270173For merchant 
+2017-01-18 22:21:10.467 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-18 22:21:10.473 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:104)
+	at com.cybersource.sample.RunSample.main(RunSample.java:52)
+
+
+2017-01-18 22:21:10.478 main TRANSTART> =======================================
+2017-01-18 22:21:10.482 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-18 22:21:10.488 main REQUEST  > 
+purchaseTotals_currency=USD
+item_0_unitPrice=69.12
+clientLibrary=Java Basic
+merchantID=
+merchantReferenceCode=MRC-14344
+ccCaptureService_run=true
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+clientLibraryVersion=6.2.3
+ccCaptureService_authRequestID=null
+
+2017-01-18 22:21:10.494 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484758270494For merchant 
+2017-01-18 22:21:10.509 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-18 22:21:10.523 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runCapture(RunSample.java:146)
+	at com.cybersource.sample.RunSample.main(RunSample.java:55)
+
+
+2017-01-18 22:22:34.936 main TRANSTART> =======================================
+2017-01-18 22:22:34.943 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-18 22:22:34.986 main REQUEST  > 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-01-18 22:22:34.997 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484758354997For merchant 
+2017-01-18 22:22:35.284 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-18 22:22:35.288 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:104)
+	at com.cybersource.sample.RunSample.main(RunSample.java:64)
+
+
+2017-01-18 22:22:35.317 main TRANSTART> =======================================
+2017-01-18 22:22:35.321 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-18 22:22:35.325 main REQUEST  > 
+purchaseTotals_currency=USD
+item_0_unitPrice=69.12
+clientLibrary=Java Basic
+merchantID=
+merchantReferenceCode=MRC-14344
+ccCaptureService_run=true
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+clientLibraryVersion=6.2.3
+ccCaptureService_authRequestID=null
+
+2017-01-18 22:22:35.330 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484758355329For merchant 
+2017-01-18 22:22:35.345 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-18 22:22:35.349 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runCapture(RunSample.java:146)
+	at com.cybersource.sample.RunSample.main(RunSample.java:67)
+
+
+2017-01-18 22:22:35.363 main TRANSTART> =======================================
+2017-01-18 22:22:35.367 main MERCHCFG > merchantID=cybs_test_ashish, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-18 22:22:35.372 main REQUEST  > 
+purchaseTotals_currency=USD
+item_0_unitPrice=12.34
+clientLibrary=Java Basic
+merchantID=cybs_test_ashish
+merchantReferenceCode=MRC-14344 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+clientLibraryVersion=6.2.3
+ccCreditService_captureRequestID=null
+ccCreditService_run=true
+
+2017-01-18 22:22:35.376 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484758355376For merchant cybs_test_ashish
+2017-01-18 22:22:35.390 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-18 22:22:35.396 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/cybs_test_ashish.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runCredit(RunSample.java:241)
+	at com.cybersource.sample.RunSample.main(RunSample.java:69)
+
+
+2017-01-19 12:25:58.821 main TRANSTART> =======================================
+2017-01-19 12:25:58.837 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-19 12:25:58.841 main PROXYCFG > https.proxyHost=userproxy.visa.com, https.proxyPort=443, https.proxyUser=(null), https.proxyPassword=(null)
+2017-01-19 12:25:58.879 main REQUEST  > 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-01-19 12:25:58.890 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484808958889For merchant 
+2017-01-19 12:25:59.170 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-19 12:25:59.175 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:104)
+	at com.cybersource.sample.RunSample.main(RunSample.java:48)
+
+
+2017-01-19 17:46:22.990 main TRANSTART> =======================================
+2017-01-19 17:46:22.995 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-19 17:46:23.005 main PROXYCFG > https.proxyHost=userproxy.visa.com, https.proxyPort=443, https.proxyUser=(null), https.proxyPassword=(null)
+2017-01-19 17:46:23.053 main REQUEST  > 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-01-19 17:46:23.064 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484828183064For merchant 
+2017-01-19 17:46:23.336 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-19 17:46:23.341 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:152)
+	at com.cybersource.sample.RunSample.main(RunSample.java:57)
+
+
+2017-01-19 17:47:23.168 main TRANSTART> =======================================
+2017-01-19 17:47:23.173 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-01-19 17:47:23.176 main PROXYCFG > https.proxyHost=userproxy.visa.com, https.proxyPort=443, https.proxyUser=(null), https.proxyPassword=(null)
+2017-01-19 17:47:23.214 main REQUEST  > 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-01-19 17:47:23.224 main INFO     > Client, Start of getInstance Call, Timer Start in ms	1484828243224For merchant 
+2017-01-19 17:47:23.476 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-01-19 17:47:23.481 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:314)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.readAndStoreCertificateAndPrivateKey(SignedAndEncryptedMessageHandler.java:101)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.loadMerchantP12File(SignedAndEncryptedMessageHandler.java:78)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.<init>(SignedAndEncryptedMessageHandler.java:55)
+	at com.cybersource.ws.client.SignedAndEncryptedMessageHandler.getInstance(SignedAndEncryptedMessageHandler.java:63)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:199)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:113)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:68)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:152)
+	at com.cybersource.sample.RunSample.main(RunSample.java:57)
+

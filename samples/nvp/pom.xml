@@ -2,10 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.cybersource.sample</groupId>
-  <artifactId>AuthCaptureSample</artifactId>
+  <artifactId>RunSample</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
-  <name>AuthCaptureSample</name>
+  <name>RunSample</name>
   <url>http://maven.apache.org</url>
   <dependencies>
       <dependency>
@@ -39,6 +39,16 @@
           <artifactId>commons-lang3</artifactId>
           <version>3.4</version>
       </dependency>
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-jcl</artifactId>
+          <version>1.7.21</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <version>3.4</version>
+      </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -54,11 +64,12 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>com.cybersource.sample.AuthCaptureSample</mainClass>
+          <mainClass>com.cybersource.sample.RunSample</mainClass>
           <arguments>
           </arguments>
         </configuration>
       </plugin>
+
 	  <plugin>
 		<groupId>org.apache.maven.plugins</groupId>
 		<artifactId>maven-dependency-plugin</artifactId>
