@@ -107,6 +107,7 @@ abstract class Connection {
 
     }
 
+
     /**
      * Validate the Http response for any faults returned from the server. 
      * @throws FaultException

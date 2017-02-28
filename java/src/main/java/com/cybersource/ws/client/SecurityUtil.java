@@ -10,24 +10,18 @@ import org.apache.ws.security.message.WSSecSignature;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.Security;
 import java.security.UnrecoverableEntryException;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Enumeration;
-
 import java.util.concurrent.ConcurrentHashMap;
-
 
 
 public class SecurityUtil {
@@ -48,7 +42,6 @@ public class SecurityUtil {
     
     private static BouncyCastleProvider bcProvider = new BouncyCastleProvider();
     
-    static MerchantConfig mc;
 	// This is loaded by WSS4J but since we use it lets make sure its here
     static {
         Security.addProvider(bcProvider);
@@ -230,10 +223,7 @@ public class SecurityUtil {
 		}
 
 		WSSecSignature sign = new WSSecSignature();
-		
-			sign.setUserInfo(identities.get(merchantID).getKeyAlias(), password);
-		
-		//sign.setUserInfo(mc.getKeyAlias(), mc.getPassword());
+		sign.setUserInfo(identities.get(merchantID).getKeyAlias(), password);
 	    sign.setDigestAlgo(DIGEST_ALGORITHM);
 	    sign.setSignatureAlgorithm(SIGNATURE_ALGORITHM);
 	    sign.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
@@ -248,118 +238,5 @@ public class SecurityUtil {
 	        logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + merchantID + "'");
 	        throw new SignException(e.getMessage());
 	   }
-	}
-	
-	
-	public static void readJdkCert(MerchantConfig merchantConfig, Logger logger) throws SignEncryptException, SignException{
-    	KeyStore keystore=null;
-    	
-    	String path=merchantConfig.getKeysDirectory()+"/"+merchantConfig.getKeyFilename();
-    	String pass=merchantConfig.getKeyPassword();
-    	
-    	if (merchantConfig.getcacert()){
-    		 path = System.getProperty("java.home") + "/jre/lib/security/cacerts".replace('/', File.separatorChar);
-    		 getAlias(path, merchantConfig,logger);
-    		
-    	}
-    	
-    	else{
-    		try{
-    			FileInputStream is = new FileInputStream(path);
-    			keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-    			keystore.load(is, pass.toCharArray());
-    			}
-    		catch(Exception e){
-    			System.out.println("exception "+e.getMessage());
-    			e.printStackTrace();
-        		}
-    	
-       
-        String merchantKeyAlias = null;
-        try {
-            Enumeration enumKeyStore = keystore.aliases();
-            while (enumKeyStore.hasMoreElements()) {
-            	KeyStore.PrivateKeyEntry keyEntry = null;
-            	merchantKeyAlias = (String) enumKeyStore.nextElement();
-				if (merchantKeyAlias.contains(merchantConfig.getKeyAlias())){
-            		try {
-            			keyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry
-                                (merchantKeyAlias, new KeyStore.PasswordProtection(merchantConfig.getKeyPassword().toCharArray()));
-                    } catch (NoSuchAlgorithmException e) {
-                        logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                        throw new SignException(e);
-                    } catch (UnrecoverableEntryException e) {
-                        logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                        throw new SignException(e);
-                    } catch (KeyStoreException e) {
-                        logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                        throw new SignException(e);
-                    }
-            		
-            		Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey());
-            		localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-            		identities.put(identity.getName(), identity);
-            		continue;
-            	}
-				Identity identity = new Identity(merchantConfig, (X509Certificate) keystore.getCertificate(merchantKeyAlias));
-        		localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-        		identities.put(identity.getName(), identity);
-			}
-        } catch (KeyStoreException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-            throw new SignException(e);
-        }
-      }
-   	}
-	
-	private static java.security.cert.Certificate getAlias(String keystore_location, MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException{
-		FileInputStream is = null;
-        try {
-            File file = new File(keystore_location);
-            is = new FileInputStream(file);
-            KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-            String password = merchantConfig.getcacertpassword();
-            keystore.load(is, password.toCharArray());
-            
-            Identity identity;
-            
-            java.security.cert.Certificate[] cert = keystore.getCertificateChain(merchantConfig.getKeyAlias());
-            PrivateKey key = null;
-			try {
-				key = (PrivateKey)keystore.getKey(merchantConfig.getKeyAlias(), merchantConfig.getKeyAlias().toCharArray());
-			} catch (UnrecoverableKeyException e) {
-				e.printStackTrace();
-			}
-            identity = new Identity(merchantConfig,(X509Certificate) cert[0],key);
-       		localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-       		identities.put(identity.getName(), identity);
-            	
-            
-			identity = new Identity(merchantConfig, (X509Certificate) cert[1]);
-			localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-			identities.put(identity.getName(), identity);
-		}
-            
-         catch (java.security.cert.CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if(null != is)
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-        }		
-        
-        return null;
 	}
 }

@@ -189,7 +189,9 @@ class HttpClientConnection extends Connection {
      */
     private class MyRetryHandler implements HttpMethodRetryHandler {
        
-        //
+    	long retryWaitInterval=mc.getRetryInterval();
+ 	   	int maxRetries= mc.getNumberOfRetries();
+ 	   	
         // I copied this code from
         // http://jakarta.apache.org/commons/httpclient/exception-handling.html#HTTP%20transport%20safety
         // and changed the NoHttpResponseException case to
@@ -198,7 +200,7 @@ class HttpClientConnection extends Connection {
                 final HttpMethod method,
                 final IOException exception,
                 int executionCount) {
-            if (executionCount > 5) {
+            if (executionCount > maxRetries) {
                 // Do not retry if over max retry count
                 return false;
             }
@@ -210,6 +212,13 @@ class HttpClientConnection extends Connection {
             if (!method.isRequestSent()) {
                 // Retry if the request has not been sent fully or
                 // if it's OK to retry methods that have been sent
+            	try {
+         	        Thread.sleep(retryWaitInterval);
+         	        logger.log( Logger.LT_INFO+" Retrying Request -- ",mc.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
+                 } catch (InterruptedException e) {
+         	        // TODO Auto-generated catch block
+         	        e.printStackTrace();
+                 }
                 return true;
             }
             // otherwise do not retry

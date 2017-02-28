@@ -340,6 +340,7 @@ public class XMLClient {
         logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true); 
         
         Document resultDocument = null;
+<<<<<<< HEAD
         if(mc.getEnablejdkcert()){
         	SecurityUtil.readJdkCert(mc,logger);
         }
@@ -356,6 +357,21 @@ public class XMLClient {
             resultDocument = SecurityUtil.handleMessageCreation(resultDocument , mc.getMerchantID() , logger);
             logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
         }
+=======
+
+        SecurityUtil.loadMerchantP12File(mc,logger);
+        logger.log(Logger.LT_INFO, "Client, End of loadMerchantP12File   ", true);
+        
+        // sign Document object
+        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword(),logger);
+        logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
+
+        if ( mc.getUseSignAndEncrypted() ) {
+        	// Encrypt signed Document
+            resultDocument = SecurityUtil.handleMessageCreation(resultDocument , mc.getMerchantID() , logger);
+            logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
+        }
+>>>>>>> upstream/master
         if (logSignedData) {
            logger.log(Logger.LT_REQUEST,Utility.nodeToString(resultDocument, PCI.REQUEST));
         	//logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
