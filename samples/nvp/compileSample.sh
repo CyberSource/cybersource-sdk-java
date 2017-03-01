@@ -8,7 +8,7 @@ LOCAL_CP=
 # -----------------------------------------------------------------------------
 
 if test -d ../../lib
-then LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.2.4.jar
+then LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.2.5-SNAPSHOT.jar
 fi
 
 if test ! -d ../../lib

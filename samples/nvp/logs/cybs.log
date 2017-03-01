@@ -452,3 +452,56 @@ com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not
 	at com.cybersource.sample.RunSample.runAuth(RunSample.java:152)
 	at com.cybersource.sample.RunSample.main(RunSample.java:57)
 
+
+2017-03-01 14:19:58.031 main TRANSTART> =======================================
+2017-03-01 14:19:58.038 main MERCHCFG > merchantID=, keysDirectory=, keyAlias=, keyPassword=, sendToProduction=false, sendToAkamai=true, targetAPIVersion=1.129, keyFilename=(null), serverURL=(null), namespaceURI=(null), enableLog=true, logDirectory=./logs, logFilename=(null), logMaximumSize=10, useHttpClient=false, timeout=1000, useSignAndEncrypted=false
+2017-03-01 14:19:58.043 main PROXYCFG > https.proxyHost=userproxy.visa.com, https.proxyPort=443, https.proxyUser=(null), https.proxyPassword=(null)
+2017-03-01 14:19:58.078 main REQUEST  > 
+UUID   >  c2958df3-6321-4d2e-b1eb-ddaee4d8dd94
+Input request is
+======================================= 
+purchaseTotals_currency=USD
+billTo_city=Mountain View 
+shipTo_lastName=xxx
+billTo_email=noboxxxxxxxxxxxxxxxcom 
+clientLibrary=Java Basic
+billTo_country=US
+billTo_lastName=xxx
+billTo_street1=1295xxxxxxxxxxxxxoad 
+shipTo_state=CA
+clientLibraryVersion=6.2.3
+ccAuthService_run=true
+shipTo_city=San Mateo 
+shipTo_street1=10xxxxxxxxxxxt 
+clientEnvironment=Mac OS X/10.11.6/Oracle Corporation/1.8.0_74
+shipTo_postalCode=94401 
+shipTo_country=US
+card_accountNumber=4111xxxxxxxxx111 
+merchantReferenceCode=MRC-14344 
+shipTo_firstName=xxxxx
+item_1_unitPrice=56.78
+billTo_postalCode=94043 
+billTo_state=CA
+billTo_firstName=xxxxx
+card_expirationMonth=xx
+item_0_unitPrice=12.34
+merchantID=
+billTo_ipAddress=10.7.7.7
+card_expirationYear=xxxx
+billTo_phoneNumber=65xxxxxxxxx0 
+
+2017-03-01 14:19:58.091 main INFO     > Client, End of soapWrap   85ms
+2017-03-01 14:19:58.386 main EXCEPTION> Exception while loading KeyStore, 'null'
+2017-03-01 14:19:58.393 main EXCEPTION> 
+ClientException details:
+innerException: 
+com.cybersource.ws.client.ConfigException: The file "/.p12" is missing or is not a file.
+	at com.cybersource.ws.client.MerchantConfig.getKeyFile(MerchantConfig.java:339)
+	at com.cybersource.ws.client.SecurityUtil.readAndStoreCertificateAndPrivateKey(SecurityUtil.java:115)
+	at com.cybersource.ws.client.SecurityUtil.loadMerchantP12File(SecurityUtil.java:92)
+	at com.cybersource.ws.client.Client.soapWrapAndSign(Client.java:205)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:120)
+	at com.cybersource.ws.client.Client.runTransaction(Client.java:75)
+	at com.cybersource.sample.RunSample.runAuth(RunSample.java:152)
+	at com.cybersource.sample.RunSample.main(RunSample.java:57)
+

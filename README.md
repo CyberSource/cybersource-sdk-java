@@ -86,20 +86,19 @@ You do not need to download and build the source to use the SDK but if you want 
        
     h. "serverURL" config parameter will take precedence over sendToProduction and sendToAkamai config parameters. By default the "serverURL" configuration is commented out. 
     
-<<<<<<< HEAD
     i. "enablejdkcert" parameter if set to true then it will read the JKS file specified at keysDirectory location. The file should be of the same name as specified in keyFilename.
     
     j. cacerts this property will be considered only if "enablejdkcert" is set to true. If it is set to true then it means the JKS file is under cacerts folder of the JDK and 
        it will read the JKS file from cacerts. 
         
     k. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
-=======
+
     i. 	"allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     	Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
     	1 to 5 any other value will throw an Error Message. Refer to the "Retry Pattern" section below.
         
     j. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
->>>>>>> upstream/master
+
 
 	
 4. Build this project using Maven.
