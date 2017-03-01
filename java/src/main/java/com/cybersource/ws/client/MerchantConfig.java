@@ -558,7 +558,6 @@ public class MerchantConfig {
 		this.allowRetry = allowRetry;
 	}
 
-<<<<<<< HEAD
 	public boolean getcacert() {
 		return cacert;
 	}
@@ -569,6 +568,5 @@ public class MerchantConfig {
 	public String getcacertpassword(){
 		return cacertpassword;
 	}
-=======
->>>>>>> upstream/master
+
 }
