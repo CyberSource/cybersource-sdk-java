@@ -50,6 +50,8 @@ public class MerchantConfig {
     private String serverURL;
     private String namespaceURI;
     private String password;
+    private boolean enablejdkcert;
+    private boolean cacert;
     private boolean enableLog;
     private boolean logSignedData;
     private String logDirectory;
@@ -61,6 +63,7 @@ public class MerchantConfig {
     private int proxyPort;
     private String proxyUser;
     private String proxyPassword;
+    private String cacertpassword;
 
     // computed values
     private String effectiveServerURL;
@@ -257,7 +260,9 @@ public class MerchantConfig {
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
         proxyPassword = getProperty(merchantID, "proxyPassword");
-
+        enablejdkcert = getBooleanProperty(merchantID, "enablejdkcert", false);
+        cacert=getBooleanProperty(merchantID, "cacert", false);
+        cacertpassword=getProperty(merchantID,"cacertpassword","changeit");
         // compute and store effective namespace URI
 
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -551,6 +556,17 @@ public class MerchantConfig {
 
 	public void setAllowRetry(boolean allowRetry) {
 		this.allowRetry = allowRetry;
+	}
+
+	public boolean getcacert() {
+		return cacert;
+	}
+
+	public boolean getEnablejdkcert() {
+		return enablejdkcert;
+	}
+	public String getcacertpassword(){
+		return cacertpassword;
 	}
 
 }

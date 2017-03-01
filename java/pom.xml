@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+    
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -33,13 +33,13 @@
             <email>developer@cybersource.com</email>
         </developer>
     </developers>
-
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <packaging>jar</packaging>
-
+    
     <profiles>
         <profile>
             <id>release-artifacts</id>
@@ -172,7 +172,7 @@
             </build>
         </profile>
     </profiles>
-
+    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -185,11 +185,11 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
             <exclusions>
-	          <exclusion>
-	            <groupId>commons-logging</groupId>
-	            <artifactId>commons-logging</artifactId>
-	          </exclusion>
-        	</exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -200,14 +200,14 @@
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
             <version>1.6.19</version>
-        </dependency>     
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
         <dependency>
-      	    <groupId>org.mockito</groupId>
+            <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.10.19</version>
             <scope>test</scope>
