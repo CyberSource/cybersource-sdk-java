@@ -340,10 +340,13 @@ public class XMLClient {
         logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true); 
         
         Document resultDocument = null;
-
-        SecurityUtil.loadMerchantP12File(mc,logger);
-        logger.log(Logger.LT_INFO, "Client, End of loadMerchantP12File   ", true);
-        
+        if(mc.getEnablejdkcert()){
+        	SecurityUtil.readJdkCert(mc,logger);
+        }
+        else{
+        	SecurityUtil.loadMerchantP12File(mc,logger);
+        	logger.log(Logger.LT_INFO, "Client, End of loadMerchantP12File   ", true);       
+        }
         // sign Document object
         resultDocument = SecurityUtil.createSignedDoc(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword(),logger);
         logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
