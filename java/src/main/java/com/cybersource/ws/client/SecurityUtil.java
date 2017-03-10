@@ -259,7 +259,7 @@ public class SecurityUtil {
         
         if (merchantConfig.getcacert()){
             path = System.getProperty("java.home") + "/jre/lib/security/cacerts".replace('/', File.separatorChar);
-            getCertificate(path, merchantConfig,logger);
+            loadJavaKeystore(path, merchantConfig,logger);
             
         }
         
@@ -272,6 +272,7 @@ public class SecurityUtil {
             catch (Exception e) {
                 logger.log(Logger.LT_EXCEPTION,
                            "Failed to load the key , '" + merchantConfig.getKeyAlias() + "'");
+                throw new SignException(e);
             }
             
             
@@ -312,7 +313,7 @@ public class SecurityUtil {
         }
    	}
     
-    private static void getCertificate(String keystore_location, MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException{
+    private static void loadJavaKeystore(String keystore_location, MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException{
         FileInputStream is = null;
         try {
             File file = new File(keystore_location);
@@ -332,6 +333,7 @@ public class SecurityUtil {
                 logger.log(Logger.LT_EXCEPTION,
                            "Exception while obtaining private key from KeyStore with alias, '"
                            + merchantConfig.getKeyAlias() + "'");
+                throw new SignException(e);
             }
             
             for (int i = 0; i < cert.length; i++) {
@@ -355,20 +357,26 @@ public class SecurityUtil {
         
         catch (java.security.cert.CertificateException e) {
             logger.log(Logger.LT_EXCEPTION, "Unable to load the certificate,"+ merchantConfig.getKeyFilename() + "'");
+             throw new SignException(e);
         } catch (NoSuchAlgorithmException e) {
             logger.log(Logger.LT_EXCEPTION, "Unable to find the certificate with the specified algorithm");
+            throw new SignException(e);
         } catch (FileNotFoundException e) {
             logger.log(Logger.LT_EXCEPTION, "File Not found ");
+            throw new SignException(e);
         } catch (KeyStoreException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore"+ merchantConfig.getKeyFilename() + "'");
+            throw new SignException(e);
         } catch (IOException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(e);
         }finally {
             if(null != is)
                 try {
                     is.close();
                 } catch (IOException e) {
                     logger.log(Logger.LT_EXCEPTION, "Exception while closing FileStream, '" + merchantConfig.getKeyFilename() + "'");
+                    throw new SignException(e);
                 }
         }		
         

@@ -1,37 +1,12 @@
 #CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)]
-(https://travis-ci.org/CyberSource/cybersource-sdk-java)
-
-##Package Managers
-
-### Maven
-To install the cybersource-sdk-java from central repository,add dependency to your application pom.xml as below.
-````
-<dependency>
-<groupId>com.cybersource</groupId>
-<artifactId>cybersource-sdk-java</artifactId>
-<version>6.2.4</version>
-</dependency> 
-````
-Run mvn install, to install dependency
-
-### Grails/Gradle
-Add the dependency to your build.gradle
-````
-dependencies {
-compile 'com.cybersource:cybersource-sdk-java:6.2.4'
-}
-````
 ##Requirements
 
 
 1. Java SDK 1.6 and later  
-2. Maven 3 and later  
-3. It is recommended to use Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar) for appropriate JAVA version. For JAVA 7, it is available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
-
+2. It is recommended to use Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar) for appropriate JAVA version. For JAVA 7, it is available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+	
 ##Prerequisites
-
 
 ######A CyberSource Evaluation account. 
 
@@ -46,74 +21,59 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 
 ######JCE Unlimited Strength Jars
 
-Replace your Java installation’s existing security policy files with the new ones you downloaded from the Oracle site:
-
+  Replace your Java installation’s existing security policy files with the new ones you downloaded from the Oracle site:
+  
 * 	Locate your existing US_export_policy.jar and local_policy.jar files in the $JAVA_HOME/jre/lib/security directory.  
 * 	Rename or move your existing files to another directory.  
 * 	Copy the new US_export_policy.jar and local_policy.jar that you downloaded from Oracle to the $JAVA_HOME/jre/lib/security directory.  
 
-
-
 ##Installing the SDK 
 
-You do not need to download and build the source to use the SDK but if you want to do that, follow these steps:
+1. You need a security key (<your merchant id>.p12) in order to send requests
+   to the server.  If you do not have your key yet, refer Transaction Security Keys 
+   link mentioned above for the procedure to create one.
+   
+2. Unzip the CyberSource package into a directory of your choice.  It will
+   create a directory called cybersource-sdk-java-master. 
+ 
+3. Go to the cybersource-sdk-java-master/sample directory.
 
-1. Clone this repository.
+4. Edit cybs.properties and make the following changes:
 
-2. Go to the sdk-java-master directory.
+    a. Set merchantID, keyAlias and keyPassword to your merchantID.  Please note that it is case-sensitive.
 
-3. To run the integration tests, edit the test_cybs.properties and make the following changes:
+    b. Set keysDirectory to the directory where your key resides.  Use forward-slashes for the directory separator, even on Windows.
+	   For example, "c:/keys"
 
-a. Set merchantID, keyAlias and keyPassword to your merchantID.  Please note that it is case-sensitive.
+	(Optional Additional Changes)
+    c. Set targetAPIVersion to the latest version displayed at: https://<cybersource-host>/commerce/1.x/transactionProcessor/
+       By default, it is set to the latest version when the package was created.
 
-b. Set keysDirectory to the directory where your key resides.  Use forward-slashes for the directory separator, even on Windows.
-For example, "c:/keys"
+    d. Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the logDirectory value, even on Windows. 
+       The directory you specify must already exist.
 
-(Optional Additional Changes)
-c. Set targetAPIVersion to the latest version displayed at: https://<cybersource-host>/commerce/1.x/transactionProcessor/
-By default, it is set to the latest version when the package was created.
+    e. Set useSignAndEncrypted to true, Mechanism to encrypt the signed Payload.For more information about MLE, See Message Level Encryption at bottom.
 
-d. Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the logDirectory value, even on Windows. 
-The directory you specify must already exist.
+    f. Set sendToProduction config parameter with toggle value "true/false"  to send requests to Cybersource production/testing environment. 
+       sendToProduction is initially set to false. Set it to true only when you are ready to send live transactions.
 
-e. Set useSignAndEncrypted to true, Mechanism to encrypt the signed Payload.For more information about MLE, See Message Level Encryption at bottom.
+    g. Set sendToAkamai config parameter with toggle value "true/false" to turn on/off routing requests through Akamai to Cybersource. 
+       By default, it is set to true.
 
-f. Set sendToProduction config parameter with toggle value "true/false"  to send requests to Cybersource production/testing environment. 
-sendToProduction is initially set to false. Set it to true only when you are ready to send live transactions.
+    h. "serverURL" config parameter will take precedence over sendToProduction and sendToAkamai config parameters. By default the "serverURL" configuration is commented out. 
 
-g. Set sendToAkamai config parameter with toggle value "true/false" to turn on/off routing requests through Akamai to Cybersource. 
-By default, it is set to true.
+	i. "enablejdkcert" parameter if set to true then it will read the JKS file specified at keysDirectory location. The file should be of the same name as specified in keyFilename.
 
-h. "serverURL" config parameter will take precedence over sendToProduction and sendToAkamai config parameters. By default the "serverURL" configuration is commented out. 
+	j. cacerts this property will be considered only if "enablejdkcert" is set to true. If it is set to true then it means the certificate file is under cacerts folder of the JDK and 
+		it will read the certificate file from cacerts. 
 
-i. "enablejdkcert" parameter if set to true then it will read the JKS file specified at keysDirectory location. The file should be of the same name as specified in keyFilename.
+	k. "allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry. 
+       Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
+       1 to 5 any other value will throw an Error Message. Refer to the "Retry Pattern" section below.
+	
+	l. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
-j. cacerts this property will be considered only if "enablejdkcert" is set to true. If it is set to true then it means the certificate file is under cacerts folder of the JDK and 
-it will read the certificate file from cacerts. 
-
-k. i. 	"allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
-
-l. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
-
-
-4. Build this project using Maven.
-
-a. mvn clean  // Cleans the Project
-
-b. mvn install 
-// Builds the project and creates a jar file of client SDK
-// Includes running all unit tests and integration tests
-
-c. mvn test
-// Runs unit tests
-
-d. mvn failsafe:integration-test
-// Runs unit and integration tests. Note that integration tests require proper setup of test_cybs.properties
-
-##Testing the SDK 
-
-We have two ways to test, One is using maven tool and other is to download the zip and use scripts to test.
-
+##Testing the Client
 1.) Unzip the downloaded zip file into a directory of your choice.  It will create a directory called 
 cybersource-sdk-java-master. 
 * If in the Request, a key called "_has_escapes" is present and is set
@@ -124,13 +84,12 @@ cybersource-sdk-java-master.
 Note: The Script will take Service_name as program argument. Service Name can 
 be auth, auth_reversal, capture, sale, emv_auth, credit. If no argument is passed the script
 will terminate the program.
-
-a. TESTING THE NAME-VALUE PAIR SAMPLE
-. Go to the cybersource-sdk-java-master/sample/nvp directory.
-. Use compileSample scripts to create classes directory.As it is not included in SDK.
-. Then at a command prompt, type this line:
-Windows 	runSample.bat <service_name>
-Unix or Linux 	runSample.sh <service_name>
+	a. TESTING THE NAME-VALUE PAIR SAMPLE
+			1. Go to the cybersource-sdk-java-master/sample/nvp directory.
+			2. Use compileSample scripts to create classes directory.As it is not included in SDK.
+			3. Then at a command prompt, type this line:
+				Windows 	runSample.bat <service_name>
+				Unix or Linux 	runSample.sh <service_name>
 
 If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
 whatever java is in the path.
@@ -142,11 +101,11 @@ must rebuild the sample before using it. Use the compileSample batch file or
 shell script provided in the sample directory.
 
 b. TESTING THE XML SAMPLE
-. Go to the cybersource-sdk-java-master/sample/xml directory.
-. Use compileSample scripts to create classes directory.As it is not included in SDK.
-. At a command prompt, type this line:
-Windows 	runSample.bat <Service_name>
-Unix or Linux 	runSample.sh <service_name>
+		   	1. Go to the cybersource-sdk-java-master/sample/xml directory.
+			2. Use compileSample scripts to create classes directory.As it is not included in SDK.
+			3. At a command prompt, type this line:
+				Windows 	runSample.bat <Service_name>
+				Unix or Linux 	runSample.sh <service_name>
 
 If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
 whatever java is in the path.
@@ -156,23 +115,6 @@ and a follow-on capture appear.
 . If you make any changes to the RunSample.java sample, you
 must rebuild the sample before using it. Use the compileSample batch file or
 shell script provided in the sample directory.
-
-2.) Using samples and maven tool. samples is present at the same directory level as java and zip.
-a.) Clone/Download the code from GitHub.
-
-b.) Go to the samples directory. then cd to nvp or xml which are present inside samples dir, choose any one and do     the same thing with other.
-
-c.) Sample project nvp and xml uses cybersource-sdk-java and 3rd party jars as dependent jar files. 
-
-d.) Build this project using Maven.
-mvn install
-
-e.) If build is successful then it will put all jars inside cybersource-sdk-java/samples/nvp/target/dependencies 
-folder.
-
-f.) Edit cybs.properties and make the required changes:
-
-g.) Now use scripts to test.
 
 ##Message Level Encryption
 
@@ -221,9 +163,6 @@ provides a framework by which new request types (methods) or HTTP extensions can
 6.) commons-logging:commons-logging:jar:1.1.1
 This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging 
 systems.
-
-7.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21 . 
-slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
 
 8.) junit:junit:4.12
 JUnit is a unit testing framework for Java.

@@ -7,10 +7,10 @@ rem If using this scripts outside zip package then give maven clean install.
 rem This will generate all required dependencies under target/dependencies.These dependencies are used in CLASSPATH.
 rem ----------------------------------------------------------------------------
 
-if exist ../../lib set LOCAL_CP=%LOCAL_CP%;../../lib/cybersource-sdk-java-6.2.4.jar
+if exist ../../lib set LOCAL_CP=%LOCAL_CP%;../../lib/cybersource-sdk-java-6.2.5.jar
 if not exist ../../lib (
 	if not exist target goto error
-	set LOCAL_CP=%LOCAL_CP%;target/dependencies/cybersource-sdk-java-6.2.4.jar
+	set LOCAL_CP=%LOCAL_CP%;target/dependencies/cybersource-sdk-java-6.2.5.jar
 )
 
 if not exist classes mkdir classes

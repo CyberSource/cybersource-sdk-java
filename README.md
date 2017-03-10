@@ -11,7 +11,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
 <dependency>
 <groupId>com.cybersource</groupId>
 <artifactId>cybersource-sdk-java</artifactId>
-<version>6.2.4</version>
+<version>6.2.5</version>
 </dependency> 
 ````
 Run mvn install, to install dependency
@@ -20,7 +20,7 @@ Run mvn install, to install dependency
 Add the dependency to your build.gradle
 ````
 dependencies {
-compile 'com.cybersource:cybersource-sdk-java:6.2.4'
+compile 'com.cybersource:cybersource-sdk-java:6.2.5'
 }
 ````
 ##Requirements
@@ -35,7 +35,7 @@ compile 'com.cybersource:cybersource-sdk-java:6.2.4'
 
 ######A CyberSource Evaluation account. 
 
-Sign up here:  <http://www.cybersource.com/register>
+Sign up here:  <http://www.cybersource.com/register/>
 
 * Complete your Evaluation account creation by following the instructions in the Registration email
 
@@ -91,7 +91,9 @@ i. "enablejdkcert" parameter if set to true then it will read the JKS file speci
 j. cacerts this property will be considered only if "enablejdkcert" is set to true. If it is set to true then it means the certificate file is under cacerts folder of the JDK and 
 it will read the certificate file from cacerts. 
 
-k. i. 	"allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
+k. "allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
+ -    	Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
+ -    	1 to 5 any other value will throw an Error Message. Refer to the "Retry Pattern" section below.
 
 l. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
