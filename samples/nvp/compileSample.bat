@@ -2,7 +2,7 @@
 
 set LOCAL_CP=
 rem ----------------------------------------------------------------------------
-rem Replace this with cybersource-sdk-java-6.2.3.jar when using Java SDK 1.6 or later.
+rem Replace this with cybersource-sdk-java-6.2.5.jar when using Java SDK 1.6 or later.
 rem If using this scripts outside zip package then give maven clean install. 
 rem This will generate all required dependencies under target/dependencies.These dependencies are used in CLASSPATH.
 rem ----------------------------------------------------------------------------
