@@ -86,10 +86,9 @@ By default, it is set to true.
 
 h. "serverURL" config parameter will take precedence over sendToProduction and sendToAkamai config parameters. By default the "serverURL" configuration is commented out. 
 
-i. "enablejdkcert" parameter if set to true then it will read the JKS file specified at keysDirectory location. The file should be of the same name as specified in keyFilename.
+i. if `enablejdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
 
-j. cacerts this property will be considered only if "enablejdkcert" is set to true. If it is set to true then it means the certificate file is under cacerts folder of the JDK and 
-it will read the certificate file from cacerts. 
+j. `cacerts` property is considered only if `enablejdkcert` is set to true. If `cacerts` is set to true, certificates will be read from the cacerts folder under the JDK. 
 
 k. "allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
  -    	Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
