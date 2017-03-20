@@ -1,20 +1,20 @@
 /*
-* Copyright 2003-2014 CyberSource Corporation
-*
-* THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
-* AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
-* DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
-* COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
-* EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
-* WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
-* DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-* SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
-* OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
-* ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
-* DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
-* DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
-* WITH ANY PARTICULAR OPERATING SYSTEM.
-*/
+ * Copyright 2003-2014 CyberSource Corporation
+ *
+ * THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
+ * AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
+ * DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
+ * COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
+ * EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
+ * WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
+ * DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ * SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
+ * OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
+ * ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
+ * DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
+ * DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
+ * WITH ANY PARTICULAR OPERATING SYSTEM.
+ */
 
 package com.cybersource.ws.client;
 
@@ -32,13 +32,13 @@ public class MerchantConfig {
      * Prefix used when looking up properties in the System properties.
      */
     private final String SYSPROP_PREFIX = "cybs.";
-
+    
     private final static int DEFAULT_TIMEOUT = 130;
     private final static int DEFAULT_PROXY_PORT = 8080;
-    private UUID uniqueKey=UUID.randomUUID(); 
+    private UUID uniqueKey=UUID.randomUUID();
     
     private final Properties props;
-
+    
     private final String merchantID;
     private String keysDirectory;
     private String keyAlias;
@@ -50,6 +50,8 @@ public class MerchantConfig {
     private String serverURL;
     private String namespaceURI;
     private String password;
+    private boolean enablejdkcert;
+    private boolean cacert;
     private boolean enableLog;
     private boolean logSignedData;
     private String logDirectory;
@@ -61,7 +63,8 @@ public class MerchantConfig {
     private int proxyPort;
     private String proxyUser;
     private String proxyPassword;
-
+    private String cacertpassword;
+    
     // computed values
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
@@ -69,7 +72,7 @@ public class MerchantConfig {
     private  boolean useSignAndEncrypted;
     
     //Retry Pattern
-    private int numberOfRetries = 0;   
+    private int numberOfRetries = 0;
     private long retryInterval  = 0;
     private boolean allowRetry=true;
     
@@ -82,29 +85,29 @@ public class MerchantConfig {
     public String getMerchantID() {
         return merchantID;
     }
-
+    
     public String getKeysDirectory() {
         return keysDirectory;
     }
-
+    
     public String getKeyAlias() {
         if ( keyAlias != null )
             return keyAlias;
         else
             return getMerchantID();
     }
-
+    
     public String getKeyPassword() {
         if ( keyPassword != null )
-          return keyPassword;
+            return keyPassword;
         else
-          return getMerchantID();
+            return getMerchantID();
     }
-
+    
     public boolean getSendToProduction() {
         return sendToProduction;
     }
-
+    
     public boolean getSendToAkamai() {
         return sendToAkamai;
     }
@@ -112,67 +115,67 @@ public class MerchantConfig {
     public String getTargetAPIVersion() {
         return targetAPIVersion;
     }
-
+    
     public String getKeyFilename() {
         return keyFilename;
     }
-
+    
     public String getServerURL() {
         return serverURL;
     }
-
+    
     public String getNamespaceURI() {
         return namespaceURI;
     }
-
+    
     public String getPassword() {
         return password;
     }
-
+    
     public boolean getEnableLog() {
         return enableLog;
     }
-
+    
     public boolean getLogSignedData() {
         return logSignedData;
     }
-
+    
     public String getLogDirectory() {
         return logDirectory;
     }
-
+    
     public String getLogFilename() {
         return logFilename;
     }
-
+    
     public int getLogMaximumSize() {
         return logMaximumSize;
     }
-
+    
     public boolean getUseHttpClient() {
         return useHttpClient;
     }
-
+    
     public int getTimeout() {
         return timeout;
     }
-
+    
     public String getProxyHost() {
         return proxyHost;
     }
-
+    
     public int getProxyPort() {
         return proxyPort;
     }
-
+    
     public String getProxyUser() {
         return proxyUser;
     }
-
+    
     public String getProxyPassword() {
         return proxyPassword != null ? proxyPassword : "";
     }
-
+    
     /**
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
@@ -184,8 +187,8 @@ public class MerchantConfig {
     public String getEffectiveServerURL() {
         return effectiveServerURL;
     }
-
-
+    
+    
     /**
      * Returns the effective namespace URI to be used to parse the request and
      * reply documents.  If a namespaceURI is specified, then that is
@@ -197,7 +200,7 @@ public class MerchantConfig {
     public String getEffectiveNamespaceURI() {
         return effectiveNamespaceURI;
     }
-
+    
     /**
      * Returns the effective key password.  If a password is specified, then
      * that is what is returned.  Otherwise, the effective password is
@@ -208,8 +211,8 @@ public class MerchantConfig {
     public String getEffectivePassword() {
         return effectivePassword;
     }
-
-
+    
+    
     /**
      * Constructor.
      *
@@ -224,17 +227,17 @@ public class MerchantConfig {
      *                         configuration.
      */
     public MerchantConfig(Properties _props, String _merchantID)
-            throws ConfigException {
+    throws ConfigException {
         props = _props;
-
+        
         merchantID = _merchantID != null
-                ? _merchantID
-                : getProperty(null, "merchantID");
-
+        ? _merchantID
+        : getProperty(null, "merchantID");
+        
         if (merchantID == null) {
             throw new ConfigException("merchantID is required.");
         }
-
+        
         keysDirectory = getProperty(merchantID, "keysDirectory");
         keyAlias = getProperty(merchantID, "keyAlias");
         keyPassword = getProperty(merchantID, "keyPassword");
@@ -251,52 +254,54 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
-
+        
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
         proxyPassword = getProperty(merchantID, "proxyPassword");
-
+        enablejdkcert = getBooleanProperty(merchantID, "enablejdkcert", false);
+        cacert=getBooleanProperty(merchantID, "cacert", false);
+        cacertpassword=getProperty(merchantID,"cacertpassword","changeit");
         // compute and store effective namespace URI
-
+        
         if (namespaceURI == null && targetAPIVersion == null) {
             throw new ConfigException("namespaceURI or targetAPIVersion must be supplied.");
         }
-
+        
         effectiveNamespaceURI =
-                namespaceURI != null
-                        ? namespaceURI
-                        : "urn:schemas-cybersource-com:transaction-data-" +
-                        targetAPIVersion;
-
+        namespaceURI != null
+        ? namespaceURI
+        : "urn:schemas-cybersource-com:transaction-data-" +
+        targetAPIVersion;
+        
         // compute and store effective Server URL
-
+        
         if (serverURL == null && targetAPIVersion == null) {
             throw new ConfigException("serverURL or targetAPIVersion must be supplied.");
         }
-
+        
         if (serverURL != null) {
             effectiveServerURL = serverURL;
         } else {
             int dotPos = targetAPIVersion.indexOf('.');
             String majorVersion
-                    = dotPos >= 0
-                    ? targetAPIVersion.substring(0, dotPos)
-                    : targetAPIVersion;
-
+            = dotPos >= 0
+            ? targetAPIVersion.substring(0, dotPos)
+            : targetAPIVersion;
+            
             Object[] arguments = {majorVersion};
             effectiveServerURL = MessageFormat.format(
-            		sendToAkamai
-						?sendToProduction
-							?"https://ics2wsa.ic3.com/commerce/{0}.x/transactionProcessor"
-							:"https://ics2wstesta.ic3.com/commerce/{0}.x/transactionProcessor"
-						:sendToProduction
-							?"https://ics2ws.ic3.com/commerce/{0}.x/transactionProcessor"
-							:"https://ics2wstest.ic3.com/commerce/{0}.x/transactionProcessor",
-                    arguments);
+                                                      sendToAkamai
+                                                      ?sendToProduction
+                                                      ?"https://ics2wsa.ic3.com/commerce/{0}.x/transactionProcessor"
+                                                      :"https://ics2wstesta.ic3.com/commerce/{0}.x/transactionProcessor"
+                                                      :sendToProduction
+                                                      ?"https://ics2ws.ic3.com/commerce/{0}.x/transactionProcessor"
+                                                      :"https://ics2wstest.ic3.com/commerce/{0}.x/transactionProcessor",
+                                                      arguments);
         }
-
+        
         // compute and store effective password
         effectivePassword = password != null ? password : merchantID;
         
@@ -306,13 +311,13 @@ public class MerchantConfig {
         if (useHttpClient && allowRetry) {
             numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 5);
             if(numberOfRetries>0)
-          	  retryInterval = getIntegerProperty(merchantID, "retryInterval", 5) *1000;
+                retryInterval = getIntegerProperty(merchantID, "retryInterval", 5) *1000;
             if( numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0){
                 throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
             }
         }
-   }
-
+    }
+    
     /**
      * Returns a File object representing the key file.  If a
      * keyFilename is specified, that will be the one used.
@@ -322,29 +327,27 @@ public class MerchantConfig {
      *                         not readable.
      */
     public File getKeyFile()
-            throws ConfigException {
+    throws ConfigException {
         File file = new File(
-                keysDirectory,
-                keyFilename != null
-                        ? keyFilename : merchantID + ".p12");
+                             keysDirectory,
+                             keyFilename != null
+                             ? keyFilename : merchantID + ".p12");
         //File file = new File("/export/home/sunagara/keys/sec_litle.p12");
         String fullPath = file.getAbsolutePath();
-
         if (!file.isFile()) {
-            throw new ConfigException(
-                    "The file \"" + fullPath + "\" is missing or is not a file.");
-        }
-
+             throw new ConfigException(
+                     "The file \"" + fullPath + "\" is missing or is not a file.");
+         } 
         if (!file.canRead()) {
             throw new ConfigException(
-                    "This application does not have permission to read the file \""
-                            + fullPath + "\".");
+                                      "This application does not have permission to read the file \""
+                                      + fullPath + "\".");
         }
-
+        
         return (file);
     }
-
-
+    
+    
     /**
      * Returns a File object representing the log file.
      *
@@ -352,21 +355,21 @@ public class MerchantConfig {
      *                         missing or is not a directory.
      */
     public File getLogFile()
-            throws ConfigException {
+    throws ConfigException {
         File dir = new File(logDirectory);
         String fullPath = dir.getAbsolutePath();
         if (!dir.isDirectory()) {
             throw new ConfigException(
-                    "The log directory \"" + fullPath +
-                            "\" is missing or is not a directory.");
+                                      "The log directory \"" + fullPath +
+                                      "\" is missing or is not a directory.");
         }
-
+        
         return (new File(logDirectory,
-                logFilename != null ? logFilename : "cybs.log"));
-
+                         logFilename != null ? logFilename : "cybs.log"));
+        
     }
-
-
+    
+    
     /**
      * Returns the value of the specified property.  See the other version
      * of this method for the complete behavior.
@@ -379,7 +382,7 @@ public class MerchantConfig {
     public String getProperty(String merchantID, String prop) {
         return (getProperty(merchantID, prop, null));
     }
-
+    
     /**
      * Returns the value of the specified property.  The search behavior is
      * as follows:
@@ -404,47 +407,47 @@ public class MerchantConfig {
      *         specified if none is found.
      */
     public String getProperty(
-            String merchantID, String prop, String defaultVal) {
+                              String merchantID, String prop, String defaultVal) {
         String val = null;
-
+        
         String merchantSpecificProp =
-                (merchantID != null) ? merchantID + "." + prop : null;
-
+        (merchantID != null) ? merchantID + "." + prop : null;
+        
         // look-up the merchant-specific property in the supplied
         // Properties object.
         if (props != null && merchantSpecificProp != null) {
             val = props.getProperty(merchantSpecificProp);
         }
-
+        
         // if none, look up the generic property.
         if (props != null && val == null) {
             val = props.getProperty(prop);
         }
-
+        
         // if none, look up the merchant-specific property in the System
         // properties.
         if (val == null && merchantSpecificProp != null) {
             val = System.getProperty(SYSPROP_PREFIX + merchantSpecificProp);
         }
-
+        
         // if none, look up the generic property in the System properties.
         if (val == null) {
             val = System.getProperty(SYSPROP_PREFIX + prop);
         }
-
+        
         // if none, return default value
         if (val == null) {
             val = defaultVal;
         }
-
+        
         return (val);
     }
-
+    
     /**
      * Returns a string representation of the properties for logging purposes.
      */
     public String getLogString() {
-
+        
         StringBuffer sb = new StringBuffer();
         appendPair(sb, "merchantID", merchantID);
         appendPair(sb, "keysDirectory", keysDirectory);
@@ -473,84 +476,94 @@ public class MerchantConfig {
             if (proxyUser != null) {
                 appendPair(sb, "proxyUser", proxyUser);
                 appendPair(sb, "proxyPassword",
-                        proxyPassword != null
-                                ? "(masked)" : null);
+                           proxyPassword != null
+                           ? "(masked)" : null);
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
         return (sb.toString());
     }
-
-	private void appendPair(StringBuffer sb, String key, long retryInterval2) {
-		appendPair(sb, key, String.valueOf(retryInterval2));
-
-	}
-	
+    
+    private void appendPair(StringBuffer sb, String key, long retryInterval2) {
+        appendPair(sb, key, String.valueOf(retryInterval2));
+        
+    }
+    
     private static void appendPair(StringBuffer sb, String key, boolean value) {
         appendPair(sb, key, String.valueOf(value));
     }
-
+    
     private static void appendPair(StringBuffer sb, String key, int value) {
         appendPair(sb, key, String.valueOf(value));
     }
-
+    
     private static void appendPair(StringBuffer sb, String key, String value) {
         if (sb.length() > 0) {
             sb.append(", ");
         }
-
+        
         sb.append(key + "=");
         sb.append(value != null ? value : "(null)");
     }
-
+    
     private boolean getBooleanProperty(
-            String merchantID, String prop, boolean defaultVal)
-            throws ConfigException {
+                                       String merchantID, String prop, boolean defaultVal)
+    throws ConfigException {
         String strValue = getProperty(merchantID, prop);
         if (strValue == null) return defaultVal;
-
+        
         if ("1".equals(strValue) || "true".equalsIgnoreCase(strValue)) {
             return (true);
         }
-
+        
         if ("0".equals(strValue) || "false".equalsIgnoreCase(strValue)) {
             return (false);
         }
-
+        
         throw new ConfigException(prop + " has an invalid value.");
     }
-
+    
     private int getIntegerProperty(
-            String merchantID, String prop, int defaultVal)
-            throws ConfigException {
+                                   String merchantID, String prop, int defaultVal)
+    throws ConfigException {
         String strValue = getProperty(merchantID, prop);
         if (strValue == null) return defaultVal;
-
+        
         try {
             return (Integer.parseInt(strValue));
         } catch (NumberFormatException nfe) {
             throw new ConfigException(prop + " has an invalid value.");
         }
     }
-
-	public UUID getUniqueKey() {
-		return uniqueKey;
-	}
-
-	public int getNumberOfRetries() {
-		return numberOfRetries;
-	}
-
-	public long getRetryInterval() {
-		return retryInterval;
-	}
-
-	public boolean isAllowRetry() {
-		return allowRetry;
-	}
-
-	public void setAllowRetry(boolean allowRetry) {
-		this.allowRetry = allowRetry;
-	}
-
+    
+    public UUID getUniqueKey() {
+        return uniqueKey;
+    }
+    
+    public int getNumberOfRetries() {
+        return numberOfRetries;
+    }
+    
+    public long getRetryInterval() {
+        return retryInterval;
+    }
+    
+    public boolean isAllowRetry() {
+        return allowRetry;
+    }
+    
+    public void setAllowRetry(boolean allowRetry) {
+        this.allowRetry = allowRetry;
+    }
+    
+    public boolean getcacert() {
+        return cacert;
+    }
+    
+    public boolean getEnablejdkcert() {
+        return enablejdkcert;
+    }
+    public String getcacertpassword(){
+        return cacertpassword;
+    }
 }
