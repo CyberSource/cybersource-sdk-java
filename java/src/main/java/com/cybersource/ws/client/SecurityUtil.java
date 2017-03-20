@@ -92,7 +92,14 @@ public class SecurityUtil {
                            + e.getMessage());
                 throw new SignException(e.getMessage());
             }
-            readAndStoreCertificateAndPrivateKey(merchantConfig, logger);
+            if(merchantConfig.getEnablejdkcert()){
+            	logger.log(Logger.LT_INFO," Loading the certificate from JDK Cert");
+            	SecurityUtil.readJdkCert(merchantConfig,logger);
+            }
+            else{
+            	logger.log(Logger.LT_INFO,"Loading the certificate from p12 file ");
+            	readAndStoreCertificateAndPrivateKey(merchantConfig, logger);
+            }
         }
     }
     
@@ -258,7 +265,7 @@ public class SecurityUtil {
         String pass=merchantConfig.getKeyPassword();
         
         if (merchantConfig.getcacert()){
-            path = System.getProperty("java.home") + "/jre/lib/security/cacerts".replace('/', File.separatorChar);
+            path = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
             loadJavaKeystore(path, merchantConfig,logger);
             
         }
