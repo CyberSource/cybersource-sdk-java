@@ -57,6 +57,7 @@ public class MerchantConfig {
     private int logMaximumSize;
     private boolean useHttpClient;
     private int timeout;
+    private int connectionTimeout;
     private String proxyHost;
     private int proxyPort;
     private String proxyUser;
@@ -157,6 +158,8 @@ public class MerchantConfig {
         return timeout;
     }
 
+    public int getConnectionTimeout() { return connectionTimeout; }
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -253,6 +256,7 @@ public class MerchantConfig {
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
 
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
+        connectionTimeout = getIntegerProperty(merchantID, "connectionTimeout", timeout);
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
@@ -467,6 +471,7 @@ public class MerchantConfig {
             appendPair(sb, "RetryInterval", retryInterval);
         }
         appendPair(sb, "timeout", timeout);
+        appendPair(sb, "connectionTimeout", connectionTimeout);
         if (proxyHost != null) {
             appendPair(sb, "proxyHost", proxyHost);
             appendPair(sb, "proxyPort", proxyPort);

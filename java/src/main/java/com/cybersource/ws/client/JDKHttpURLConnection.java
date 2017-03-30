@@ -59,7 +59,7 @@ class JDKHttpURLConnection extends Connection {
         con = ConnectionHelper.openConnection(url, mc);
         con.setRequestMethod("POST");
         con.setDoOutput(true);
-        ConnectionHelper.setTimeout(con, mc.getTimeout());
+        ConnectionHelper.setTimeout(con, mc.getConnectionTimeout(), mc.getTimeout());
 
         OutputStream out = con.getOutputStream();
         byte[] requestBytes = documentToByteArray(request);

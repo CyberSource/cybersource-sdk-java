@@ -61,7 +61,7 @@ class HttpClientConnection extends Connection {
             TransformerException, MalformedURLException,
             ProtocolException {
         HttpClient httpClient = new HttpClient();
-        setTimeout(httpClient, mc.getTimeout() * 1000);
+        setTimeout(httpClient, mc.getConnectionTimeout() * 1000, mc.getTimeout() * 1000);
         setProxy(httpClient);
 
         String serverURL = mc.getEffectiveServerURL();
@@ -126,10 +126,10 @@ class HttpClientConnection extends Connection {
      * @param httpClient
      * @param timeoutInMs
      */
-    private void setTimeout(HttpClient httpClient, int timeoutInMs) {
+    private void setTimeout(HttpClient httpClient, int connectionTimeoutInMs, int timeoutInMs) {
         HttpConnectionManagerParams params
                 = httpClient.getHttpConnectionManager().getParams();
-        params.setConnectionTimeout(timeoutInMs);
+        params.setConnectionTimeout(connectionTimeoutInMs);
         params.setSoTimeout(timeoutInMs);
     }
 

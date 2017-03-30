@@ -48,10 +48,9 @@ class ConnectionHelper {
      * @param con
      * @param timeout
      */
-    public static void setTimeout(HttpURLConnection con, int timeout) {
-        int timeoutInMS = timeout * 1000;
-        con.setConnectTimeout(timeoutInMS);
-        con.setReadTimeout(timeoutInMS);
+    public static void setTimeout(HttpURLConnection con, int connectionTimeout, int timeout) {
+        con.setConnectTimeout(connectionTimeout * 1000);
+        con.setReadTimeout(timeout * 1000);
     }
 
     /**
