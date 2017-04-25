@@ -108,7 +108,6 @@ public class RunSample {
 		saleProps = readProperty("sale.properties");
 		HashMap<String, String> request = new HashMap<String, String>(
 				(Map) saleProps);
-		System.out.println("Properties Object --> " + request);
 		try {
 			displayMap("CREDIT CARD SALE REQUEST:", request);
 			// run transaction now
@@ -145,7 +144,6 @@ public class RunSample {
 		authProps = readProperty("auth.properties");
 		HashMap<String, String> request = new HashMap<String, String>(
 				(Map) authProps);
-		System.out.println("Properties Object --> " + request);
 		try {
 			displayMap("CREDIT CARD AUTHORIZATION REQUEST:", request);
 			// run transaction now

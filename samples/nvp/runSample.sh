@@ -42,7 +42,7 @@ JAVA_CMD=java
 fi
 
 
-if [ -z "$1"];
+if [ -z "$1" ];
 then
 echo "No service_name was mentioned ... terminating program"
 exit 1
