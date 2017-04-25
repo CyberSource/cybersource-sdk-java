@@ -25,7 +25,7 @@ if "%JAVA_HOME%" == "" (
    set JAVA_CMD="%JAVA_HOME%"\bin\java
 )
 
-if /I "%~1"=="NVP" (
+if /I "%~1"=="" (
 echo No Service Name entered ... Program terminating
 goto eof
 )
