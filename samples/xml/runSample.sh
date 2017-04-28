@@ -42,7 +42,7 @@ JAVA_CMD=java
 fi
 
 echo "argument passed $1"
-if [ -z "$1"];
+if [ -z "$1" ];
 then
 echo "No Service Name entered ... program terminating"
 exit 1
