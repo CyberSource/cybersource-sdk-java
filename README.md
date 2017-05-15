@@ -5,8 +5,8 @@
 ## Package Managers
 
 ### Maven
-To install the cybersource-sdk-java from central repository,add dependency to your application pom.xml as below.
-````
+To install the `cybersource-sdk-java` from central repository, add dependency to your application `pom.xml` as below.
+```xml
 <dependency>
 <groupId>com.cybersource</groupId>
 <artifactId>cybersource-sdk-java</artifactId>
@@ -17,17 +17,15 @@ Run `mvn install` to install dependency
 
 ### Grails/Gradle
 Add the dependency to your build.gradle
-````
+```java
 dependencies {
 compile 'com.cybersource:cybersource-sdk-java:6.2.5'
 }
-````
-##Requirements
-
-
-1. Java SDK 1.6 and later  
-2. Maven 3 and later  
-3. It is recommended to use Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar) for appropriate JAVA version. For JAVA 7, it is available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+```
+## Requirements
+- Java SDK 1.6 and later  
+- Maven 3 and later  
+- It is recommended to use Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar) for appropriate JAVA version. For JAVA 7, it is available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
 
 ## Prerequisites
 ### CyberSource Evaluation account
@@ -45,49 +43,6 @@ Replace your Java installation’s existing security policy files with the new o
 - Copy the new US_export_policy.jar and local_policy.jar that you downloaded from Oracle to the $JAVA_HOME/jre/lib/security directory.  
 ## Installing the SDK 
 You do not need to download and build the source to use the SDK but if you want to do that, follow these steps:
-
-1. Clone this repository.
-
-2. Go to the sdk-java-master directory.
-
-3. To run the integration tests, edit the test_cybs.properties and make the following changes:
-
-a. Set merchantID, keyAlias and keyPassword to your merchantID.  Please note that it is case-sensitive.
-
-b. Set keysDirectory to the directory where your key resides.  Use forward-slashes for the directory separator, even on Windows.
-For example, "c:/keys"
-
-(Optional Additional Changes)
-c. Set targetAPIVersion to the latest version displayed at: https://<cybersource-host>/commerce/1.x/transactionProcessor/
-By default, it is set to the latest version when the package was created.
-
-d. Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the logDirectory value, even on Windows. 
-The directory you specify must already exist.
-
-e. Set useSignAndEncrypted to true, Mechanism to encrypt the signed Payload.For more information about MLE, See Message Level Encryption at bottom.
-
-f. Set sendToProduction config parameter with toggle value "true/false"  to send requests to Cybersource production/testing environment. 
-sendToProduction is initially set to false. Set it to true only when you are ready to send live transactions.
-
-g. Set sendToAkamai config parameter with toggle value "true/false" to turn on/off routing requests through Akamai to Cybersource. 
-By default, it is set to true.
-
-h. "serverURL" config parameter will take precedence over sendToProduction and sendToAkamai config parameters. By default the "serverURL" configuration is commented out. 
-
-i. if `enablejdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
-
-j. `cacerts` property is considered only if `enablejdkcert` is set to true. If `cacerts` is set to true, certificates will be read from the cacerts folder under the JDK.
-Refer to JKS Creation section to know how to convert p12 to JKS
-
-k. "allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
--    	Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
--    	1 to 5 any other value will throw an Error Message. Refer to the "Retry Pattern" section below.
-
-l. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
-
-
-4. Build this project using Maven.
-
 - Clone this repository.
 - Go to the `cybersource-sdk-java-master` directory.
 - To run the integration tests, edit the [test_cybs.properties](java/src/test/resources/test_cybs.properties) and make the following changes:
@@ -111,7 +66,6 @@ l. Please refer to the accompanying documentation for the other optional propert
 - Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 - Build this project using Maven.
 ```
->>>>>>> future
 a. mvn clean  // Cleans the Project
 
 b. mvn install 
@@ -123,97 +77,7 @@ c. mvn test
 
 d. mvn failsafe:integration-test
 // Runs unit and integration tests. Note that integration tests require proper setup of test_cybs.properties
-
-##Testing the SDK 
-
-We have two ways to test, One is using maven tool and other is to download the zip and use scripts to test.
-
-1.) Unzip the downloaded zip file into a directory of your choice.  It will create a directory called 
-cybersource-sdk-java-master. 
-* If in the Request, a key called "_has_escapes" is present and is set
-* to "1", we will not escape the special characters.  Basically, the
-* merchant is saying that they have escaped the characters themselves.
-* This might prove useful for more advanced users of the Basic client.
-
-Note: The Script will take Service_name as program argument. Service Name can 
-be auth, auth_reversal, capture, sale, emv_auth, credit. If no argument is passed the script
-will terminate the program.
-
-a. TESTING THE NAME-VALUE PAIR SAMPLE
-. Go to the cybersource-sdk-java-master/sample/nvp directory.
-. Use compileSample scripts to create classes directory.As it is not included in SDK.
-. Then at a command prompt, type this line:
-Windows 	runSample.bat <service_name>
-Unix or Linux 	runSample.sh <service_name>
-
-If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
-whatever java is in the path.
-If the client is installed correctly, the requests and replies for a credit card authorization
-and a follow-on capture appear.
-
-. If you make any changes to the RunSample.java sample, you
-must rebuild the sample before using it. Use the compileSample batch file or
-shell script provided in the sample directory.
-
-b. TESTING THE XML SAMPLE
-. Go to the cybersource-sdk-java-master/sample/xml directory.
-. Use compileSample scripts to create classes directory.As it is not included in SDK.
-. At a command prompt, type this line:
-Windows 	runSample.bat <Service_name>
-Unix or Linux 	runSample.sh <service_name>
-
-If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
-whatever java is in the path.
-If the client is installed correctly, the requests and replies for a credit card authorization
-and a follow-on capture appear.
-
-. If you make any changes to the RunSample.java sample, you
-must rebuild the sample before using it. Use the compileSample batch file or
-shell script provided in the sample directory.
-
-2.) Using samples and maven tool. samples is present at the same directory level as java and zip.
-a.) Clone/Download the code from GitHub.
-
-b.) Go to the samples directory. then cd to nvp or xml which are present inside samples dir, choose any one and do     the same thing with other.
-
-c.) Sample project nvp and xml uses cybersource-sdk-java and 3rd party jars as dependent jar files. 
-
-d.) Build this project using Maven.
-mvn install
-
-e.) If build is successful then it will put all jars inside cybersource-sdk-java/samples/nvp/target/dependencies 
-folder.
-
-f.) Edit cybs.properties and make the required changes:
-
-g.) Now use scripts to test.
-
-##JKS creation
-
-To convert the p12 file to JKS follow the steps mentioned below.
-These commands will take out all the certs from the p12 file. 
-1. openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key
-2. openssl pkcs12 -in <Merchant_ID>.p12 -clcerts -nokeys -out <Merchant_ID>.crt
-3. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt
-4. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt
-
-Create a new p12. Here Identity.p12 is the new p12 file
-openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey cybs_test_ashish.key -out identity.p12 -name "<Merchant_ID>"
-
-Create JKS from p12 using keytool
-keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
-
-Now import the CyberSource_SJC_US.crt to your keystore
-keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks
-
-List the entries of your keystore
-keytool -list -v -keystore <Your_keystore_name>
-It should have two entries. The first entry should contain a chain of two certificates - CyberSourceCertAuth and <Merchant_ID> with alias name <Merchant_ID>
-Second entry should be for CyberSource_SJC_US certificate with alias name as CyberSource_SJC_US
-
-##Message Level Encryption
-
-
+```
 
 ## Testing the SDK 
 We have two ways to test -- one is by downloading the zip and using scripts to test; other is using maven tool.
@@ -246,8 +110,32 @@ Unix or Linux:	runSample.sh <service_name>
 - Now use scripts to test.
 
 ## Message Level Encryption
-
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
+
+##JKS creation
+
+To convert the p12 file to JKS follow the steps mentioned below.
+- These commands will take out all the certs from the p12 file. 
+1. openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key
+2. openssl pkcs12 -in <Merchant_ID>.p12 -clcerts -nokeys -out <Merchant_ID>.crt
+3. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt
+4. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt
+
+Create a new p12. Here Identity.p12 is the new p12 file
+openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey cybs_test_ashish.key -out identity.p12 -name "<Merchant_ID>"
+
+Create JKS from p12 using keytool
+keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
+
+Now import the CyberSource_SJC_US.crt to your keystore
+keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks
+
+List the entries of your keystore
+keytool -list -v -keystore <Your_keystore_name>
+
+It should have two entries. The first entry should contain a chain of two certificates - CyberSourceCertAuth and <Merchant_ID> with alias name <Merchant_ID>
+Second entry should be for CyberSource_SJC_US certificate with alias name as CyberSource_SJC_US
+
 
 ### Authentication Details
 Message level encryption authenticates using the same mechanism as signed SOAP messages. The signature creation involves utilizing the merchants private key which combined with a hash of the message to be signed, can be validated with the merchants certificate and the message which was signed. 

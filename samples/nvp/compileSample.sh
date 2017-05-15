@@ -8,7 +8,7 @@ LOCAL_CP=
 # -----------------------------------------------------------------------------
 
 if test -d ../../lib
-then LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.2.5.jar
+then LOCAL_CP=$LOCAL_CP:../../lib/cybersource-sdk-java-6.2.5-SNAPSHOT.jar
 fi
 
 if test ! -d ../../lib
@@ -19,7 +19,7 @@ then
 		echo "Execute maven clean install , This will generate all required dependencies under target/dependencies!!"
 		exit 1
 	fi
-LOCAL_CP=$LOCAL_CP:target/dependencies/cybersource-sdk-java-6.2.5.jar
+LOCAL_CP=$LOCAL_CP:target/dependencies/cybersource-sdk-java-6.2.5-SNAPSHOT.jar
 fi
 
 if test ! -d ./classes
