@@ -88,7 +88,8 @@ h. "serverURL" config parameter will take precedence over sendToProduction and s
 
 i. if `enablejdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
 
-j. `cacerts` property is considered only if `enablejdkcert` is set to true. If `cacerts` is set to true, certificates will be read from the cacerts folder under the JDK. 
+j. `cacerts` property is considered only if `enablejdkcert` is set to true. If `cacerts` is set to true, certificates will be read from the cacerts folder under the JDK.
+    Refer to JKS Creation section to know how to convert p12 to JKS
 
 k. "allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
  -    	Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
@@ -174,6 +175,29 @@ folder.
 f.) Edit cybs.properties and make the required changes:
 
 g.) Now use scripts to test.
+
+##JKS creation
+
+To convert the p12 file to JKS follow the steps mentioned below.
+    These commands will take out all the certs from the p12 file. 
+        1. openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key
+        2. openssl pkcs12 -in <Merchant_ID>.p12 -clcerts -nokeys -out <Merchant_ID>.crt
+        3. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt
+        4. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt
+    
+    Create a new p12. Here Identity.p12 is the new p12 file
+        openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey cybs_test_ashish.key -out identity.p12 -name "<Merchant_ID>"
+
+    Create JKS from p12 using keytool
+        keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
+    
+    Now import the CyberSource_SJC_US.crt to your keystore
+        keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks
+
+    List the entries of your keystore
+        keytool -list -v -keystore <Your_keystore_name>
+It should have two entries. The first entry should contain a chain of two certificates - CyberSourceCertAuth and <Merchant_ID> with alias name <Merchant_ID>
+        Second entry should be for CyberSource_SJC_US certificate with alias name as CyberSource_SJC_US
 
 ##Message Level Encryption
 

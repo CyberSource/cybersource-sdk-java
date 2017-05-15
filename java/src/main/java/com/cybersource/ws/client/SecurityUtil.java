@@ -93,12 +93,12 @@ public class SecurityUtil {
                 throw new SignException(e.getMessage());
             }
             if(merchantConfig.getEnablejdkcert()){
-            	logger.log(Logger.LT_INFO," Loading the certificate from JDK Cert");
-            	SecurityUtil.readJdkCert(merchantConfig,logger);
+                logger.log(Logger.LT_INFO," Loading the certificate from JDK Cert");
+                SecurityUtil.readJdkCert(merchantConfig,logger);
             }
             else{
-            	logger.log(Logger.LT_INFO,"Loading the certificate from p12 file ");
-            	readAndStoreCertificateAndPrivateKey(merchantConfig, logger);
+                logger.log(Logger.LT_INFO,"Loading the certificate from p12 file ");
+                readAndStoreCertificateAndPrivateKey(merchantConfig, logger);
             }
         }
     }
@@ -360,11 +360,18 @@ public class SecurityUtil {
                     identities.put(identity.getName(), identity);
                 }
             }
+            java.security.cert.Certificate serverCert = keystore.getCertificate(SERVER_ALIAS);
+            identity = new Identity(merchantConfig,
+                                    (X509Certificate) serverCert);
+            localKeyStoreHandler
+            .addIdentityToKeyStore(identity, logger);
+            identities.put(identity.getName(), identity);
+            
         }
         
         catch (java.security.cert.CertificateException e) {
             logger.log(Logger.LT_EXCEPTION, "Unable to load the certificate,"+ merchantConfig.getKeyFilename() + "'");
-             throw new SignException(e);
+            throw new SignException(e);
         } catch (NoSuchAlgorithmException e) {
             logger.log(Logger.LT_EXCEPTION, "Unable to find the certificate with the specified algorithm");
             throw new SignException(e);
@@ -385,7 +392,7 @@ public class SecurityUtil {
                     logger.log(Logger.LT_EXCEPTION, "Exception while closing FileStream, '" + merchantConfig.getKeyFilename() + "'");
                     throw new SignException(e);
                 }
-        }		
+        }
         
         
     }
