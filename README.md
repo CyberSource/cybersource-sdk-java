@@ -1,6 +1,6 @@
 #CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)]
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)]
 (https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ##Package Managers
@@ -11,7 +11,7 @@ To install the cybersource-sdk-java from central repository,add dependency to yo
 <dependency>
 <groupId>com.cybersource</groupId>
 <artifactId>cybersource-sdk-java</artifactId>
-<version>6.2.4</version>
+<version>6.2.5</version>
 </dependency> 
 ````
 Run mvn install, to install dependency
@@ -20,7 +20,7 @@ Run mvn install, to install dependency
 Add the dependency to your build.gradle
 ````
 dependencies {
-compile 'com.cybersource:cybersource-sdk-java:6.2.4'
+compile 'com.cybersource:cybersource-sdk-java:6.2.5'
 }
 ````
 ##Requirements
@@ -35,7 +35,7 @@ compile 'com.cybersource:cybersource-sdk-java:6.2.4'
 
 ######A CyberSource Evaluation account. 
 
-Sign up here:  <http://www.cybersource.com/register>
+Sign up here:  <http://www.cybersource.com/register/>
 
 * Complete your Evaluation account creation by following the instructions in the Registration email
 
@@ -96,6 +96,8 @@ k. - if `enablejdkcert` parameter is set to true, certificates will be read from
 
 l. `cacerts` property is considered only if `enablejdkcert` is set to true. If `cacerts` is set to true, certificates will be read from the cacerts folder under the JDK.
 
+m. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
+
 
 
 4. Build this project using Maven.
@@ -119,19 +121,29 @@ We have two ways to test, One is using maven tool and other is to download the z
 1.) Unzip the downloaded zip file into a directory of your choice.  It will create a directory called 
 cybersource-sdk-java-master. 
 
+* If in the Request, a key called "_has_escapes" is present and is set		
+* to "1", we will not escape the special characters.  Basically, the		
+* merchant is saying that they have escaped the characters themselves.		
+* This might prove useful for more advanced users of the Basic client.		
+
+Note: The Script will take Service_name as program argument. Service Name can 		
+be auth, auth_reversal, capture, sale, emv_auth, credit. If no argument is passed the script will terminate the program.
+
+
 a. TESTING THE NAME-VALUE PAIR SAMPLE
 . Go to the cybersource-sdk-java-master/sample/nvp directory.
 . Use compileSample scripts to create classes directory.As it is not included in SDK.
 . Then at a command prompt, type this line:
-Windows 	runSample.bat
-Unix or Linux 	runSample.sh
+Windows 	runSample.bat <Service_name>
+Unix or Linux 	runSample.sh <service_name>
+
 
 If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
 whatever java is in the path.
 If the client is installed correctly, the requests and replies for a credit card authorization
 and a follow-on capture appear.
 
-. If you make any changes to the AuthCaptureSample.java sample, you
+. If you make any changes to the RunSample.java sample, you
 must rebuild the sample before using it. Use the compileSample batch file or
 shell script provided in the sample directory.
 
@@ -139,15 +151,17 @@ b. TESTING THE XML SAMPLE
 . Go to the cybersource-sdk-java-master/sample/xml directory.
 . Use compileSample scripts to create classes directory.As it is not included in SDK.
 . At a command prompt, type this line:
-Windows 	runSample.bat
-Unix or Linux 	runSample.sh
+Windows 	runSample.bat <service_name>
+
+Unix or Linux 	runSample.sh <service_name>
+
 
 If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses
 whatever java is in the path.
 If the client is installed correctly, the requests and replies for a credit card authorization
 and a follow-on capture appear.
 
-. If you make any changes to the AuthSample.java sample, you
+. If you make any changes to the RunSample.java sample, you
 must rebuild the sample before using it. Use the compileSample batch file or
 shell script provided in the sample directory.
 
@@ -239,11 +253,13 @@ provides a framework by which new request types (methods) or HTTP extensions can
 6.) commons-logging:commons-logging:jar:1.1.1
 This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging 
 systems.
+7.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21
+slf4j-api is getting used as a dependency for wss4j. Modified  to latest version.
 
-7.) junit:junit:4.12
+8.) junit:junit:4.12
 JUnit is a unit testing framework for Java.
 
-8.) org.mockito:mockito-all:1.10.19
+9.) org.mockito:mockito-all:1.10.19
 Mock objects library for java  
 
 ##Documentation
@@ -251,8 +267,6 @@ Mock objects library for java
 For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>
 
 For all other support needs, see <http://www.cybersource.com/support>
-
-
 
 
 
