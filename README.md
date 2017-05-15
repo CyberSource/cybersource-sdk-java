@@ -64,7 +64,6 @@ You do not need to download and build the source to use the SDK but if you want 
 - Number of retry parameter should be set between 1 to 5. Any other value will throw an Error Message.
 - Refer to the [Retry Pattern](README.md#retry-pattern) section below.
 - Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
-- Build this project using Maven.
 ```
 a. mvn clean  // Cleans the Project
 
@@ -136,7 +135,6 @@ keytool -list -v -keystore <Your_keystore_name>
 It should have two entries. The first entry should contain a chain of two certificates - CyberSourceCertAuth and <Merchant_ID> with alias name <Merchant_ID>
 Second entry should be for CyberSource_SJC_US certificate with alias name as CyberSource_SJC_US
 
-
 ### Authentication Details
 Message level encryption authenticates using the same mechanism as signed SOAP messages. The signature creation involves utilizing the merchants private key which combined with a hash of the message to be signed, can be validated with the merchants certificate and the message which was signed. 
 The merchant certificate is included in the SOAP message for both signature and message level encryption. Message level encryption, encrypts a temporary message key for a specific recipient. This is done by encrypting the temporary message key with the recipient’s public certificate. Therefore only the party holding the private key (CyberSource) can decrypt the temporary message key. The merchant sending the request must be a valid merchant for the environment which the message is being processed in. After validating the merchant and retrieving the CyberSource copy of the merchant certificate from our database, these additional authentication steps are performed:
@@ -174,7 +172,7 @@ slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
 8. junit:junit:4.12
 JUnit is a unit testing framework for Java.
 9. org.mockito:mockito-all:1.10.19
-Mock objects library for java  
+Mock objects library for java
 
 ## Documentation
 - For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>.
