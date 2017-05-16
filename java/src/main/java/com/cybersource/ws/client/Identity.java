@@ -52,7 +52,9 @@ public class Identity {
         if(merchantConfig.getEnablejdkcert()){
             setUpJdkServer();
         }
-        setUpServer();
+        else{
+          setUpServer();
+        }
     }
     private void setUpJdkServer() throws SignException {
         
