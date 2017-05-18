@@ -92,7 +92,7 @@ public class SecurityUtil {
                            + e.getMessage());
                 throw new SignException(e.getMessage());
             }
-            if(merchantConfig.getEnablejdkcert()){
+            if(merchantConfig.isEnableJdkCert()){
                 logger.log(Logger.LT_INFO," Loading the certificate from JDK Cert");
                 SecurityUtil.readJdkCert(merchantConfig,logger);
             }
@@ -264,7 +264,7 @@ public class SecurityUtil {
         String path=merchantConfig.getKeysDirectory()+"/"+merchantConfig.getKeyFilename();
         String pass=merchantConfig.getKeyPassword();
         
-        if (merchantConfig.getcacert()){
+        if (merchantConfig.isCacert()){
             path = System.getProperty("java.home") + "jre/lib/security/cacerts".replace('/', File.separatorChar);
             loadJavaKeystore(path, merchantConfig,logger);
             
@@ -326,7 +326,7 @@ public class SecurityUtil {
             File file = new File(keystore_location);
             is = new FileInputStream(file);
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-            String password = merchantConfig.getcacertpassword();
+            String password = merchantConfig.getCacertPassword();
             keystore.load(is, password.toCharArray());
             
             Identity identity;

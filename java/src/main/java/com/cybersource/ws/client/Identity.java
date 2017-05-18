@@ -49,14 +49,14 @@ public class Identity {
     public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert=x509Certificate;
-        if(merchantConfig.getEnablejdkcert()){
-            setUpJdkServer();
+        if(merchantConfig.isEnableJdkCert()){
+            setupJdkServerCert();
         }
         else{
           setUpServer();
         }
     }
-    private void setUpJdkServer() throws SignException {
+    private void setupJdkServerCert() throws SignException {
         
         if (serialNumber == null && x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
