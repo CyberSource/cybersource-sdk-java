@@ -572,7 +572,7 @@ public class MerchantConfig {
         return cacert;
     }
     
-    public boolean isEnableJdkCert() {
+    public boolean isJdkCertEnabled() {
         return enableJdkCert;
     }
     public String getCacertPassword(){
