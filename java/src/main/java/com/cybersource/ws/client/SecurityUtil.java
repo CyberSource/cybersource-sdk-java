@@ -92,7 +92,7 @@ public class SecurityUtil {
                            + e.getMessage());
                 throw new SignException(e.getMessage());
             }
-            if(merchantConfig.isEnableJdkCert()){
+            if(merchantConfig.isJdkCertEnabled()){
                 logger.log(Logger.LT_INFO," Loading the certificate from JDK Cert");
                 SecurityUtil.readJdkCert(merchantConfig,logger);
             }
