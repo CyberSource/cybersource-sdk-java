@@ -58,7 +58,7 @@ public class Identity {
     }
     private void setupJdkServerCerts() throws SignException {
         
-        if (serialNumber == null && x509Cert != null) {
+        if (x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
                 String subjectDNrray[] = subjectDN.split("SERIALNUMBER=");
