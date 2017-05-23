@@ -118,7 +118,7 @@ Unix or Linux:	runSample.sh <service_name>
   4. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt
 
 -Create a new p12. Here Identity.p12 is the new p12 file
-  -openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey cybs_test_ashish.key -out identity.p12 -name "<Merchant_ID>"
+  -openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey <Merchant_ID>.key -out identity.p12 -name "<Merchant_ID>"
 
 -Create JKS from p12 using keytool
   -keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
