@@ -264,7 +264,7 @@ public class SecurityUtil {
         String path=merchantConfig.getKeysDirectory()+"/"+merchantConfig.getKeyFilename();
         String pass=merchantConfig.getKeyPassword();
         
-        if (merchantConfig.isCacert()){
+        if (merchantConfig.isCacertEnabled()){
             path = System.getProperty("java.home") + "jre/lib/security/cacerts".replace('/', File.separatorChar);
             loadJavaKeystore(path, merchantConfig,logger);
             
