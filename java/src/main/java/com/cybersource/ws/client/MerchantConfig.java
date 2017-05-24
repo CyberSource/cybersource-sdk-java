@@ -51,7 +51,7 @@ public class MerchantConfig {
     private String namespaceURI;
     private String password;
     private boolean enableJdkCert;
-    private boolean cacert;
+    private boolean enableCacert;
     private boolean enableLog;
     private boolean logSignedData;
     private String logDirectory;
@@ -268,7 +268,7 @@ public class MerchantConfig {
         proxyUser = getProperty(merchantID, "proxyUser");
         proxyPassword = getProperty(merchantID, "proxyPassword");
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
-        cacert=getBooleanProperty(merchantID, "enableCacert", false);
+        enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
         useClientHttpFactoryFlag=getBooleanProperty(merchantID,"useClientHttpFactoryFlag",false);
         // compute and store effective namespace URI
@@ -475,7 +475,7 @@ public class MerchantConfig {
         appendPair(sb, "useClientHttpFactoryFlag", useClientHttpFactoryFlag);
         appendPair(sb, "useHttpClient", useHttpClient);
         appendPair(sb, "enableJdkCert", enableJdkCert);
-        appendPair(sb, "cacert", cacert);
+        appendPair(sb, "enableCacert", enableCacert);
         if(useHttpClient){
             appendPair(sb, "allowRetry", allowRetry);
             appendPair(sb, "RetryCount", numberOfRetries);
@@ -568,8 +568,8 @@ public class MerchantConfig {
         this.allowRetry = allowRetry;
     }
     
-    public boolean isCacert() {
-        return cacert;
+    public boolean isenableCacert() {
+        return enableCacert;
     }
     
     public boolean isJdkCertEnabled() {
