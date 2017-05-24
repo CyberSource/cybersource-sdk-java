@@ -268,7 +268,7 @@ public class MerchantConfig {
         proxyUser = getProperty(merchantID, "proxyUser");
         proxyPassword = getProperty(merchantID, "proxyPassword");
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
-        cacert=getBooleanProperty(merchantID, "cacert", false);
+        cacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
         useClientHttpFactoryFlag=getBooleanProperty(merchantID,"useClientHttpFactoryFlag",false);
         // compute and store effective namespace URI
