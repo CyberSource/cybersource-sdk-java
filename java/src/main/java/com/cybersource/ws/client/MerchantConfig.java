@@ -568,7 +568,7 @@ public class MerchantConfig {
         this.allowRetry = allowRetry;
     }
     
-    public boolean isenableCacert() {
+    public boolean isCacertEnabled() {
         return enableCacert;
     }
     
