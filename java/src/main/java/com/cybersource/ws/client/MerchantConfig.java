@@ -50,8 +50,8 @@ public class MerchantConfig {
     private String serverURL;
     private String namespaceURI;
     private String password;
-    private boolean enablejdkcert;
-    private boolean cacert;
+    private boolean enableJdkCert;
+    private boolean enableCacert;
     private boolean enableLog;
     private boolean logSignedData;
     private String logDirectory;
@@ -63,9 +63,17 @@ public class MerchantConfig {
     private int proxyPort;
     private String proxyUser;
     private String proxyPassword;
-    private String cacertpassword;
+    private String cacertPassword;
+    private String useClientHttpFactory;
+    private boolean useClientHttpFactoryFlag;
     
-    // computed values
+    public String getUseClientHttpFactory() {
+		return useClientHttpFactory;
+	}
+    public boolean getUseClientHttpFactoryFlag() {
+		return useClientHttpFactoryFlag;
+	}
+	// computed values
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
     private String effectivePassword;
@@ -80,8 +88,7 @@ public class MerchantConfig {
     // getter methods
     public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
     
-    
-    
+
     public String getMerchantID() {
         return merchantID;
     }
@@ -254,15 +261,16 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
-        
+        useClientHttpFactory = getProperty(merchantID, "useClientHttpFactory");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
         proxyPassword = getProperty(merchantID, "proxyPassword");
-        enablejdkcert = getBooleanProperty(merchantID, "enablejdkcert", false);
-        cacert=getBooleanProperty(merchantID, "cacert", false);
-        cacertpassword=getProperty(merchantID,"cacertpassword","changeit");
+        enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
+        enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
+        cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
+        useClientHttpFactoryFlag=getBooleanProperty(merchantID,"useClientHttpFactoryFlag",false);
         // compute and store effective namespace URI
         
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -463,7 +471,11 @@ public class MerchantConfig {
         appendPair(sb, "logDirectory", logDirectory);
         appendPair(sb, "logFilename", logFilename);
         appendPair(sb, "logMaximumSize", logMaximumSize);
+        appendPair(sb, "useClientHttpFactory", useClientHttpFactory);
+        appendPair(sb, "useClientHttpFactoryFlag", useClientHttpFactoryFlag);
         appendPair(sb, "useHttpClient", useHttpClient);
+        appendPair(sb, "enableJdkCert", enableJdkCert);
+        appendPair(sb, "enableCacert", enableCacert);
         if(useHttpClient){
             appendPair(sb, "allowRetry", allowRetry);
             appendPair(sb, "RetryCount", numberOfRetries);
@@ -556,14 +568,14 @@ public class MerchantConfig {
         this.allowRetry = allowRetry;
     }
     
-    public boolean getcacert() {
-        return cacert;
+    public boolean isCacertEnabled() {
+        return enableCacert;
     }
     
-    public boolean getEnablejdkcert() {
-        return enablejdkcert;
+    public boolean isJdkCertEnabled() {
+        return enableJdkCert;
     }
-    public String getcacertpassword(){
-        return cacertpassword;
+    public String getCacertPassword(){
+        return cacertPassword;
     }
 }
