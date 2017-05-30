@@ -337,7 +337,7 @@ public class MerchantConfig {
     public File getKeyFile()
     throws ConfigException {
         File file;
-    	if (keyFilename == null || keyFilename=="") {
+    	if (StringUtils.isBlank(keyFilename)) {
     		 file = new File(keysDirectory,merchantID + ".p12");
     	}
     	else {
