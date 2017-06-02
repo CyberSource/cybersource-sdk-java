@@ -22,7 +22,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.UUID;
-
+import org.apache.commons.lang3.StringUtils;
 /**
  * An internal class used by the clients to hold and derive the properties
  * applicable to the current transaction.
@@ -336,11 +336,13 @@ public class MerchantConfig {
      */
     public File getKeyFile()
     throws ConfigException {
-        File file = new File(
-                             keysDirectory,
-                             keyFilename != null
-                             ? keyFilename : merchantID + ".p12");
-        //File file = new File("/export/home/sunagara/keys/sec_litle.p12");
+        File file;
+    	if (StringUtils.isBlank(keyFilename)) {
+    		 file = new File(keysDirectory,merchantID + ".p12");
+    	}
+    	else {
+    		file = new File(keysDirectory,keyFilename);
+    	}
         String fullPath = file.getAbsolutePath();
         if (!file.isFile()) {
              throw new ConfigException(

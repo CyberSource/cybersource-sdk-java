@@ -48,6 +48,7 @@ You do not need to download and build the source to use the SDK but if you want 
 - To run the integration tests, edit the [test_cybs.properties](java/src/test/resources/test_cybs.properties) and make the following changes:
   - Set `merchantID`, `keyAlias` and `keyPassword` to your merchantID.  Please note that it is case-sensitive.
   - Set `keysDirectory` to the directory where your key resides.  Use forward-slashes for the directory separator, even on Windows. For example, "c:/keys"
+  - Uncomment & set KeyFilename if you want to use JKS file or if the p12 file name is different from Merchant_ID
   - Optional Additional Changes
     - Set `targetAPIVersion` to the latest version displayed at: https://<cybersource-host>/commerce/1.x/transactionProcessor/. By default, it is set to the latest version when the package was created.
     - Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the `logDirectory` value, even on Windows. The directory you specify must already exist.
