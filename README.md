@@ -1,9 +1,9 @@
-#CyberSource Simple Order API for Java
+# CyberSource Simple Order API for Java
 
 [![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)]
 (https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
-##Package Managers
+## Package Managers
 
 ### Maven
 To install the cybersource-sdk-java from central repository,add dependency to your application pom.xml as below.
@@ -23,28 +23,28 @@ dependencies {
     compile 'com.cybersource:cybersource-sdk-java:6.2.4'
     }
 ````
-##Requirements
+## Requirements
 
 
 1. Java SDK 1.6 and later  
 2. Maven 3 and later  
 3. It is recommended to use Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar) for appropriate JAVA version. For JAVA 7, it is available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
 	
-##Prerequisites
+## Prerequisites
 
 
-######A CyberSource Evaluation account. 
+###### A CyberSource Evaluation account. 
 
 Sign up here:  <http://www.cybersource.com/register>
 
 * Complete your Evaluation account creation by following the instructions in the Registration email
 
-######Transaction Security Keys
+###### Transaction Security Keys
 
 * Create security keys in the Enterprise Business Center (ebctest) after you've created your Merchant Admin account. 
 Refer to our Developer's Guide for details <http://apps.cybersource.com/library/documentation/dev_guides/security_keys/html/wwhelp/wwhimpl/js/html/wwhelp.htm#href=securityKeys_SO_API.4.2.html>.
 
-######JCE Unlimited Strength Jars
+###### JCE Unlimited Strength Jars
 
   Replace your Java installation’s existing security policy files with the new ones you downloaded from the Oracle site:
   
@@ -54,7 +54,7 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 	
 
 
-##Installing the SDK 
+## Installing the SDK 
 
 You do not need to download and build the source to use the SDK but if you want to do that, follow these steps:
 
@@ -107,7 +107,7 @@ You do not need to download and build the source to use the SDK but if you want 
         d. mvn failsafe:integration-test
            // Runs unit and integration tests. Note that integration tests require proper setup of test_cybs.properties
 
-##Testing the SDK 
+## Testing the SDK 
 		
 We have two ways to test, One is using maven tool and other is to download the zip and use scripts to test.
 
@@ -163,7 +163,7 @@ We have two ways to test, One is using maven tool and other is to download the z
 	
 	g.) Now use scripts to test.
 	
-##Message Level Encryption
+## Message Level Encryption
 
 	CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
 
@@ -179,7 +179,7 @@ We have two ways to test, One is using maven tool and other is to download the z
 	Cryptography Algorithms
 		CyberSource utilizes the following algorithms for this implementation. While others may work, the following are validated and recommended. SSL is used for transport security even with encrypted messages. CyberSource asymmetric keys are RSA 2048 keys and therefore your cryptography API should support 2048 bit RSA keys and signatures create with them. The messages are encrypted with a temporary derived key which is used per message. This derived key is AES 256 bit and utilizes CBC blocking mode for encryption. The derived key is encrypted with the recipient ( CyberSource ) public key. The key exchange algorithm used is RSA-OAEP.
   
-##RETRY PATTERN
+## RETRY PATTERN
 
 	Retry Pattern Allows to retry sending a failed request and it will only work with useHttpClient=true, allowRetry flag enables the retry mechanism. 
 	set the value of allowRetry parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant 
@@ -188,7 +188,7 @@ We have two ways to test, One is using maven tool and other is to download the z
 	numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 5. User can set a delay in between the retry attempts. 
 	Config parameter for this property is 'retryInterval' in cybs.property file. The default value for 'retryInterval' parameter is 5 which means a delay of 5 seconds.
 
-##Third Party jars
+## Third Party jars
 	1.) org.apache.ws.security.wss4j:1.6.19
 	    The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications    
 	    from the OASIS Web Services Security TC.
@@ -217,7 +217,7 @@ We have two ways to test, One is using maven tool and other is to download the z
 	8.) org.mockito:mockito-all:1.10.19
 		Mock objects library for java  
 
-##Documentation
+## Documentation
 
 For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>
 
