@@ -286,6 +286,9 @@ public class SecurityUtil {
             String merchantKeyAlias = null;
             try {
                 Enumeration enumKeyStore = keystore.aliases();
+		if(!enumKeyStore.hasMoreElements()){
+                	throw new SignException("Empty Keystore or Missing Certificate ");
+                }
                 while (enumKeyStore.hasMoreElements()) {
                     KeyStore.PrivateKeyEntry keyEntry = null;
                     merchantKeyAlias = (String) enumKeyStore.nextElement();
@@ -332,7 +335,9 @@ public class SecurityUtil {
             Identity identity;
             
             java.security.cert.Certificate[] cert = keystore.getCertificateChain(merchantConfig.getKeyAlias());
-            
+            if (cert == null) {
+                throw new SignException("Empty Keystore or Missing Certificate ");
+            }
             PrivateKey key = null;
             try {
                 key = (PrivateKey)keystore.getKey(merchantConfig.getKeyAlias(), merchantConfig.getKeyAlias().toCharArray());
@@ -361,6 +366,9 @@ public class SecurityUtil {
                 }
             }
             java.security.cert.Certificate serverCert = keystore.getCertificate(SERVER_ALIAS);
+	    if(serverCert == null){
+                	throw new SignException("Missing Server Certificate ");
+                }
             identity = new Identity(merchantConfig,
                                     (X509Certificate) serverCert);
             localKeyStoreHandler
