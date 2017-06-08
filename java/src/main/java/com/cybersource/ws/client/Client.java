@@ -200,7 +200,7 @@ public class Client {
         Document resultDocument = null;
         
         SecurityUtil.loadMerchantP12File(mc,logger);
-        logger.log(Logger.LT_INFO, "Client, End of loadMerchantP12File   ", true);       
+        logger.log(Logger.LT_INFO, "Client, End of loading Merchant Certificates ", true);       
         
         // sign Document object
         resultDocument = SecurityUtil.createSignedDoc(wrappedDoc, mc.getMerchantID(), mc.getKeyPassword(), logger);
