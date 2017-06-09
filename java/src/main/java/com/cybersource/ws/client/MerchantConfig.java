@@ -65,13 +65,13 @@ public class MerchantConfig {
     private String proxyPassword;
     private String cacertPassword;
     private String useClientHttpFactory;
-    private boolean useClientHttpFactoryFlag;
+    private boolean ClientHttpFactoryEnabled;
     
     public String getUseClientHttpFactory() {
 		return useClientHttpFactory;
 	}
-    public boolean getUseClientHttpFactoryFlag() {
-		return useClientHttpFactoryFlag;
+    public boolean isClientHttpFactoryEnabled() {
+		return ClientHttpFactoryEnabled;
 	}
 	// computed values
     private String effectiveServerURL;
@@ -270,7 +270,7 @@ public class MerchantConfig {
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
-        useClientHttpFactoryFlag=getBooleanProperty(merchantID,"useClientHttpFactoryFlag",false);
+        ClientHttpFactoryEnabled=getBooleanProperty(merchantID,"ClientHttpFactoryEnabled",false);
         // compute and store effective namespace URI
         
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -474,7 +474,7 @@ public class MerchantConfig {
         appendPair(sb, "logFilename", logFilename);
         appendPair(sb, "logMaximumSize", logMaximumSize);
         appendPair(sb, "useClientHttpFactory", useClientHttpFactory);
-        appendPair(sb, "useClientHttpFactoryFlag", useClientHttpFactoryFlag);
+        appendPair(sb, "useClientHttpFactoryFlag", ClientHttpFactoryEnabled);
         appendPair(sb, "useHttpClient", useHttpClient);
         appendPair(sb, "enableJdkCert", enableJdkCert);
         appendPair(sb, "enableCacert", enableCacert);

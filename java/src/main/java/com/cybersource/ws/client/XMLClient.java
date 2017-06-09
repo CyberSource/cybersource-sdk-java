@@ -35,6 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 /**
@@ -64,7 +65,8 @@ public class XMLClient {
 
     private static Document soapEnvelope;
     private static Exception initException = null;
-    
+    private static Object client_class_obj;
+    private static Class<Connection> clientclass;
     static {
         try {
             // load the SOAP envelope document.
@@ -137,7 +139,8 @@ public class XMLClient {
      * @throws FaultException  if a fault occurs.
      * @throws ClientException if any other exception occurs.
      */
-    public static Document runTransaction(
+    @SuppressWarnings("unchecked")
+	public static Document runTransaction(
             Document request, Properties props,
             Logger _logger, boolean prepare, boolean logTranStart)
             throws FaultException, ClientException {
@@ -177,8 +180,32 @@ public class XMLClient {
 
             Document signedDoc
                     = soapWrapAndSign(request, mc, builder, logger);
-
-            con = Connection.getInstance(mc, builder, logger);
+            if(mc.isClientHttpFactoryEnabled()){
+				Class<Connection> custom_connection_class;
+				try {
+					custom_connection_class = (Class<Connection>) Class.forName(mc.getUseClientHttpFactory());
+					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class}; 
+					con=custom_connection_class.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
+				    //con=((Connection) client_class_obj).getConnection();
+				} catch (InstantiationException e) {
+					throw new ClientException(e, false, null);
+				} catch (IllegalAccessException e) {
+					throw new ClientException(e, false, null);
+				} catch (ClassNotFoundException e) {
+					throw new ClientException(e, false, null);
+				} catch (IllegalArgumentException e) {
+					throw new ClientException(e, false, null);
+				} catch (SecurityException e) {
+					throw new ClientException(e, false, null);
+				} catch (InvocationTargetException e) {
+					throw new ClientException(e, false, null);
+				} catch (NoSuchMethodException e) {
+					throw new ClientException(e, false, null);
+				}    	
+            }
+            else{
+            	con = Connection.getInstance(mc, builder, logger);
+            }
             Document wrappedReply = con.post(signedDoc);
 
             Document doc = soapUnwrap(wrappedReply, mc, builder, logger);

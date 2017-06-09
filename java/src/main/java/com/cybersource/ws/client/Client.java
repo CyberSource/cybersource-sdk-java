@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.security.KeyStore;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
@@ -90,13 +91,15 @@ public class Client {
      * @throws FaultException  if a fault occurs.
      * @throws ClientException if any other exception occurs.
      */
-    public static Map runTransaction(
+    @SuppressWarnings("unchecked")
+	public static Map runTransaction(
             Map<String, String> request, Properties props,
             Logger _logger, boolean prepare, boolean logTranStart)
             throws FaultException, ClientException {
         MerchantConfig mc;
         LoggerWrapper logger = null;
         Connection con = null;
+        Object client_class_obj;
 
         try {
             setVersionInformation(request);
@@ -122,8 +125,33 @@ public class Client {
 //          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
 //          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
 //          writer.close();
-            
-            con = Connection.getInstance(mc, builder, logger);
+            if(mc.isClientHttpFactoryEnabled()){
+				Class<Connection> custom_connection_class;
+				try {
+					custom_connection_class = (Class<Connection>) Class.forName(mc.getUseClientHttpFactory());
+					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class}; 
+					con=custom_connection_class.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
+				    //con=((Connection) client_class_obj).getConnection();
+				} catch (InstantiationException e) {
+					throw new ClientException(e, false, null);
+				} catch (IllegalAccessException e) {
+					throw new ClientException(e, false, null);
+				} catch (ClassNotFoundException e) {
+					System.out.println("could not load class amazon  "+e);
+					throw new ClientException(e, false, null);
+				} catch (IllegalArgumentException e) {
+					throw new ClientException(e, false, null);
+				} catch (SecurityException e) {
+					throw new ClientException(e, false, null);
+				} catch (InvocationTargetException e) {
+					throw new ClientException(e, false, null);
+				} catch (NoSuchMethodException e) {
+					throw new ClientException(e, false, null);
+				}    	
+            }
+            else{
+            	con = Connection.getInstance(mc, builder, logger);
+            }
             Document wrappedReply = con.post(signedDoc);
             Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
             logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ",false);
