@@ -188,19 +188,25 @@ public class XMLClient {
 					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
 				} catch (InstantiationException e) {
+					logger.log(Logger.LT_INFO, "Failed to Instantiate the class "+e);
 					throw new ClientException(e, false, null);
 				} catch (IllegalAccessException e) {
+					logger.log(Logger.LT_INFO, "Could not Access the method invoked "+e);
 					throw new ClientException(e, false, null);
 				} catch (ClassNotFoundException e) {
 					logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
 					throw new ClientException(e, false, null);
 				} catch (IllegalArgumentException e) {
+					logger.log(Logger.LT_INFO, "Method invoked with Illegal Argument list  "+e);
 					throw new ClientException(e, false, null);
 				} catch (SecurityException e) {
+					logger.log(Logger.LT_INFO, "Security Exception "+e);
 					throw new ClientException(e, false, null);
 				} catch (InvocationTargetException e) {
+					logger.log(Logger.LT_INFO, "Exception occured while calling the method "+e);
 					throw new ClientException(e, false, null);
 				} catch (NoSuchMethodException e) {
+					logger.log(Logger.LT_INFO, "Method not found ");
 					throw new ClientException(e, false, null);
 				}    	
             }
