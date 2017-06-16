@@ -48,7 +48,7 @@ abstract class Connection {
     private final DocumentBuilder builder;
     final LoggerWrapper logger;
 
-    Connection(MerchantConfig mc, DocumentBuilder builder,
+   protected Connection(MerchantConfig mc, DocumentBuilder builder,
                LoggerWrapper logger) {
         this.mc = mc;
         this.builder = builder;

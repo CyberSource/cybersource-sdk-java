@@ -28,10 +28,10 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.w3c.dom.Document;
 
 
-public class AmazonHttpConnection extends Connection{
+public class CustomHttpConnectionClass extends Connection{
 	private PostMethod postMethod = null;
 	
-	AmazonHttpConnection(MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
+	CustomHttpConnectionClass(MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         super(mc, builder, logger);
     }
 	

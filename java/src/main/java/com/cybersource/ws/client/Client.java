@@ -99,7 +99,7 @@ public class Client {
         MerchantConfig mc;
         LoggerWrapper logger = null;
         Connection con = null;
-        Object client_class_obj;
+
 
         try {
             setVersionInformation(request);
@@ -125,19 +125,19 @@ public class Client {
 //          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
 //          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
 //          writer.close();
-            if(mc.isClientHttpFactoryEnabled()){
-				Class<Connection> custom_connection_class;
+            if(mc.iscustomHttpClassEnabled()){
+				Class<Connection> customConnectionClass;
 				try {
-					custom_connection_class = (Class<Connection>) Class.forName(mc.getUseClientHttpFactory());
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
 					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class}; 
-					con=custom_connection_class.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
-				    //con=((Connection) client_class_obj).getConnection();
+					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
+
 				} catch (InstantiationException e) {
 					throw new ClientException(e, false, null);
 				} catch (IllegalAccessException e) {
 					throw new ClientException(e, false, null);
 				} catch (ClassNotFoundException e) {
-					System.out.println("could not load class amazon  "+e);
+					logger.log(Logger.LT_INFO, "Could not load the custom class ");
 					throw new ClientException(e, false, null);
 				} catch (IllegalArgumentException e) {
 					throw new ClientException(e, false, null);

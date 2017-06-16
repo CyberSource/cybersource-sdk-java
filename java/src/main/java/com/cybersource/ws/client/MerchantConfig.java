@@ -64,14 +64,14 @@ public class MerchantConfig {
     private String proxyUser;
     private String proxyPassword;
     private String cacertPassword;
-    private String useClientHttpFactory;
-    private boolean ClientHttpFactoryEnabled;
+    private String customHttpClass;
+    private boolean customHttpClassEnabled;
     
-    public String getUseClientHttpFactory() {
-		return useClientHttpFactory;
+    public String getcustomHttpClass() {
+		return customHttpClass;
 	}
-    public boolean isClientHttpFactoryEnabled() {
-		return ClientHttpFactoryEnabled;
+    public boolean iscustomHttpClassEnabled() {
+		return customHttpClassEnabled;
 	}
 	// computed values
     private String effectiveServerURL;
@@ -261,7 +261,7 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
-        useClientHttpFactory = getProperty(merchantID, "useClientHttpFactory");
+        customHttpClass = getProperty(merchantID, "customHttpClass");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
@@ -270,7 +270,7 @@ public class MerchantConfig {
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
-        ClientHttpFactoryEnabled=getBooleanProperty(merchantID,"ClientHttpFactoryEnabled",false);
+        customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
         // compute and store effective namespace URI
         
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -473,8 +473,8 @@ public class MerchantConfig {
         appendPair(sb, "logDirectory", logDirectory);
         appendPair(sb, "logFilename", logFilename);
         appendPair(sb, "logMaximumSize", logMaximumSize);
-        appendPair(sb, "useClientHttpFactory", useClientHttpFactory);
-        appendPair(sb, "useClientHttpFactoryFlag", ClientHttpFactoryEnabled);
+        appendPair(sb, "customHttpClass", customHttpClass);
+        appendPair(sb, "customHttpClassEnabled", customHttpClassEnabled);
         appendPair(sb, "useHttpClient", useHttpClient);
         appendPair(sb, "enableJdkCert", enableJdkCert);
         appendPair(sb, "enableCacert", enableCacert);

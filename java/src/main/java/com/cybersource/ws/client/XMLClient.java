@@ -65,8 +65,8 @@ public class XMLClient {
 
     private static Document soapEnvelope;
     private static Exception initException = null;
-    private static Object client_class_obj;
-    private static Class<Connection> clientclass;
+
+
     static {
         try {
             // load the SOAP envelope document.
@@ -180,18 +180,19 @@ public class XMLClient {
 
             Document signedDoc
                     = soapWrapAndSign(request, mc, builder, logger);
-            if(mc.isClientHttpFactoryEnabled()){
-				Class<Connection> custom_connection_class;
+            if(mc.iscustomHttpClassEnabled()){
+				Class<Connection> customConnectionClass;
 				try {
-					custom_connection_class = (Class<Connection>) Class.forName(mc.getUseClientHttpFactory());
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
 					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class}; 
-					con=custom_connection_class.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
-				    //con=((Connection) client_class_obj).getConnection();
+					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
+
 				} catch (InstantiationException e) {
 					throw new ClientException(e, false, null);
 				} catch (IllegalAccessException e) {
 					throw new ClientException(e, false, null);
 				} catch (ClassNotFoundException e) {
+					logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
 					throw new ClientException(e, false, null);
 				} catch (IllegalArgumentException e) {
 					throw new ClientException(e, false, null);
