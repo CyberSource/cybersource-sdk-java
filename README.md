@@ -69,6 +69,7 @@ You do not need to download and build the source to use the SDK but if you want 
     - Set customHttpClassEnabled to true to make use of Custom Http Library. 
       - Enter the custom class name in customHttpClass field. Provide the full package name along with the class name.
         example customHttpClass= <packagename.customHttpClass>
+      - The custom HTTP Class must have a three argument constructor which accepts MerchantConfig, DocumentBuilder and LoggerWrapper as argument. Then it should call the constructor of the parent class.
 - Build this project using Maven.
 a. mvn clean  // Cleans the Project
 
