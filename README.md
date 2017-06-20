@@ -68,17 +68,10 @@ You do not need to download and build the source to use the SDK but if you want 
     - Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
 - Build this project using Maven.
-a. mvn clean  // Cleans the Project
-
-b. mvn install 
-// Builds the project and creates a jar file of client SDK
-// Includes running all unit tests and integration tests
-
-c. mvn test
-// Runs unit tests
-
-d. mvn failsafe:integration-test
-// Runs unit and integration tests. Note that integration tests require proper setup of test_cybs.properties
+  - `mvn clean` - Cleans the Project
+  - `mvn install` - Builds the project and creates a jar file of client SDK. Includes running all unit tests and integration tests
+  - `mvn test` - Runs unit tests
+  - `mvn failsafe:integration-test` - Runs unit and integration tests. Note that integration tests require proper setup of `test_cybs.properties`
 
 ## Testing the SDK 
 We have two ways to test -- one is by downloading the zip and using scripts to test; other is using maven tool.
@@ -94,6 +87,7 @@ We have two ways to test -- one is by downloading the zip and using scripts to t
 ```
 Windows:	runSample.bat <service_name>
 Unix or Linux:	runSample.sh <service_name>
+```
   - If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses whatever java is in the path.
   - If the client is installed correctly, the requests and replies for a credit card authorization and a follow-on capture appear.
 - If you make any changes to the `RunSample.java` sample, you must rebuild the sample before using it. Use the `compileSample` batch file or shell script provided in the sample directory.
@@ -109,29 +103,35 @@ Unix or Linux:	runSample.sh <service_name>
 - Edit `cybs.properties` and make the required changes.
 - Now use scripts to test.
 
-##JKS creation
+## JKS creation
 
--To convert the p12 file to JKS follow the steps mentioned below.
+- To convert the p12 file to JKS follow the steps mentioned below.
   - These commands will take out all the certs from the p12 file. 
-  1. openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key
-  2. openssl pkcs12 -in <Merchant_ID>.p12 -clcerts -nokeys -out  <Merchant_ID>.crt
-  3. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt
-  4. openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt
-
--Create a new p12. Here Identity.p12 is the new p12 file
-  -openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey <Merchant_ID>.key -out identity.p12 -name "<Merchant_ID>"
-
--Create JKS from p12 using keytool
-  -keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
-
--Now import the CyberSource_SJC_US.crt to your keystore
-  -keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks
-
--List the entries of your keystore
-  -keytool -list -v -keystore <Your_keystore_name>
-
--It should have two entries. The first entry should contain a chain of two certificates - CyberSourceCertAuth and <Merchant_ID> with alias name <Merchant_ID>
--Second entry should be for CyberSource_SJC_US certificate with alias name as CyberSource_SJC_US
+```
+openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key
+openssl pkcs12 -in <Merchant_ID>.p12 -clcerts -nokeys -out  <Merchant_ID>.crt
+openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt
+openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt
+```
+- Create a new p12. Here `Identity.p12` is the new p12 file
+```
+openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey <Merchant_ID>.key -out identity.p12 -name "<Merchant_ID>"
+```
+- Create JKS from p12 using keytool
+```
+keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
+```
+- Now import the CyberSource_SJC_US.crt to your keystore
+```
+keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks
+```
+- List the entries of your keystore
+```
+keytool -list -v -keystore <Your_keystore_name>
+```
+- It should have two entries.
+  - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
+  - Second entry should be for `CyberSource_SJC_US` certificate with alias name as `CyberSource_SJC_US`
 
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
