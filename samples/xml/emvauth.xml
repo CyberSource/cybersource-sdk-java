@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<requestMessage xmlns="_NSURI_">
+	  <!--Optional:-->
+         
+         <!--Optional:-->
+         <merchantReferenceCode>abc</merchantReferenceCode>
+         	<billTo>
+		<firstName>John</firstName>
+		<lastName>Doe</lastName>
+		<street1>1295 Charleston Road</street1>
+		<city>Mountain View</city>
+		<state>CA</state>
+		<postalCode>94043</postalCode>
+		<country>US</country>
+		<phoneNumber>650-965-6000</phoneNumber>
+		<email>nobody@cybersource.com</email>
+		<ipAddress>10.7.7.7</ipAddress>
+	</billTo>
+		 <item id="0">
+            <!--Optional:-->
+            <unitPrice>1</unitPrice>
+            <!--Optional:-->
+            <quantity>1</quantity>
+            <!--Optional:-->
+            <productSKU>A100</productSKU>
+            <!--Optional:-->
+            <taxAmount>50</taxAmount>
+         </item>
+                  <purchaseTotals>
+		<currency>USD</currency>
+	</purchaseTotals>
+		 <pos>
+            <!--Optional:-->
+            <entryMode>contact</entryMode>
+            <!--Optional:-->
+            <cardPresent>Y</cardPresent>
+            <!--Optional:-->
+            <terminalCapability>1</terminalCapability>
+            <!--Optional:-->
+            <trackData>	%B4111111111111111^SMITH/BETTY^16121200123456789012**XXX******?*;4111111111111111=16121200XXXX00000000?*</trackData>
+            <!--Optional:-->
+            <catLevel>1</catLevel>
+         </pos>
+		 <card>
+		 		<accountNumber>4111111111111111</accountNumber>
+		<expirationMonth>12</expirationMonth>
+		<expirationYear>2020</expirationYear>
+            <cvIndicator>0</cvIndicator>
+            <!--Optional:-->
+            <cardType>001</cardType>
+         </card>
+	<ccAuthService run="true">
+	<commerceIndicator>retail</commerceIndicator>
+	  <mobileRemotePaymentType>1</mobileRemotePaymentType>
+	</ccAuthService>
+		 <emvRequest>
+            <!--Optional:-->
+            <combinedTags>9F3303204000950500000000009F3704518823719F100706011103A000009F26081E1756ED0E2134E29F36020015820200009C01009F1A0208409A030006219F02060000000020005F2A0208409F0306000000000000</combinedTags>
+            <!--Optional:-->
+            <cardSequenceNumber>123</cardSequenceNumber>
+            <!--Optional:-->
+            <fallback></fallback>
+         </emvRequest>
+
+		 </requestMessage>

@@ -26,13 +26,20 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.security.cert.X509Certificate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.security.KeyStore;
+import java.security.cert.PKIXParameters;
+import java.security.cert.TrustAnchor;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -191,8 +198,9 @@ public class Client {
         logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true); 
         
         Document resultDocument = null;
+        
         SecurityUtil.loadMerchantP12File(mc,logger);
-        logger.log(Logger.LT_INFO, "Client, End of loadMerchantP12File   ", true);       
+        logger.log(Logger.LT_INFO, "Client, End of loading Merchant Certificates ", true);       
         
         // sign Document object
         resultDocument = SecurityUtil.createSignedDoc(wrappedDoc, mc.getMerchantID(), mc.getKeyPassword(), logger);

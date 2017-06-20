@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<requestMessage xmlns="_NSURI_">
+
+	<merchantReferenceCode>your_merchant_reference_code
+	</merchantReferenceCode>
+	<item id="0">
+		<unitPrice>12.34</unitPrice>
+	</item>
+	<item id="1">
+		<unitPrice>56.78</unitPrice>
+	</item>
+	<purchaseTotals>
+		<currency>USD</currency>
+	</purchaseTotals>
+	<ccCreditService run="true">
+		<!--Optional: -->
+		<captureRequestID>?</captureRequestID>
+		<!--Optional: -->
+	</ccCreditService>
+</requestMessage>

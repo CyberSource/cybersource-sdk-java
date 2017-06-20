@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<requestMessage xmlns="_NSURI_">
+    
+	<merchantReferenceCode>your_merchant_reference_code</merchantReferenceCode>
+	<billTo>
+		<firstName>John</firstName>
+		<lastName>Doe</lastName>
+		<street1>1295 Charleston Road</street1>
+		<city>Mountain View</city>
+		<state>CA</state>
+		<postalCode>94043</postalCode>
+		<country>US</country>
+		<phoneNumber>650-965-6000</phoneNumber>
+		<email>nobody@cybersource.com</email>
+		<ipAddress>10.7.7.7</ipAddress>
+	</billTo>
+	<shipTo>
+		<firstName>Jane</firstName>
+		<lastName>Doe</lastName>
+		<street1>100 Elm Street</street1>
+		<city>San Mateo</city>
+		<state>CA</state>
+		<postalCode>94401</postalCode>
+		<country>US</country>
+	</shipTo>
+	<item id="0">
+		<unitPrice>1234</unitPrice>
+	</item>
+	<item id="1">
+		<unitPrice>5678</unitPrice>
+	</item>
+	<purchaseTotals>
+		<currency>USD</currency>
+	</purchaseTotals>
+	<card>
+		<accountNumber>4111111111111111</accountNumber>
+		<expirationMonth>12</expirationMonth>
+		<expirationYear>2020</expirationYear>
+	</card>
+
+	<ccAuthService run="true">
+	</ccAuthService>
+	<ccCaptureService run="true">
+	</ccCaptureService>
+</requestMessage>

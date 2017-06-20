@@ -4,7 +4,7 @@ set LOCAL_CP=
 set LOCAL_CP=%LOCAL_CP%;classes
 
 rem ----------------------------------------------------------------------------
-rem Replace cybersource-sdk-java-6.2.4.jar when using Java SDK 1.6 or later.
+rem Replace cybersource-sdk-java-6.2.5.jar when using Java SDK 1.6 or later.
 rem If using this scripts outside zip package then give maven clean install. 
 rem This will generate all required dependencies under target/dependencies.These dependencies are used in CLASSPATH.
 rem ----------------------------------------------------------------------------
@@ -25,8 +25,14 @@ if "%JAVA_HOME%" == "" (
    set JAVA_CMD="%JAVA_HOME%"\bin\java
 )
 
+if /I "%~1"=="" (
+echo No Service Name entered ... Program terminating
+goto eof
+)
+
+
 %JAVA_CMD% -version
-%JAVA_CMD% -cp "%LOCAL_CP%" com.cybersource.sample.AuthSample
+%JAVA_CMD% -cp "%LOCAL_CP%" com.cybersource.sample.RunSample "%~1"
 goto eof
 
 :compile_error

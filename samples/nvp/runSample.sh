@@ -4,7 +4,7 @@ LOCAL_CP=
 LOCAL_CP=$LOCAL_CP:./classes
 
 # -----------------------------------------------------------------------------
-# Replace this with cybersource-sdk-java-6.2.4.jar when using Java SDK 1.6 or later.
+# Replace this with cybersource-sdk-java-6.2.5.jar when using Java SDK 1.6 or later.
 # If using this scripts outside zip package then give maven clean install.
 # This will generate all required dependencies under target/dependencies.These dependencies are used in CLASSPATH.
 # -----------------------------------------------------------------------------
@@ -41,6 +41,13 @@ else
 JAVA_CMD=java
 fi
 
+
+if [ -z "$1" ];
+then
+echo "No service_name was mentioned ... terminating program"
+exit 1
+fi
+
 $JAVA_CMD -version
-$JAVA_CMD -cp "$LOCAL_CP" com.cybersource.sample.AuthCaptureSample
+$JAVA_CMD -cp "$LOCAL_CP" com.cybersource.sample.RunSample $1
 
