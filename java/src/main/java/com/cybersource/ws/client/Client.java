@@ -125,7 +125,7 @@ public class Client {
 //          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
 //          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
 //          writer.close();
-            if(mc.iscustomHttpClassEnabled()){
+            if(mc.isCustomHttpClassEnabled()){
 				Class<Connection> customConnectionClass;
 				try {
 					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());

@@ -180,7 +180,7 @@ public class XMLClient {
 
             Document signedDoc
                     = soapWrapAndSign(request, mc, builder, logger);
-            if(mc.iscustomHttpClassEnabled()){
+            if(mc.isCustomHttpClassEnabled()){
 				Class<Connection> customConnectionClass;
 				try {
 					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());

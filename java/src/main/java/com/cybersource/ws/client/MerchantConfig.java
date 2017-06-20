@@ -70,7 +70,7 @@ public class MerchantConfig {
     public String getcustomHttpClass() {
 		return customHttpClass;
 	}
-    public boolean iscustomHttpClassEnabled() {
+    public boolean isCustomHttpClassEnabled() {
 		return customHttpClassEnabled;
 	}
 	// computed values

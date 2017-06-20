@@ -1,5 +1,6 @@
 package com.cybersource.ws.client;
 
+import com.cybersource.ws.client.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -183,3 +184,4 @@ public class CustomHttpConnectionClass extends Connection{
     }
 
 }
+
