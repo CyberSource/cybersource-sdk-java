@@ -261,7 +261,7 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
-        customHttpClass = getProperty(merchantID, "customHttpClass");
+        customHttpClass = getProperty(merchantID, "customHttpClass"," ");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
