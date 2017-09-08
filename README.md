@@ -94,14 +94,16 @@ We have two ways to test -- one is by downloading the zip and using scripts to t
   - If you want to test XML, go to the `cybersource-sdk-java-master/samples/xml` directory.
 - Use `compileSample` scripts to create classes directory as it is not included in SDK.
 - Then at a command prompt, type this line:
-```
-Windows:	runSample.bat <service_name>
-Unix or Linux:	runSample.sh <service_name>
-  - If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses whatever java is in the path.
-  - If the client is installed correctly, the requests and replies for a credit card authorization and a follow-on capture appear.
+
+      Windows:	runSample.bat <service_name>
+      Unix or Linux:	runSample.sh <service_name>
+
+- If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses whatever java is in the path.
+- If the client is installed correctly, the requests and replies for a credit card authorization and a follow-on capture appear.
 - If you make any changes to the `RunSample.java` sample, you must rebuild the sample before using it. Use the `compileSample` batch file or shell script provided in the sample directory.
 
 ### Using samples and maven tool
+
 - Clone/Download the code from GitHub.
 - Choosing which sample to test:
   - If you want to test Name-Value Pair, `cd` to the `cybersource-sdk-java-master/samples/nvp` directory.
@@ -112,7 +114,7 @@ Unix or Linux:	runSample.sh <service_name>
 - Edit `cybs.properties` and make the required changes.
 - Now use scripts to test.
 
-##JKS creation
+## JKS creation
 
 -To convert the p12 file to JKS follow the steps mentioned below.
   - These commands will take out all the certs from the p12 file. 
