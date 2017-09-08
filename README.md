@@ -94,14 +94,16 @@ We have two ways to test -- one is by downloading the zip and using scripts to t
   - If you want to test XML, go to the `cybersource-sdk-java-master/samples/xml` directory.
 - Use `compileSample` scripts to create classes directory as it is not included in SDK.
 - Then at a command prompt, type this line:
-```
-Windows:	runSample.bat <service_name>
-Unix or Linux:	runSample.sh <service_name>
-  - If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses whatever java is in the path.
-  - If the client is installed correctly, the requests and replies for a credit card authorization and a follow-on capture appear.
+
+      Windows:	runSample.bat <service_name>
+      Unix or Linux:	runSample.sh <service_name>
+
+- If JAVA_HOME is defined, the script uses <JAVA_HOME>/bin/java. Otherwise, it uses whatever java is in the path.
+- If the client is installed correctly, the requests and replies for a credit card authorization and a follow-on capture appear.
 - If you make any changes to the `RunSample.java` sample, you must rebuild the sample before using it. Use the `compileSample` batch file or shell script provided in the sample directory.
 
 ### Using samples and maven tool
+
 - Clone/Download the code from GitHub.
 - Choosing which sample to test:
   - If you want to test Name-Value Pair, `cd` to the `cybersource-sdk-java-master/samples/nvp` directory.
@@ -112,7 +114,7 @@ Unix or Linux:	runSample.sh <service_name>
 - Edit `cybs.properties` and make the required changes.
 - Now use scripts to test.
 
-##JKS creation
+## JKS creation
 
 -To convert the p12 file to JKS follow the steps mentioned below.
   - These commands will take out all the certs from the p12 file. 
@@ -177,6 +179,47 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       JUnit is a unit testing framework for Java.
     9. org.mockito:mockito-all:1.10.19
       Mock objects library for java  
+
+## Changes
+
+Version Cybersource-sdk-java 6.2.5(TBD)
+_______________________________
+  1) Merchant cert to be read from JAVA key store. Flag is added to enable reading cert from Java keystore.
+  2) Added Custom HttpClient feature. Merchants can use there own http client instead of defaults which comes with SDK.
+  3) Http Client connection reuse issue.
+  4) Changed clientLibrary version to 6.2.5, in 6.2.4 release it was missed. So, in 6.2.4 release, clientLibrary version was      pointing to 6.2.3.
+  
+Version Cybersource-sdk-java 6.2.4(Dec 15, 2016)
+_______________________________
+  1) RetryPattern config for http client.
+  2) Code review comments.
+  3) Added timers to log the method execution time.
+  4) Sample added to support other services.
+  
+Version Cybersource-sdk-java 6.2.3(Oct 17, 2016)
+_______________________________
+  1) Fixed performance issue, In case of multiple merchantIDs, p12 was getting loaded for every request.
+  2) p12 will be loaded once per merchantId.
+
+Version Cybersource-sdk-java 6.2.2(Sep 15, 2016)
+_______________________________
+  1)Upgraded 3rd party dependencies jars including wss4j.
+
+Version Cybersource-sdk-java 6.2.1(Aug 4, 2016)
+_______________________________
+  1) AkamaiSureroute config parameter introduced
+  2) i18n fix for NVP sample.            
+  3) In Sample/cybs.properties file, targetAPIVersion changed to latest 1.129.
+
+Version Cybersource-sdk-java 6.2.0(Jul 28, 2016)
+_______________________________
+  1) MLE[Message Level Encryption] is enabled.
+  2) published zip file with samples and packaged compiled cybersoruce-sdk-java jar file.
+  3) Bouncycastle jar issue, changed scope from provided to default"scope"
+
+Version Cybersource-sdk-java 6.1.0(Feb 24,2016)
+_______________________________
+  1) SHA256 changes which is required to signed the request with SHA256.
 
 ## Documentation
 - For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>.
