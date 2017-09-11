@@ -64,14 +64,14 @@ public class MerchantConfig {
     private String proxyUser;
     private String proxyPassword;
     private String cacertPassword;
-    private String customHttpClass;
-    private boolean customHttpClassEnabled;
+    private String useClientHttpFactory;
+    private boolean useClientHttpFactoryFlag;
     
-    public String getcustomHttpClass() {
-		return customHttpClass;
+    public String getUseClientHttpFactory() {
+		return useClientHttpFactory;
 	}
-    public boolean isCustomHttpClassEnabled() {
-		return customHttpClassEnabled;
+    public boolean getUseClientHttpFactoryFlag() {
+		return useClientHttpFactoryFlag;
 	}
 	// computed values
     private String effectiveServerURL;
@@ -261,7 +261,7 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
-        customHttpClass = getProperty(merchantID, "customHttpClass");
+        useClientHttpFactory = getProperty(merchantID, "useClientHttpFactory");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
@@ -270,7 +270,7 @@ public class MerchantConfig {
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
-        customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
+        useClientHttpFactoryFlag=getBooleanProperty(merchantID,"useClientHttpFactoryFlag",false);
         // compute and store effective namespace URI
         
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -473,8 +473,8 @@ public class MerchantConfig {
         appendPair(sb, "logDirectory", logDirectory);
         appendPair(sb, "logFilename", logFilename);
         appendPair(sb, "logMaximumSize", logMaximumSize);
-        appendPair(sb, "customHttpClass", customHttpClass);
-        appendPair(sb, "customHttpClassEnabled", customHttpClassEnabled);
+        appendPair(sb, "useClientHttpFactory", useClientHttpFactory);
+        appendPair(sb, "useClientHttpFactoryFlag", useClientHttpFactoryFlag);
         appendPair(sb, "useHttpClient", useHttpClient);
         appendPair(sb, "enableJdkCert", enableJdkCert);
         appendPair(sb, "enableCacert", enableCacert);
