@@ -66,10 +66,7 @@ You do not need to download and build the source to use the SDK but if you want 
       - Number of retry parameter should be set between 1 to 5. Any other value will throw an Error Message.
       - Refer to the [Retry Pattern](README.md#retry-pattern) section below.
     - Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
-    - Set customHttpClassEnabled to true to make use of Custom Http Library. 
-      - Enter the custom class name in customHttpClass field. Provide the full package name along with the class name.
-        example customHttpClass= <packagename.customHttpClass>
-      - The custom HTTP Class must have a three argument constructor which accepts MerchantConfig, DocumentBuilder and LoggerWrapper as argument. Then it should call the constructor of the parent class.
+
 - Build this project using Maven.
   - `mvn clean` - Cleans the Project
   - `mvn install` - Builds the project and creates a jar file of client SDK. Includes running all unit tests and integration tests
@@ -96,7 +93,6 @@ Unix or Linux:	runSample.sh <service_name>
 - If you make any changes to the `RunSample.java` sample, you must rebuild the sample before using it. Use the `compileSample` batch file or shell script provided in the sample directory.
 
 ### Using samples and maven tool
-
 - Clone/Download the code from GitHub.
 - Choosing which sample to test:
   - If you want to test Name-Value Pair, `cd` to the `cybersource-sdk-java-master/samples/nvp` directory.
@@ -111,31 +107,31 @@ Unix or Linux:	runSample.sh <service_name>
 
 - To convert the p12 file to JKS follow the steps mentioned below.
   - These commands will take out all the certs from the p12 file. 
-  1. `openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key`
-  2. `openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out  <Merchant_ID>.crt`
-  3. `openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt`
-  4. `openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt`
-
-- Create a new p12. Here Identity.p12 is the new p12 file
+```
+openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key
+openssl pkcs12 -in <Merchant_ID>.p12 -clcerts -nokeys -out  <Merchant_ID>.crt
+openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt
+openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt
+```
+- Create a new p12. Here `Identity.p12` is the new p12 file
 ```
 openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -inkey <Merchant_ID>.key -out identity.p12 -name "<Merchant_ID>"
 ```
-
 - Create JKS from p12 using keytool
 ```
-keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>`
+keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
 ```
 - Now import the CyberSource_SJC_US.crt to your keystore
 ```
-keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks`
+keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks
 ```
 - List the entries of your keystore
 ```
-keytool -list -v -keystore <Your_keystore_name>`
+keytool -list -v -keystore <Your_keystore_name>
 ```
 - It should have two entries.
   - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
-  - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
+  - Second entry should be for `CyberSource_SJC_US` certificate with alias name as `CyberSource_SJC_US`
 
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
@@ -155,7 +151,7 @@ CyberSource supports Message Level Encryption (MLE) for Simple Order API. Messag
 ## Retry Pattern
 
 Retry Pattern allows to retry sending a failed request and it will only work with `useHttpClient=true`. `allowRetry` flag enables the retry mechanism. 
-  - Set the value of `allowRetry` parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant in the config parameter 'numberOfRetries'.
+- Set the value of `allowRetry` parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant in the config parameter 'numberOfRetries'.
   - numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 5. User can set a delay in between the retry attempts.
   - Config parameter for this property is 'retryInterval' in `cybs.property` file. The default value for 'retryInterval' parameter is 5 which means a delay of 5 seconds.
 
@@ -178,47 +174,6 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       JUnit is a unit testing framework for Java.
     9. org.mockito:mockito-all:1.10.19
       Mock objects library for java  
-
-## Changes
-
-Version Cybersource-sdk-java 6.2.5 (TBD)
-_______________________________
-  1) Merchant cert to be read from JAVA key store. Flag is added to enable reading cert from Java keystore.
-  2) Added Custom HttpClient feature. Merchants can use there own http client instead of defaults which comes with SDK.
-  3) Http Client connection reuse issue.
-  4) Changed clientLibrary version to 6.2.5; in 6.2.4 release it was missed. So, in 6.2.4 release, clientLibrary version was      pointing to 6.2.3.
-_______________________________  
-Version Cybersource-sdk-java 6.2.4 (Dec 15, 2016)
-_______________________________
-  1) RetryPattern config for http client.
-  2) Code review comments.
-  3) Added timers to log the method execution time.
-  4) Sample added to support other services.
-_______________________________
-Version Cybersource-sdk-java 6.2.3 (Oct 17, 2016)
-_______________________________
-  1) Fixed performance issue; in case of multiple merchantIDs, p12 was getting loaded for every request.
-  2) p12 will be loaded once per merchantId.
-_______________________________
-Version Cybersource-sdk-java 6.2.2 (Sep 15, 2016)
-_______________________________
-  1)Upgraded 3rd party dependencies jars including wss4j.
-_______________________________
-Version Cybersource-sdk-java 6.2.1 (Aug 4, 2016)
-_______________________________
-  1) AkamaiSureroute config parameter introduced
-  2) i18n fix for NVP sample.            
-  3) In `Sample/cybs.properties` file, `targetAPIVersion` changed to latest 1.129.
-_______________________________
-Version Cybersource-sdk-java 6.2.0 (Jul 28, 2016)
-_______________________________
-  1) MLE[Message Level Encryption] is enabled.
-  2) published zip file with samples and packaged compiled cybersoruce-sdk-java jar file.
-  3) `Bouncycastle` jar issue; changed scope from provided to default"scope"
-_______________________________
-Version Cybersource-sdk-java 6.1.0 (Feb 24,2016)
-_______________________________
-  1) SHA256 changes which are required to signed the request with SHA256.
 
 ## Documentation
 - For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>.

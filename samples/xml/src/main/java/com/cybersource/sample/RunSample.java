@@ -49,16 +49,12 @@ public class RunSample {
 		
 		case 0:
 			authReply = runAuth(props, "auth");
-			if(authReply==null)
-				break;
 			requestID = getRequestID(authReply);
 			decision = getDecisonCode(authReply);
 			break;
 			
 		case 1:
 			authReply = runAuth(props, "auth");
-			if(authReply==null)
-				break;
 			requestID = getRequestID(authReply);
 			decision = getDecisonCode(authReply);
 			if (!(("null".equals(requestID)) && (decision
@@ -69,16 +65,12 @@ public class RunSample {
 			
 		case 2:
 			authReply = runAuthEMV(props, "emvauth");
-				if(authReply==null)
-					break;
 			requestID = getRequestID(authReply);
 			decision = getDecisonCode(authReply);
 			break;
 			
 		case 3:
 			authReply = runAuth(props, "auth");
-				if(authReply==null)
-				break;
 			requestID = getRequestID(authReply);
 			decision = getDecisonCode(authReply);
 			captureReply = runCapture(props, requestID, "capture");
@@ -90,8 +82,6 @@ public class RunSample {
 
 		case 4:
 			authReply = runAuth(props, "auth");
-				if(authReply=null)
-				break;
 			requestID = getRequestID(authReply);
 			decision = getDecisonCode(authReply);
 			if (!(("null".equals(requestID)) && "decline".equalsIgnoreCase(decision))) 

@@ -71,12 +71,8 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
     k. "allowRetry" config parameter will only work for HttpClient. Set allowRetry config parameter to "true" to enable retry mechanism and set merchant specific values for the retry. 
        Set integer values for config parameter numberOfRetries & retryInterval. Retry Interval is time delay for next retry in seconds. number of retry parameter should be set between
        1 to 5 any other value will throw an Error Message. Refer to the "Retry Pattern" section below.
-       
-    l. Set customHttpClassEnabled to true to make us of Custom Http Library. 
-     	- Enter the custom class name in customHttpClass field. Provide the full package name along with the class name.
-       	  example customHttpClass= <packagename.customHttpClass>   
 	
-    m. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
+    l. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
 ##Testing the Client
 1.) Unzip the downloaded zip file into a directory of your choice.  It will create a directory called 

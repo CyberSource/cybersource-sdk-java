@@ -47,15 +47,8 @@ abstract class Connection {
     final MerchantConfig mc;
     private final DocumentBuilder builder;
     final LoggerWrapper logger;
-    
-   /**
-    * It initializes three arguments MerchantConfig, DocumentBuilder and Logger
-    * Any class extending this class must implement three argument constructor
-    * @param mc
-    * @param builder
-    * @param logger
- */
-protected Connection(MerchantConfig mc, DocumentBuilder builder,
+
+    Connection(MerchantConfig mc, DocumentBuilder builder,
                LoggerWrapper logger) {
         this.mc = mc;
         this.builder = builder;

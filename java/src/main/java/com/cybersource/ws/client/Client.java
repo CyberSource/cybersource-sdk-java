@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.security.KeyStore;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
@@ -91,15 +90,13 @@ public class Client {
      * @throws FaultException  if a fault occurs.
      * @throws ClientException if any other exception occurs.
      */
-    @SuppressWarnings("unchecked")
-	public static Map runTransaction(
+    public static Map runTransaction(
             Map<String, String> request, Properties props,
             Logger _logger, boolean prepare, boolean logTranStart)
             throws FaultException, ClientException {
         MerchantConfig mc;
         LoggerWrapper logger = null;
         Connection con = null;
-
 
         try {
             setVersionInformation(request);
@@ -125,39 +122,8 @@ public class Client {
 //          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
 //          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
 //          writer.close();
-            if(mc.isCustomHttpClassEnabled()){
-				Class<Connection> customConnectionClass;
-				try {
-					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
-					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class}; 
-					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
-
-				} catch (InstantiationException e) {
-					logger.log(Logger.LT_INFO, "Failed to Instantiate the class "+e);
-					throw new ClientException(e, false, null);
-				} catch (IllegalAccessException e) {
-					logger.log(Logger.LT_INFO, "Could not Access the method invoked "+e);
-					throw new ClientException(e, false, null);
-				} catch (ClassNotFoundException e) {
-					logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
-					throw new ClientException(e, false, null);
-				} catch (IllegalArgumentException e) {
-					logger.log(Logger.LT_INFO, "Method invoked with Illegal Argument list  "+e);
-					throw new ClientException(e, false, null);
-				} catch (SecurityException e) {
-					logger.log(Logger.LT_INFO, "Security Exception "+e);
-					throw new ClientException(e, false, null);
-				} catch (InvocationTargetException e) {
-					logger.log(Logger.LT_INFO, "Exception occured while calling the method "+e);
-					throw new ClientException(e, false, null);
-				} catch (NoSuchMethodException e) {
-					logger.log(Logger.LT_INFO, "Method not found ");
-					throw new ClientException(e, false, null);
-				}  	
-            }
-            else{
-            	con = Connection.getInstance(mc, builder, logger);
-            }
+            
+            con = Connection.getInstance(mc, builder, logger);
             Document wrappedReply = con.post(signedDoc);
             Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
             logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ",false);
