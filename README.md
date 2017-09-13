@@ -112,7 +112,7 @@ Unix or Linux:	runSample.sh <service_name>
 - To convert the p12 file to JKS follow the steps mentioned below.
   - These commands will take out all the certs from the p12 file. 
   1. `openssl pkcs12 -in <Merchant_ID>.p12 -nocerts -out <Merchant_ID>.key`
-  2. `openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out  <Merchant_ID>.crt`
+  2. `openssl pkcs12 -in <Merchant_ID>.p12 -clcerts -nokeys -out  <Merchant_ID>.crt`
   3. `openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSourceCertAuth.crt`
   4. `openssl pkcs12 -in <Merchant_ID>.p12 -cacerts -nokeys -out CyberSource_SJC_US.crt`
 
@@ -123,11 +123,11 @@ openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -
 
 - Create JKS from p12 using keytool
 ```
-keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>`
+keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
 ```
 - Now import the CyberSource_SJC_US.crt to your keystore
 ```
-keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks`
+keytool -importcert -trustcacerts -file CyberSource_SJC_US.crt -alias CyberSource_SJC_US -keystore <Your_keystore_name>.jks
 ```
 - List the entries of your keystore
 ```

@@ -90,7 +90,7 @@ public class RunSample {
 
 		case 4:
 			authReply = runAuth(props, "auth");
-				if(authReply=null)
+				if(authReply==null)
 				break;
 			requestID = getRequestID(authReply);
 			decision = getDecisonCode(authReply);
