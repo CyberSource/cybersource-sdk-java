@@ -181,7 +181,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.5 (TBD)
+Version Cybersource-sdk-java 6.2.5 (OCT,2017)
 _______________________________
   1) Merchant cert to be read from JAVA key store. Flag is added to enable reading cert from Java keystore.
   2) Added Custom HttpClient feature. Merchants can use there own http client instead of defaults which comes with SDK.
