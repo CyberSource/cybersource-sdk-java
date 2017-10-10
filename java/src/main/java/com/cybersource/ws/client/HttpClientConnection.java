@@ -60,7 +60,13 @@ class HttpClientConnection extends Connection {
             throws IOException, TransformerConfigurationException,
             TransformerException, MalformedURLException,
             ProtocolException {
-        HttpClient httpClient = new HttpClient();
+    	
+    	/*
+    	 * SimpleHttpConnectionManager(boolean alwaysClose) : 
+    	 * alwaysClose - if set true, the connection manager will always close connections upon release.
+    	 */
+    	
+        HttpClient httpClient = new HttpClient(new SimpleHttpConnectionManager(true));
         setTimeout(httpClient, mc.getTimeout() * 1000);
         setProxy(httpClient);
 
