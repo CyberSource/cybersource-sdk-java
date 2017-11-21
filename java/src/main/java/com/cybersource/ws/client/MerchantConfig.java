@@ -66,6 +66,7 @@ public class MerchantConfig {
     private String cacertPassword;
     private String customHttpClass;
     private boolean customHttpClassEnabled;
+    private boolean identitiesCacheEnabled;
     
     public String getcustomHttpClass() {
 		return customHttpClass;
@@ -182,7 +183,11 @@ public class MerchantConfig {
     public String getProxyPassword() {
         return proxyPassword != null ? proxyPassword : "";
     }
-    
+
+    public boolean isIdentitiesCacheEnabled() {
+        return identitiesCacheEnabled;
+    }
+
     /**
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
@@ -271,8 +276,9 @@ public class MerchantConfig {
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
         customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
+        identitiesCacheEnabled=getBooleanProperty(merchantID,"identitiesCacheEnabled",true);
         // compute and store effective namespace URI
-        
+
         if (namespaceURI == null && targetAPIVersion == null) {
             throw new ConfigException("namespaceURI or targetAPIVersion must be supplied.");
         }
@@ -495,6 +501,7 @@ public class MerchantConfig {
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
+        appendPair(sb, "identitiesCacheEnabled", identitiesCacheEnabled);
         return (sb.toString());
     }
     

@@ -23,7 +23,6 @@ import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
@@ -79,10 +78,11 @@ public class SecurityUtil {
      */
     public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException {
         
-        // Load the KeyStore and get the signing key and certificate do this once only
+        // Load the KeyStore and get the signing key and certificate
         // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
-        
-        if(identities.get(merchantConfig.getMerchantID()) == null){
+        // set merchantConfig's 'identitiesCacheEnabled' value to false (default is true) to force reload of the P12 key on every call
+
+        if(!merchantConfig.isIdentitiesCacheEnabled() || identities.get(merchantConfig.getMerchantID()) == null){
             try {
                 if (localKeyStoreHandler == null)
                     initKeystore();
