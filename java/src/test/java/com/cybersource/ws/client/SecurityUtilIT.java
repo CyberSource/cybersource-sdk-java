@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.security.KeyFactory;
@@ -119,6 +120,8 @@ public class SecurityUtilIT {
     
     @Test
     public void testSoapWrapSignedAndEncrypt() throws Exception {
+    	Thread.sleep(30000);
+    	
     	Document signedDoc = SecurityUtil.createSignedDoc(wrappedDoc,config.getMerchantID(),config.getKeyPassword(),logger);
         NodeList signatureElement = signedDoc.getElementsByTagName("wsse:Security");
         assert (signatureElement.getLength() >= 1);
@@ -178,5 +181,28 @@ public class SecurityUtilIT {
         return privateKey;
     }
     
+    @Test
+    public void testLoadMerchantP12File() throws Exception{
+    	
+    	
+    	Identity identity = Mockito.mock(Identity.class);
+    	//MerchantConfig config=Mockito.mock(MerchantConfig.class);
+    	File keyFile=config.getKeyFile();
+    	boolean value=(config.getMerchantID() == null || !(identity.isValid(keyFile)));
+    	assert(value==true);
+		if (value == true) {
 
-}
+			logger.log(Logger.LT_INFO, "Condition valid");
+
+		} else {
+
+			logger.log(Logger.LT_INFO, "Condition false");
+		}
+    		
+    	}
+    	
+    	
+    }
+    
+
+
