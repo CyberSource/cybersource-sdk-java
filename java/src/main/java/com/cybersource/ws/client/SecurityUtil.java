@@ -48,6 +48,8 @@ public class SecurityUtil {
     
     private static BouncyCastleProvider bcProvider = new BouncyCastleProvider();
     
+   
+    
     
     // This is loaded by WSS4J but since we use it lets make sure its here
     static {
@@ -77,12 +79,15 @@ public class SecurityUtil {
      * @throws IOException
      * @throws CredentialException
      */
-    public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException {
+    public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException, ConfigException {
         
         // Load the KeyStore and get the signing key and certificate do this once only
         // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
-        
-        if(identities.get(merchantConfig.getMerchantID()) == null){
+       
+			
+		
+        Identity identitys=identities.get(merchantConfig.getMerchantID());
+        if(identities.get(merchantConfig.getMerchantID()) == null || !(identitys.isValid(merchantConfig.getKeyFile()))){
             try {
                 if (localKeyStoreHandler == null)
                     initKeystore();

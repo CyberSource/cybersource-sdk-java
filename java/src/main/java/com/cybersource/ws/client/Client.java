@@ -212,12 +212,13 @@ public class Client {
      * @throws SignException if signing fails.
      * @throws SAXException 
      * @throws SignEncryptException 
+     * @throws ConfigException 
      */
     private static Document soapWrapAndSign(
             Map request, MerchantConfig mc, DocumentBuilder builder,
             LoggerWrapper logger)
             throws
-            IOException, SignException, SAXException, SignEncryptException {
+            IOException, SignException, SAXException, SignEncryptException, ConfigException {
         boolean logSignedData = mc.getLogSignedData();
         if (!logSignedData) {
             logger.log(

@@ -355,11 +355,12 @@ public class XMLClient {
      * @return signed document.
      * @throws SignException if signing fails.
      * @throws SignEncryptException 
+     * @throws ConfigException 
      */
     private static Document soapWrapAndSign(
             Document doc, MerchantConfig mc, DocumentBuilder builder,
             LoggerWrapper logger)
-            throws SignException, SignEncryptException {
+            throws SignException, SignEncryptException, ConfigException {
     	boolean logSignedData = mc.getLogSignedData();
         
     	if (!logSignedData) {

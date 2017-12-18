@@ -9,6 +9,7 @@
  */
 package com.cybersource.ws.client;
 
+import java.io.File;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -35,8 +36,14 @@ public class Identity {
     private PrivateKey privateKey;
     
     private MerchantConfig merchantConfig;
+
+	private long lastModifiedDate;
     
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
+    
+    Logger logger;
+    
+    
     
     /**
      * Creates an Identity instance.this type of the instance can
@@ -93,7 +100,21 @@ public class Identity {
         this.merchantConfig = merchantConfig;
         this.x509Cert = x509Certificate;
         this.privateKey = privateKey;
+        try {
+			this.lastModifiedDate=merchantConfig.getKeyFile().lastModified();
+		} catch (ConfigException e) {
+			logger.log(Logger.LT_EXCEPTION,
+                    "Identity object ,cannot instantiate with key file lastModifiedDate. "
+                    + e.getMessage());
+         throw new SignException(e.getMessage());
+		}
         setUpMerchant();
+    }
+    
+    public boolean isValid(File keyFile)
+    {
+    	
+       return this.lastModifiedDate == keyFile.lastModified();
     }
     
     private void setUpMerchant() throws SignException {
