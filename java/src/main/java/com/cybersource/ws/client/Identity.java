@@ -41,7 +41,9 @@ public class Identity {
     
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
     
-    Logger logger;
+    Logger logger = new LoggerImpl(merchantConfig);
+    
+    
     
     
     
@@ -103,6 +105,7 @@ public class Identity {
         try {
 			this.lastModifiedDate=merchantConfig.getKeyFile().lastModified();
 		} catch (ConfigException e) {
+			
 			logger.log(Logger.LT_EXCEPTION,
                     "Identity object ,cannot instantiate with key file lastModifiedDate. "
                     + e.getMessage());

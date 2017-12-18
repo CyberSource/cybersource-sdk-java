@@ -86,8 +86,8 @@ public class SecurityUtil {
        
 			
 		
-        Identity identitys=identities.get(merchantConfig.getMerchantID());
-        if(identities.get(merchantConfig.getMerchantID()) == null || !(identitys.isValid(merchantConfig.getKeyFile()))){
+        Identity identity=identities.get(merchantConfig.getMerchantID());
+        if(identity == null || !(identity.isValid(merchantConfig.getKeyFile()))){
             try {
                 if (localKeyStoreHandler == null)
                     initKeystore();
