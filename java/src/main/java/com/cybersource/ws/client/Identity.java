@@ -41,7 +41,7 @@ public class Identity {
     
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
     
-    Logger logger = new LoggerImpl(merchantConfig);
+    private Logger logger = null;
     
     
     
@@ -55,9 +55,12 @@ public class Identity {
      * @param x509Certificate
      * @throws SignException
      */
-    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate) throws SignException {
+    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate,Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert=x509Certificate;
+        if(this.logger == null){
+        	this.logger=logger;
+        }
         if(merchantConfig.isJdkCertEnabled()){
             setupJdkServerCerts();
         }
@@ -98,10 +101,13 @@ public class Identity {
      * @param privateKey
      * @throws SignException
      */
-    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey) throws SignException {
+    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey,Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert = x509Certificate;
         this.privateKey = privateKey;
+        if(this.logger == null){
+        	this.logger=logger;
+        }
         try {
 			this.lastModifiedDate=merchantConfig.getKeyFile().lastModified();
 		} catch (ConfigException e) {
@@ -109,7 +115,7 @@ public class Identity {
 			logger.log(Logger.LT_EXCEPTION,
                     "Identity object ,cannot instantiate with key file lastModifiedDate. "
                     + e.getMessage());
-         throw new SignException(e.getMessage());
+         throw new SignException("Exception While initializing the merchant identity constructor with keyfile last modified date"+e.getMessage());
 		}
         setUpMerchant();
     }
@@ -117,7 +123,16 @@ public class Identity {
     public boolean isValid(File keyFile)
     {
     	
-       return this.lastModifiedDate == keyFile.lastModified();
+    	if(this.lastModifiedDate == keyFile.lastModified()){
+    		
+    	     logger.log(Logger.LT_INFO, "key files not yet changed");
+    	}
+    	//boolean b=this.lastModifiedDate == keyFile.lastModified();
+    	//String p=String.valueOf(b);
+    	//logger.log(Logger.LT_INFO,"Check the merchant certificate is new " +p);
+       //return b;
+    	//logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
+    	return this.lastModifiedDate == keyFile.lastModified();
     }
     
     private void setUpMerchant() throws SignException {

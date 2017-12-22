@@ -34,9 +34,10 @@ public class IdentityTest{
     	X509Certificate x509Cert = Mockito.mock(X509Certificate.class);
     	Principal principal =  Mockito.mock(Principal.class);
     	PrivateKey pkey = Mockito.mock(PrivateKey.class);
+    	Logger logger = Mockito.mock(Logger.class);
     	Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
     	Mockito.when(principal.getName()).thenReturn(keyAlias);
-    	Identity identity = new Identity(config,x509Cert,pkey);
+    	Identity identity = new Identity(config,x509Cert,pkey,logger);
     	assertEquals(identity.getName(), config.getMerchantID());
     	assertEquals(identity.getSerialNumber(), "400000009910179089277");
     	assertNotNull(identity.getPrivateKey());
@@ -47,9 +48,10 @@ public class IdentityTest{
     	String keyAlias = "CN=CyberSource_SJC_US,SERIALNUMBER=400000009910179089277";
     	X509Certificate x509Cert = Mockito.mock(X509Certificate.class);
     	Principal principal =  Mockito.mock(Principal.class);
+    	Logger logger = Mockito.mock(Logger.class);
     	Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
     	Mockito.when(principal.getName()).thenReturn(keyAlias);
-    	Identity identity = new Identity(config,x509Cert);
+    	Identity identity = new Identity(config,x509Cert,logger);
     	assertEquals(identity.getName(), "CyberSource_SJC_US");
     	assertEquals(identity.getSerialNumber(), "400000009910179089277");
     	assertNull(identity.getPrivateKey());

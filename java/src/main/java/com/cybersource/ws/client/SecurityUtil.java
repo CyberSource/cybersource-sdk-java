@@ -23,7 +23,6 @@ import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,13 +80,13 @@ public class SecurityUtil {
      */
     public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException, ConfigException {
         
-        // Load the KeyStore and get the signing key and certificate do this once only
+        // Load the KeyStore and get the signing key and certificate
         // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
        
 			
 		
         Identity identity=identities.get(merchantConfig.getMerchantID());
-        if(identity == null || !(identity.isValid(merchantConfig.getKeyFile()))){
+        if(!merchantConfig.isCertificateCacheEnabled() || identity == null || !(identity.isValid(merchantConfig.getKeyFile()))){
             try {
                 if (localKeyStoreHandler == null)
                     initKeystore();
@@ -164,12 +163,12 @@ public class SecurityUtil {
                         throw new SignException(e);
                     }
                     
-                    Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey());
+                    Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey(),logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
                     continue;
                 }
-                Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias));
+                Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias),logger);
                 localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                 identities.put(identity.getName(), identity);
             }
@@ -312,12 +311,12 @@ public class SecurityUtil {
                             throw new SignException(e);
                         }
                         
-                        Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey());
+                        Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey(),logger);
                         localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                         identities.put(identity.getName(), identity);
                         continue;
                     }
-                    Identity identity = new Identity(merchantConfig, (X509Certificate) keystore.getCertificate(merchantKeyAlias));
+                    Identity identity = new Identity(merchantConfig, (X509Certificate) keystore.getCertificate(merchantKeyAlias),logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
                 }
@@ -358,13 +357,13 @@ public class SecurityUtil {
                 if (merchantConfig.getKeyAlias().equals(
                                                         keystore.getCertificateAlias(cert[i]))) {
                     identity = new Identity(merchantConfig,
-                                            (X509Certificate) cert[i], key);
+                                            (X509Certificate) cert[i], key,logger);
                     localKeyStoreHandler
                     .addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
                 } else {
                     identity = new Identity(merchantConfig,
-                                            (X509Certificate) cert[i]);
+                                            (X509Certificate) cert[i],logger);
                     localKeyStoreHandler
                     .addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
@@ -375,7 +374,7 @@ public class SecurityUtil {
                 	throw new SignException("Missing Server Certificate ");
                 }
             identity = new Identity(merchantConfig,
-                                    (X509Certificate) serverCert);
+                                    (X509Certificate) serverCert,logger);
             localKeyStoreHandler
             .addIdentityToKeyStore(identity, logger);
             identities.put(identity.getName(), identity);
