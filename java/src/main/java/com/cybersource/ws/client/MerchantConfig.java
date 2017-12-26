@@ -85,9 +85,6 @@ public class MerchantConfig {
     private long retryInterval  = 0;
     private boolean allowRetry=true;
 
-	
-    
-    
     // getter methods
     public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
     

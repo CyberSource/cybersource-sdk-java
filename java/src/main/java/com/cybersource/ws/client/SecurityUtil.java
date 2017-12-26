@@ -47,9 +47,6 @@ public class SecurityUtil {
     
     private static BouncyCastleProvider bcProvider = new BouncyCastleProvider();
     
-   
-    
-    
     // This is loaded by WSS4J but since we use it lets make sure its here
     static {
         Security.addProvider(bcProvider);
@@ -83,8 +80,6 @@ public class SecurityUtil {
         // Load the KeyStore and get the signing key and certificate
         // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
        
-			
-		
         Identity identity=identities.get(merchantConfig.getMerchantID());
         if(!merchantConfig.isCertificateCacheEnabled() || identity == null || !(identity.isValid(merchantConfig.getKeyFile()))){
             try {

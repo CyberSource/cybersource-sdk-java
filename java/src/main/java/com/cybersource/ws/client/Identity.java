@@ -43,10 +43,6 @@ public class Identity {
     
     private Logger logger = null;
     
-    
-    
-    
-    
     /**
      * Creates an Identity instance.this type of the instance can
      * only be used to store server certificate identity.
@@ -120,20 +116,14 @@ public class Identity {
         setUpMerchant();
     }
     
-    public boolean isValid(File keyFile)
-    {
-    	
-    	if(this.lastModifiedDate == keyFile.lastModified()){
-    		
-    	     logger.log(Logger.LT_INFO, "key files not yet changed");
-    	}
-    	//boolean b=this.lastModifiedDate == keyFile.lastModified();
-    	//String p=String.valueOf(b);
-    	//logger.log(Logger.LT_INFO,"Check the merchant certificate is new " +p);
-       //return b;
-    	//logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
-    	return this.lastModifiedDate == keyFile.lastModified();
-    }
+	public boolean isValid(File keyFile) {
+
+		if (this.lastModifiedDate == keyFile.lastModified()) {
+
+			logger.log(Logger.LT_INFO, "key files not yet changed");
+		}
+		return this.lastModifiedDate == keyFile.lastModified();
+	}
     
     private void setUpMerchant() throws SignException {
         if (serialNumber == null && x509Cert != null) {
@@ -273,5 +263,4 @@ public class Identity {
         + serialNumber + ",expiration=" + expireStr+ " }";
 	   }
     
-	   
 }
