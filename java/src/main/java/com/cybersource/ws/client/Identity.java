@@ -117,13 +117,15 @@ public class Identity {
     }
     
 	public boolean isValid(File keyFile) {
+		
+		boolean changeKeyFileStatus=(this.lastModifiedDate == keyFile.lastModified());
 
-		if (this.lastModifiedDate == keyFile.lastModified()) {
+		if (!changeKeyFileStatus) {
 
-			logger.log(Logger.LT_INFO, "key files not yet changed");
-			logger.log(Logger.LT_INFO, "Timestamp of Current file:"+this.lastModifiedDate);	
+			logger.log(Logger.LT_INFO, "Key file changed");
+			logger.log(Logger.LT_INFO, "Timestamp of current key file:"+this.lastModifiedDate);	
 		}
-		return this.lastModifiedDate == keyFile.lastModified();
+		return changeKeyFileStatus;
 	}
     
     private void setUpMerchant() throws SignException {
