@@ -116,6 +116,11 @@ public class Identity {
         setUpMerchant();
     }
     
+    /**
+     * Replace of merchant certificate not happened at runtime then isValid method will return true and certificate reload will not happen.
+     * But replace of merchant certificate happened at at runtime then isValid method will return false and certificate reload will happen.
+    */
+    
 	public boolean isValid(File keyFile) {
 		
 		boolean changeKeyFileStatus=(this.lastModifiedDate == keyFile.lastModified());

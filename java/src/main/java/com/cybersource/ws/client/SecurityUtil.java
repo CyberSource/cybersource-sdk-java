@@ -67,6 +67,13 @@ public class SecurityUtil {
     /**
      * Method loads the Merchant P12 key.
      *  IMPORTANT :This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
+     *
+     *CertificateCacheEnabled : If it is true then only first time merchant p12 file will be loaded.
+     *							If it is false then every time merchant p12 file will be loaded.
+     *
+     *isValid() method checks : If this method returns true that means existing certificate is valid and reload of merchant p12 file will not happen.                            
+     *						  : If method returns false that means existing certificate is not valid and reload of new merchant p12 file will happen.
+     *    
      * @param merchantConfig - Merchant Config
      * @param logger - logger instance
      * @throws SignException - Signature exception
@@ -76,10 +83,7 @@ public class SecurityUtil {
      * @throws CredentialException
      */
     public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException, ConfigException {
-        
-        // Load the KeyStore and get the signing key and certificate
-        // This change is made based on the assumptions that at point of time , a merchant will have only one P12 Key
-       
+               
         Identity identity=identities.get(merchantConfig.getMerchantID());
         if(!merchantConfig.isCertificateCacheEnabled() || identity == null || !(identity.isValid(merchantConfig.getKeyFile()))){
             try {

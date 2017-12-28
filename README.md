@@ -182,12 +182,18 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.6 (OCT,2017)
+Version Cybersource-sdk-java 6.2.6 (JAN,2018)
+_______________________________
+  1) Added certificateCacheEnabled optional feature. certificateCacheEnabled parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made.If the certificateCacheEnabled is true then only at the begining time certificate of a merchant will loaded from filesystem.
+  2) Intreduced a new feature to check merchant .p12 certificate file validity at run time.If it is not valid and replaced at runtime then SDK will be able to reload the new certificate data into cache.
+  3) Changed clientLibrary version to 6.2.6;
+
+Version Cybersource-sdk-java 6.2.5 (OCT,2017)
 _______________________________
   1) Merchant cert to be read from JAVA key store. Flag is added to enable reading cert from Java keystore.
   2) Added Custom HttpClient feature. Merchants can use there own http client instead of defaults which comes with SDK.
   3) Http Client connection reuse issue.
-  4) Changed clientLibrary version to 6.2.6; in 6.2.4 release it was missed. So, in 6.2.4 release, clientLibrary version was      pointing to 6.2.3.
+  4) Changed clientLibrary version to 6.2.5; in 6.2.4 release it was missed. So, in 6.2.4 release, clientLibrary version was      pointing to 6.2.3.
 _______________________________  
 Version Cybersource-sdk-java 6.2.4 (Dec 15, 2016)
 _______________________________
