@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.InputStream;
 import java.security.Principal;
 import java.security.PrivateKey;
@@ -29,16 +30,21 @@ public class IdentityTest{
     }
 
     @Test
-    public void testSetUpMerchant() throws InstantiationException, IllegalAccessException, SignException{
-    	String keyAlias = "CN="+config.getMerchantID()+",SERIALNUMBER=400000009910179089277";
+    public void testSetUpMerchant() throws InstantiationException, IllegalAccessException, SignException, ConfigException{
+    	File p12file = Mockito.mock(File.class);
+    	MerchantConfig mc = Mockito.mock(MerchantConfig.class);
+    	
+    	String keyAlias = "CN="+mc.getMerchantID()+",SERIALNUMBER=400000009910179089277";
     	X509Certificate x509Cert = Mockito.mock(X509Certificate.class);
     	Principal principal =  Mockito.mock(Principal.class);
     	PrivateKey pkey = Mockito.mock(PrivateKey.class);
     	Logger logger = Mockito.mock(Logger.class);
     	Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
     	Mockito.when(principal.getName()).thenReturn(keyAlias);
-    	Identity identity = new Identity(config,x509Cert,pkey,logger);
-    	assertEquals(identity.getName(), config.getMerchantID());
+    	
+    	Mockito.when(mc.getKeyFile()).thenReturn(p12file);
+    	Identity identity = new Identity(mc,x509Cert,pkey,logger);
+    	assertEquals(identity.getName(), mc.getMerchantID());
     	assertEquals(identity.getSerialNumber(), "400000009910179089277");
     	assertNotNull(identity.getPrivateKey());
     }
