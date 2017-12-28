@@ -9,6 +9,7 @@
  */
 package com.cybersource.ws.client;
 
+import java.io.File;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -35,8 +36,12 @@ public class Identity {
     private PrivateKey privateKey;
     
     private MerchantConfig merchantConfig;
+
+	private long lastModifiedDate;
     
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
+    
+    private Logger logger = null;
     
     /**
      * Creates an Identity instance.this type of the instance can
@@ -46,9 +51,12 @@ public class Identity {
      * @param x509Certificate
      * @throws SignException
      */
-    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate) throws SignException {
+    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate,Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert=x509Certificate;
+        if(this.logger == null){
+        	this.logger=logger;
+        }
         if(merchantConfig.isJdkCertEnabled()){
             setupJdkServerCerts();
         }
@@ -89,12 +97,41 @@ public class Identity {
      * @param privateKey
      * @throws SignException
      */
-    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey) throws SignException {
+    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey,Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert = x509Certificate;
         this.privateKey = privateKey;
+        if(this.logger == null){
+        	this.logger=logger;
+        }
+        try {
+			this.lastModifiedDate=merchantConfig.getKeyFile().lastModified();
+		} catch (ConfigException e) {
+			
+			logger.log(Logger.LT_EXCEPTION,
+                    "Identity object ,cannot instantiate with key file lastModifiedDate. "
+                    + e.getMessage());
+         throw new SignException("Exception While initializing the merchant identity constructor with keyfile last modified date"+e.getMessage());
+		}
         setUpMerchant();
     }
+    
+    /**
+     * Replace of merchant certificate not happened at runtime then isValid method will return true and certificate reload will not happen.
+     * But replace of merchant certificate happened at at runtime then isValid method will return false and certificate reload will happen.
+    */
+    
+	public boolean isValid(File keyFile) {
+		
+		boolean changeKeyFileStatus=(this.lastModifiedDate == keyFile.lastModified());
+
+		if (!changeKeyFileStatus) {
+
+			logger.log(Logger.LT_INFO, "Key file changed");
+			logger.log(Logger.LT_INFO, "Timestamp of current key file:"+this.lastModifiedDate);	
+		}
+		return changeKeyFileStatus;
+	}
     
     private void setUpMerchant() throws SignException {
         if (serialNumber == null && x509Cert != null) {
@@ -234,5 +271,4 @@ public class Identity {
         + serialNumber + ",expiration=" + expireStr+ " }";
 	   }
     
-	   
 }
