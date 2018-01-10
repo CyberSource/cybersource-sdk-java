@@ -189,6 +189,105 @@ public class Client {
     }
 
     /**
+     * Runs a transaction.
+     *
+     * @param request      request to send.
+     * @param mc           merchant config object	
+     *                     See README for more information.
+     * @param _logger      Logger object to used for logging.
+     * @param prepare      Flag as to whether or not the logger's
+     *                     prepare() method should be called.
+     * @param logTranStart Flag as to whether or not the logger's
+     *                     logTransactionStart() method should be called.
+     * @throws FaultException  if a fault occurs.
+     * @throws ClientException if any other exception occurs.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Map runTransaction(
+            Map<String, String> request,  MerchantConfig mc,
+            Logger _logger, boolean prepare, boolean logTranStart)
+            throws FaultException, ClientException {
+        ;
+        LoggerWrapper logger = null;
+        Connection con = null;
+
+        try {
+            setVersionInformation(request);
+
+            logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
+
+            DocumentBuilder builder = Utility.newDocumentBuilder();
+
+            Document signedDoc
+                    = soapWrapAndSign(request, mc, builder,logger);
+            
+//          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
+//          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
+//          writer.close();
+            if(mc.isCustomHttpClassEnabled()){
+				Class<Connection> customConnectionClass;
+				try {
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
+					Class[] constructor_Args = new Class[] {mc.getClass(), javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class}; 
+					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
+
+				} catch (InstantiationException e) {
+					logger.log(Logger.LT_INFO, "Failed to Instantiate the class "+e);
+					throw new ClientException(e, false, null);
+				} catch (IllegalAccessException e) {
+					logger.log(Logger.LT_INFO, "Could not Access the method invoked "+e);
+					throw new ClientException(e, false, null);
+				} catch (ClassNotFoundException e) {
+					logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
+					throw new ClientException(e, false, null);
+				} catch (IllegalArgumentException e) {
+					logger.log(Logger.LT_INFO, "Method invoked with Illegal Argument list  "+e);
+					throw new ClientException(e, false, null);
+				} catch (SecurityException e) {
+					logger.log(Logger.LT_INFO, "Security Exception "+e);
+					throw new ClientException(e, false, null);
+				} catch (InvocationTargetException e) {
+					logger.log(Logger.LT_INFO, "Exception occured while calling the method "+e);
+					throw new ClientException(e, false, null);
+				} catch (NoSuchMethodException e) {
+					logger.log(Logger.LT_INFO, "Method not found ");
+					throw new ClientException(e, false, null);
+				}  	
+            }
+            else{
+            	con = Connection.getInstance(mc, builder, logger);
+            }
+            Document wrappedReply = con.post(signedDoc);
+            Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
+            logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ",false);
+            
+            return replyMap;
+        } catch (IOException e) {
+            throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+        } catch (ParserConfigurationException e) {
+            throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+        } catch (SignException e) {
+            throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+        } catch (ConfigException e) {
+            throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+        } catch (SAXException e) {
+        	throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+		} catch (SignEncryptException e) {
+			throw new ClientException(
+                    e, con != null && con.isRequestSent(), logger);
+		} finally {
+            if (con != null) {
+                con.release();
+            }
+        }
+    }
+    
+    /**
      * Sets the version information in the request.
      *
      * @param request request to set the version information in.
