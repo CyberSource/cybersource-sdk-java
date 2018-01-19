@@ -60,7 +60,8 @@ You do not need to download and build the source to use the SDK but if you want 
     - `serverURL` config parameter will take precedence over `sendToProduction` and `sendToAkamai` config parameters. By default the `serverURL` configuration is commented out.
     - if `enablejdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
       - To know how to convert p12 to JKS refer the JKS creation section of this document.
-    - `enableCacerts` property is considered only if `enablejdkcert` is set to true. If `enableCacerts` is set to true, certificates will be read from the cacerts folder under the JDK.
+    - If `enableCacerts` is set to true, certificates will be read from the cacerts folder under the JDKxx\jre\lib\security.
+       Also point keysDirectory to " C:\\Program Files\\Java\\jdk1.8.0_152\\jre\\lib\\security " and keyFilename=cacerts   
     - if `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - `allowRetry` config parameter will only work for HttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     - Set integer values for config parameter `numberOfRetries` *and* `retryInterval`. Retry Interval is time delay for next retry in seconds.
@@ -137,6 +138,15 @@ keytool -list -v -keystore <Your_keystore_name>`
 - It should have two entries.
   - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
+  
+Keep the .jks file under C:\Program Files\Java\jdk1.8.0_152\jre\lib\security folder
+
+Give full access permission to cacerts file.
+
+run the command 
+
+keytool -importkeystore -alias keyfilealias -srckeystore keyfilealias.jks -keystore cacerts
+  
 
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 

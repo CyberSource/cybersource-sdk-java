@@ -22,6 +22,9 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.UUID;
+
+import javax.swing.plaf.basic.BasicTreeUI.SelectionModelPropertyChangeHandler;
+
 import org.apache.commons.lang3.StringUtils;
 /**
  * An internal class used by the clients to hold and derive the properties
@@ -329,6 +332,18 @@ public class MerchantConfig {
                 throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
             }
         }
+        
+        if(isCacertEnabled()){
+        String keyPath=this.getKeysDirectory();
+        String keysFilename=this.getKeyFilename();
+        if(!(keyPath == null)){
+        	keysDirectory=keyPath;
+        }
+        if(!(keysFilename == null)){
+        	keyFilename=keysFilename;
+        	
+        }
+      }
     }
     
     /**

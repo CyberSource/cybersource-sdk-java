@@ -57,7 +57,7 @@ public class Identity {
         if(this.logger == null){
         	this.logger=logger;
         }
-        if(merchantConfig.isJdkCertEnabled()){
+        if(merchantConfig.isJdkCertEnabled() || merchantConfig.isCacertEnabled()){
             setupJdkServerCerts();
         }
         else{
