@@ -278,7 +278,7 @@ public class SecurityUtil {
         
         else{
             try{
-                FileInputStream is = new FileInputStream(path);
+            	FileInputStream is = new FileInputStream(merchantConfig.getKeyFile());
                 keystore = KeyStore.getInstance(KeyStore.getDefaultType());
                 keystore.load(is, pass.toCharArray());
             }
