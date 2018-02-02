@@ -25,7 +25,7 @@ dependencies {
 ## Requirements
 - Java SDK 1.6 and later  
 - Maven 3 and later  
-- It is recommended to use Unlimited Strength Jurisdiction Policy files from OracleÂ® (US_export_policy.jar and local_policy.jar) for appropriate JAVA version. For JAVA 7, it is available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+- It is recommended to use Unlimited Strength Jurisdiction Policy files from Oracle® (US_export_policy.jar and local_policy.jar) for appropriate JAVA version. For JAVA 7, it is available at http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
 
 ## Prerequisites
 ### CyberSource Evaluation account
@@ -37,7 +37,7 @@ Create security keys in the [Enterprise Business Center](https://ebctest.cyberso
 - Refer to our [Developer Guide](http://apps.cybersource.com/library/documentation/dev_guides/security_keys/html/wwhelp/wwhimpl/js/html/wwhelp.htm#href=securityKeys_SO_API.4.1.html) for details.
 
 ### JCE Unlimited Strength Jars
-Replace your Java installationâ€™s existing security policy files with the new ones you downloaded from the Oracle site:
+Replace your Java installation’s existing security policy files with the new ones you downloaded from the Oracle site:
 - Locate your existing US_export_policy.jar and local_policy.jar files in the $JAVA_HOME/jre/lib/security directory.
 - Rename or move your existing files to another directory.
 - Copy the new US_export_policy.jar and local_policy.jar that you downloaded from Oracle to the $JAVA_HOME/jre/lib/security directory.  
@@ -60,8 +60,8 @@ You do not need to download and build the source to use the SDK but if you want 
     - `serverURL` config parameter will take precedence over `sendToProduction` and `sendToAkamai` config parameters. By default the `serverURL` configuration is commented out.
     - if `enablejdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
       - To know how to convert p12 to JKS refer the JKS creation section of this document.
-   - If `enableCacerts` is set to true, certificates will be read from the cacerts folder under the $JAVA_HOME/jre/lib/security.
-       Also point keysDirectory to  $JAVA_HOME/jre/lib/security and keyFilename=cacerts .
+    - If `enableCacerts` is set to true, certificates will be read from the cacerts folder under the " %JAVA_HOME\jre\lib\security ".
+       Also point keysDirectory to " %JAVA_HOME\\jre\\lib\\security " and keyFilename=cacerts .
     - if `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - `allowRetry` config parameter will only work for HttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     - Set integer values for config parameter `numberOfRetries` *and* `retryInterval`. Retry Interval is time delay for next retry in seconds.
@@ -138,17 +138,18 @@ keytool -list -v -keystore <Your_keystore_name>`
 - It should have two entries.
   - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
-
+  
+  
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
 
 ### Authentication Details
     Message level encryption authenticates using the same mechanism as signed SOAP messages. The signature creation involves utilizing the merchants private key which combined with a hash of the message to be signed, can be validated with the merchants certificate and the message which was signed. 
-    The merchant certificate is included in the SOAP message for both signature and message level encryption. Message level encryption, encrypts a temporary message key for a specific recipient. This is done by encrypting the temporary message key with the recipientâ€™s public certificate. Therefore only the party holding the private key (CyberSource) can decrypt the temporary message key. The merchant sending the request must be a valid merchant for the environment which the message is being processed in. After validating the merchant and retrieving the CyberSource copy of the merchant certificate from our database, these additional authentication steps are performed:
+    The merchant certificate is included in the SOAP message for both signature and message level encryption. Message level encryption, encrypts a temporary message key for a specific recipient. This is done by encrypting the temporary message key with the recipient’s public certificate. Therefore only the party holding the private key (CyberSource) can decrypt the temporary message key. The merchant sending the request must be a valid merchant for the environment which the message is being processed in. After validating the merchant and retrieving the CyberSource copy of the merchant certificate from our database, these additional authentication steps are performed:
     1.	The certificate sent in the message must have valid trust chain with the CyberSource certificate authority as the root signer.
     2.	A certificate belonging to the merchant which sent the message must exist within our database, having the exact serial number of the certificate provided. 
     3.	Our record of the certificate must have a valid start and end date for the transaction time sent.
-    4.	Our record of the certificate must have a â€œactiveâ€� state (ie. Not deactivated by support).
+    4.	Our record of the certificate must have a “active” state (ie. Not deactivated by support).
     5.	If merchant is reseller, the merchant must allow reseller to act upon their behalf and reseller must be configured as a reseller and the provided merchant must be configured as a merchant of this reseller. Additionally all above authorizations apply.
 
 ### Cryptography Algorithms
