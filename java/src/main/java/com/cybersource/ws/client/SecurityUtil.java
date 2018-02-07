@@ -101,7 +101,7 @@ public class SecurityUtil {
             }
 			else if(merchantConfig.isCacertEnabled()){
                 logger.log(Logger.LT_INFO," Loading the certificate from JRE security cacert file");
-                SecurityUtil.readJdkCert(merchantConfig,logger);
+                SecurityUtil.loadJavaKeystore(merchantConfig,logger);
             }
             else{
                 logger.log(Logger.LT_INFO,"Loading the certificate from p12 file ");
@@ -265,18 +265,11 @@ public class SecurityUtil {
     }
     
     
-    public static void readJdkCert(MerchantConfig merchantConfig, Logger logger) throws SignEncryptException, SignException{
+    public static void readJdkCert(MerchantConfig merchantConfig, Logger logger) throws SignEncryptException, SignException, ConfigException{
         KeyStore keystore=null;
         
         String pass=merchantConfig.getKeyPassword();
         
-        if (merchantConfig.isCacertEnabled()){
-            String path = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
-            loadJavaKeystore(path, merchantConfig,logger);
-            
-        }
-        
-        else{
             try{
             	FileInputStream is = new FileInputStream(merchantConfig.getKeyFile());
                 keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -326,13 +319,13 @@ public class SecurityUtil {
                 logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
                 throw new SignException(e);
             }
-        }
+        
    	}
     
-    private static void loadJavaKeystore(String keystore_location, MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException{
+    private static void loadJavaKeystore(MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException, ConfigException{
         FileInputStream is = null;
         try {
-            File file = new File(keystore_location);
+            File file = new File(merchantConfig.getKeyFile().getCanonicalPath());
             is = new FileInputStream(file);
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
             String password = merchantConfig.getCacertPassword();

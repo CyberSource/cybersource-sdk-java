@@ -330,15 +330,12 @@ public class MerchantConfig {
             }
         }
 		if(isCacertEnabled()){
-        String keyPath=this.getKeysDirectory();
-        String keysFilename=this.getKeyFilename();
-        if(!(keyPath == null)){
-        	keysDirectory=keyPath;
-        }
-        if(!(keysFilename == null)){
-        	keyFilename=keysFilename;
-        	
-        }
+        	if(StringUtils.isBlank(keysDirectory)){
+        		keysDirectory = System.getProperty("java.home") + "/lib/security".replace('/', File.separatorChar);
+        	}
+        	if(StringUtils.isBlank(keyFilename)){
+        		keyFilename = "cacerts";
+        	}
       }
     }
     
