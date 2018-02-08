@@ -99,6 +99,10 @@ public class SecurityUtil {
                 logger.log(Logger.LT_INFO," Loading the certificate from JDK Cert");
                 SecurityUtil.readJdkCert(merchantConfig,logger);
             }
+			else if(merchantConfig.isCacertEnabled()){
+                logger.log(Logger.LT_INFO," Loading the certificate from JRE security cacert file");
+                SecurityUtil.loadJavaKeystore(merchantConfig,logger);
+            }
             else{
                 logger.log(Logger.LT_INFO,"Loading the certificate from p12 file ");
                 readAndStoreCertificateAndPrivateKey(merchantConfig, logger);
@@ -261,21 +265,13 @@ public class SecurityUtil {
     }
     
     
-    public static void readJdkCert(MerchantConfig merchantConfig, Logger logger) throws SignEncryptException, SignException{
+    public static void readJdkCert(MerchantConfig merchantConfig, Logger logger) throws SignEncryptException, SignException, ConfigException{
         KeyStore keystore=null;
         
-        String path=merchantConfig.getKeysDirectory()+"/"+merchantConfig.getKeyFilename();
         String pass=merchantConfig.getKeyPassword();
         
-        if (merchantConfig.isCacertEnabled()){
-            path = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
-            loadJavaKeystore(path, merchantConfig,logger);
-            
-        }
-        
-        else{
             try{
-                FileInputStream is = new FileInputStream(path);
+            	FileInputStream is = new FileInputStream(merchantConfig.getKeyFile());
                 keystore = KeyStore.getInstance(KeyStore.getDefaultType());
                 keystore.load(is, pass.toCharArray());
             }
@@ -323,13 +319,13 @@ public class SecurityUtil {
                 logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
                 throw new SignException(e);
             }
-        }
+        
    	}
     
-    private static void loadJavaKeystore(String keystore_location, MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException{
+    private static void loadJavaKeystore(MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException, ConfigException{
         FileInputStream is = null;
         try {
-            File file = new File(keystore_location);
+            File file = new File(merchantConfig.getKeyFile().getCanonicalPath());
             is = new FileInputStream(file);
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
             String password = merchantConfig.getCacertPassword();

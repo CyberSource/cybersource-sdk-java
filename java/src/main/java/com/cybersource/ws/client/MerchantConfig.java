@@ -329,6 +329,14 @@ public class MerchantConfig {
                 throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
             }
         }
+		if(isCacertEnabled()){
+        	if(StringUtils.isBlank(keysDirectory)){
+        		keysDirectory = System.getProperty("java.home") + "/lib/security".replace('/', File.separatorChar);
+        	}
+        	if(StringUtils.isBlank(keyFilename)){
+        		keyFilename = "cacerts";
+        	}
+      }
     }
     
     /**
