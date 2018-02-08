@@ -58,10 +58,9 @@ You do not need to download and build the source to use the SDK but if you want 
       - `sendToProduction` is initially set to false. Set it to true only when you are ready to send live transactions.
     - Set `sendToAkamai` config parameter with toggle value "true/false" to turn on/off routing requests through Akamai to Cybersource. By default, it is set to true.
     - `serverURL` config parameter will take precedence over `sendToProduction` and `sendToAkamai` config parameters. By default the `serverURL` configuration is commented out.
-    - if `enablejdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
+    - if `enableJdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
       - To know how to convert p12 to JKS refer the JKS creation section of this document.
-    - If enableCacert property is enabled then it means the certificates are kept under the keysDirectory path.
-       By default, keysDirectory path is set to Java Installation cacerts location.
+    - If 'enableCacert' property parameter is set to true, certificates will be read from the cacerts file specified at keysDirectory location.If keysDirectory path is not set,certificate will be loaded from Java Installation cacerts file. The cacerts file should be of the same name as specified in keyFilename.
     - if `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - `allowRetry` config parameter will only work for HttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     - Set integer values for config parameter `numberOfRetries` *and* `retryInterval`. Retry Interval is time delay for next retry in seconds.
