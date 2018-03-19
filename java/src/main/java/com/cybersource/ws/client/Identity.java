@@ -128,7 +128,7 @@ public class Identity {
 		if (!changeKeyFileStatus) {
 
 			logger.log(Logger.LT_INFO, "Key file changed");
-			logger.log(Logger.LT_INFO, "Timestamp of current key file:"+this.lastModifiedDate);	
+			logger.log(Logger.LT_INFO, "Timestamp of current key file:"+keyFile.lastModified());	
 		}
 		return changeKeyFileStatus;
 	}
