@@ -117,8 +117,8 @@ public class Identity {
     }
     
     /**
-     * Replace of merchant certificate not happened at runtime then isValid method will return true and certificate reload will not happen.
-     * But replace of merchant certificate happened at at runtime then isValid method will return false and certificate reload will happen.
+     * If merchant uploads a new key then isValid method will return false and certificate reload will happen.
+     * else isValid method will return true and certificate reload will not occur.
     */
     
 	public boolean isValid(File keyFile) {
