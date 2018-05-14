@@ -265,142 +265,140 @@ public class SecurityUtil {
     }
     
     
-    public static void readJdkCert(MerchantConfig merchantConfig, Logger logger) throws SignEncryptException, SignException, ConfigException{
-        KeyStore keystore=null;
-        
-        String pass=merchantConfig.getKeyPassword();
-        
-            try{
-            	FileInputStream is = new FileInputStream(merchantConfig.getKeyFile());
-                keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-                keystore.load(is, pass.toCharArray());
-            }
-            catch (Exception e) {
-                logger.log(Logger.LT_EXCEPTION,
-                           "Failed to load the key , '" + merchantConfig.getKeyAlias() + "'");
-                throw new SignException(e);
-            }
-            
-            
-            String merchantKeyAlias = null;
-            try {
-                Enumeration enumKeyStore = keystore.aliases();
-		if(!enumKeyStore.hasMoreElements()){
-                	throw new SignException("Empty Keystore or Missing Certificate ");
-                }
-                while (enumKeyStore.hasMoreElements()) {
-                    KeyStore.PrivateKeyEntry keyEntry = null;
-                    merchantKeyAlias = (String) enumKeyStore.nextElement();
-                    if (merchantKeyAlias.contains(merchantConfig.getKeyAlias())){
-                        try {
-                            keyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry
-                            (merchantKeyAlias, new KeyStore.PasswordProtection(merchantConfig.getKeyPassword().toCharArray()));
-                        } catch (NoSuchAlgorithmException e) {
-                            logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                            throw new SignException(e);
-                        } catch (UnrecoverableEntryException e) {
-                            logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                            throw new SignException(e);
-                        } catch (KeyStoreException e) {
-                            logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                            throw new SignException(e);
-                        }
-                        
-                        Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey(),logger);
-                        localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-                        identities.put(identity.getName(), identity);
-                        continue;
-                    }
-                    Identity identity = new Identity(merchantConfig, (X509Certificate) keystore.getCertificate(merchantKeyAlias),logger);
-                    localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-                    identities.put(identity.getName(), identity);
-                }
-            } catch (KeyStoreException e) {
-                logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                throw new SignException(e);
-            }
-        
-   	}
+	public static void readJdkCert(MerchantConfig merchantConfig, Logger logger)
+			throws SignEncryptException, SignException, ConfigException {
+		KeyStore keystore = null;
+		try {
+			FileInputStream is = new FileInputStream(merchantConfig.getKeyFile());
+			keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keystore.load(is, merchantConfig.getKeyPassword().toCharArray());
+		} catch (Exception e) {
+			logger.log(Logger.LT_EXCEPTION, "Failed to load the key , '" + merchantConfig.getKeyAlias() + "'");
+			throw new SignException(e);
+		}
+
+		String merchantKeyAlias = null;
+		try {
+			Enumeration enumKeyStore = keystore.aliases();
+			if (!enumKeyStore.hasMoreElements()) {
+				throw new SignException("Empty Keystore or Missing Certificate ");
+			}
+			while (enumKeyStore.hasMoreElements()) {
+				KeyStore.PrivateKeyEntry keyEntry = null;
+				merchantKeyAlias = (String) enumKeyStore.nextElement();
+				if (merchantKeyAlias.contains(merchantConfig.getKeyAlias())) {
+					try {
+						keyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry(merchantKeyAlias,
+								new KeyStore.PasswordProtection(merchantConfig.getKeyPassword().toCharArray()));
+					} catch (NoSuchAlgorithmException e) {
+						logger.log(Logger.LT_EXCEPTION,
+								"Exception while obtaining private key from KeyStore with alias, '"
+										+ merchantConfig.getKeyAlias() + "'");
+						throw new SignException(e);
+					} catch (UnrecoverableEntryException e) {
+						logger.log(Logger.LT_EXCEPTION,
+								"Exception while obtaining private key from KeyStore with alias, '"
+										+ merchantConfig.getKeyAlias() + "'");
+						throw new SignException(e);
+					} catch (KeyStoreException e) {
+						logger.log(Logger.LT_EXCEPTION,
+								"Exception while obtaining private key from KeyStore with alias, '"
+										+ merchantConfig.getKeyAlias() + "'");
+						throw new SignException(e);
+					}
+
+					Identity identity = new Identity(merchantConfig, (X509Certificate) keyEntry.getCertificate(),
+							keyEntry.getPrivateKey(), logger);
+					localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+					identities.put(identity.getName(), identity);
+					continue;
+				}
+				Identity identity = new Identity(merchantConfig,
+						(X509Certificate) keystore.getCertificate(merchantKeyAlias), logger);
+				localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+				identities.put(identity.getName(), identity);
+			}
+		} catch (KeyStoreException e) {
+			logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '"
+					+ merchantConfig.getKeyAlias() + "'");
+			throw new SignException(e);
+		}
+
+	}
     
-    private static void loadJavaKeystore(MerchantConfig merchantConfig,Logger logger) throws SignException, SignEncryptException, ConfigException{
-        FileInputStream is = null;
-        try {
-            File file = new File(merchantConfig.getKeyFile().getCanonicalPath());
-            is = new FileInputStream(file);
-            KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-            String password = merchantConfig.getCacertPassword();
-            keystore.load(is, password.toCharArray());
-            
-            Identity identity;
-            
-            java.security.cert.Certificate[] cert = keystore.getCertificateChain(merchantConfig.getKeyAlias());
-            if (cert == null) {
-                throw new SignException("Empty Keystore or Missing Certificate ");
-            }
-            PrivateKey key = null;
-            try {
-                key = (PrivateKey)keystore.getKey(merchantConfig.getKeyAlias(), merchantConfig.getKeyAlias().toCharArray());
-            } catch (UnrecoverableKeyException e) {
-                logger.log(Logger.LT_EXCEPTION,
-                           "Exception while obtaining private key from KeyStore with alias, '"
-                           + merchantConfig.getKeyAlias() + "'");
-                throw new SignException(e);
-            }
-            
-            for (int i = 0; i < cert.length; i++) {
-                
-                if (merchantConfig.getKeyAlias().equals(
-                                                        keystore.getCertificateAlias(cert[i]))) {
-                    identity = new Identity(merchantConfig,
-                                            (X509Certificate) cert[i], key,logger);
-                    localKeyStoreHandler
-                    .addIdentityToKeyStore(identity, logger);
-                    identities.put(identity.getName(), identity);
-                } else {
-                    identity = new Identity(merchantConfig,
-                                            (X509Certificate) cert[i],logger);
-                    localKeyStoreHandler
-                    .addIdentityToKeyStore(identity, logger);
-                    identities.put(identity.getName(), identity);
-                }
-            }
-            java.security.cert.Certificate serverCert = keystore.getCertificate(SERVER_ALIAS);
-	    if(serverCert == null){
-                	throw new SignException("Missing Server Certificate ");
-                }
-            identity = new Identity(merchantConfig,
-                                    (X509Certificate) serverCert,logger);
-            localKeyStoreHandler
-            .addIdentityToKeyStore(identity, logger);
-            identities.put(identity.getName(), identity);
-            
-        }
-        
-        catch (java.security.cert.CertificateException e) {
-            logger.log(Logger.LT_EXCEPTION, "Unable to load the certificate,"+ merchantConfig.getKeyFilename() + "'");
-            throw new SignException(e);
-        } catch (NoSuchAlgorithmException e) {
-            logger.log(Logger.LT_EXCEPTION, "Unable to find the certificate with the specified algorithm");
-            throw new SignException(e);
-        } catch (FileNotFoundException e) {
-            logger.log(Logger.LT_EXCEPTION, "File Not found ");
-            throw new SignException(e);
-        } catch (KeyStoreException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore"+ merchantConfig.getKeyFilename() + "'");
-            throw new SignException(e);
-        } catch (IOException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
-            throw new SignException(e);
-        }finally {
-            if(null != is)
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    logger.log(Logger.LT_EXCEPTION, "Exception while closing FileStream, '" + merchantConfig.getKeyFilename() + "'");
-                    throw new SignException(e);
-                }
-        }
-        
-        
-    }
+	private static void loadJavaKeystore(MerchantConfig merchantConfig, Logger logger)
+			throws SignException, SignEncryptException, ConfigException {
+		FileInputStream is = null;
+		try {
+			is = new FileInputStream(merchantConfig.getKeyFile());
+			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keystore.load(is, merchantConfig.getCacertPassword().toCharArray());
+
+			Identity identity;
+
+			java.security.cert.Certificate[] cert = keystore.getCertificateChain(merchantConfig.getKeyAlias());
+			if (cert == null) {
+				throw new SignException("Empty Keystore or Missing Certificate ");
+			}
+			PrivateKey key = null;
+			try {
+				key = (PrivateKey) keystore.getKey(merchantConfig.getKeyAlias(),
+						merchantConfig.getKeyAlias().toCharArray());
+			} catch (UnrecoverableKeyException e) {
+				logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '"
+						+ merchantConfig.getKeyAlias() + "'");
+				throw new SignException(e);
+			}
+
+			for (int i = 0; i < cert.length; i++) {
+
+				if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(cert[i]))) {
+					identity = new Identity(merchantConfig, (X509Certificate) cert[i], key, logger);
+					localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+					identities.put(identity.getName(), identity);
+				} else {
+					identity = new Identity(merchantConfig, (X509Certificate) cert[i], logger);
+					localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+					identities.put(identity.getName(), identity);
+				}
+			}
+			java.security.cert.Certificate serverCert = keystore.getCertificate(SERVER_ALIAS);
+			if (serverCert == null) {
+				throw new SignException("Missing Server Certificate ");
+			}
+			identity = new Identity(merchantConfig, (X509Certificate) serverCert, logger);
+			localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+			identities.put(identity.getName(), identity);
+
+		}
+
+		catch (java.security.cert.CertificateException e) {
+			logger.log(Logger.LT_EXCEPTION, "Unable to load the certificate," + merchantConfig.getKeyFilename() + "'");
+			throw new SignException(e);
+		} catch (NoSuchAlgorithmException e) {
+			logger.log(Logger.LT_EXCEPTION, "Unable to find the certificate with the specified algorithm");
+			throw new SignException(e);
+		} catch (FileNotFoundException e) {
+			logger.log(Logger.LT_EXCEPTION, "File Not found ");
+			throw new SignException(e);
+		} catch (KeyStoreException e) {
+			logger.log(Logger.LT_EXCEPTION,
+					"Exception while obtaining private key from KeyStore" + merchantConfig.getKeyFilename() + "'");
+			throw new SignException(e);
+		} catch (IOException e) {
+			logger.log(Logger.LT_EXCEPTION,
+					"Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
+			throw new SignException(e);
+		} finally {
+			if (null != is)
+				try {
+					is.close();
+				} catch (IOException e) {
+					logger.log(Logger.LT_EXCEPTION,
+							"Exception while closing FileStream, '" + merchantConfig.getKeyFilename() + "'");
+					throw new SignException(e);
+				}
+		}
+
+	}
 }
