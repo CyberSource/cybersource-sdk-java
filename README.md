@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -186,7 +186,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 Version Cybersource-sdk-java 6.2.6 (MAY,2018)
 _______________________________
   1) Added certificateCacheEnabled optional feature. certificateCacheEnabled parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made.If the certificateCacheEnabled is true then only at the first time certificate of a merchant will loaded from filesystem.
-  2) Intreduced a new feature to check merchant .p12 certificate file validity at run time. If it is replaced at runtime then SDK will reload the new certificate into the cache.
+  2) Introduced a new feature to check merchant .p12 certificate file validity at run time. If it is replaced at runtime then SDK will reload the new certificate into the cache.
   3) Changed clientLibrary version to 6.2.6;
 
 Version Cybersource-sdk-java 6.2.5 (OCT,2017)
