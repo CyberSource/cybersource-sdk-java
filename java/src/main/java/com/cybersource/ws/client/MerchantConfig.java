@@ -66,6 +66,7 @@ public class MerchantConfig {
     private String cacertPassword;
     private String customHttpClass;
     private boolean customHttpClassEnabled;
+    private boolean certificateCacheEnabled; 
     
     public String getcustomHttpClass() {
 		return customHttpClass;
@@ -83,8 +84,7 @@ public class MerchantConfig {
     private int numberOfRetries = 0;
     private long retryInterval  = 0;
     private boolean allowRetry=true;
-    
-    
+
     // getter methods
     public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
     
@@ -183,6 +183,10 @@ public class MerchantConfig {
         return proxyPassword != null ? proxyPassword : "";
     }
     
+    public boolean isCertificateCacheEnabled() {  
+        return certificateCacheEnabled;  
+    }  
+    
     /**
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
@@ -271,6 +275,7 @@ public class MerchantConfig {
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
         customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
+        certificateCacheEnabled=getBooleanProperty(merchantID,"certificateCacheEnabled",true); 
         // compute and store effective namespace URI
         
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -324,6 +329,14 @@ public class MerchantConfig {
                 throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
             }
         }
+		if(isCacertEnabled()){
+        	if(StringUtils.isBlank(keysDirectory)){
+        		keysDirectory = System.getProperty("java.home") + "/lib/security".replace('/', File.separatorChar);
+        	}
+        	if(StringUtils.isBlank(keyFilename)){
+        		keyFilename = "cacerts";
+        	}
+      }
     }
     
     /**
@@ -495,6 +508,7 @@ public class MerchantConfig {
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
+        appendPair(sb, "certificateCacheEnabled", certificateCacheEnabled);
         return (sb.toString());
     }
     
@@ -580,4 +594,5 @@ public class MerchantConfig {
     public String getCacertPassword(){
         return cacertPassword;
     }
+	
 }

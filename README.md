@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -10,7 +10,7 @@ To install the `cybersource-sdk-java` from central repository, add dependency to
 <dependency>
   <groupId>com.cybersource</groupId>
   <artifactId>cybersource-sdk-java</artifactId>
-  <version>6.2.5</version>
+  <version>6.2.6</version>
 </dependency> 
 ```
 Run `mvn install` to install dependency
@@ -19,7 +19,7 @@ Run `mvn install` to install dependency
 Add the dependency to your build.gradle
 ```java
 dependencies {
-  compile 'com.cybersource:cybersource-sdk-java:6.2.5'
+  compile 'com.cybersource:cybersource-sdk-java:6.2.6'
 }
 ```
 ## Requirements
@@ -58,9 +58,10 @@ You do not need to download and build the source to use the SDK but if you want 
       - `sendToProduction` is initially set to false. Set it to true only when you are ready to send live transactions.
     - Set `sendToAkamai` config parameter with toggle value "true/false" to turn on/off routing requests through Akamai to Cybersource. By default, it is set to true.
     - `serverURL` config parameter will take precedence over `sendToProduction` and `sendToAkamai` config parameters. By default the `serverURL` configuration is commented out.
-    - if `enablejdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
+    - If `enableJdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
       - To know how to convert p12 to JKS refer the JKS creation section of this document.
-    - `enableCacerts` property is considered only if `enablejdkcert` is set to true. If `enableCacerts` is set to true, certificates will be read from the cacerts folder under the JDK.
+    - If 'enableCacert' property parameter is set to true, certificates will be read from the cacerts file specified at keysDirectory location.If keysDirectory path is not set,certificate will be loaded from Java Installation cacerts file. The cacerts file should be of the same name as specified in keyFilename.
+    - If `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - `allowRetry` config parameter will only work for HttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     - Set integer values for config parameter `numberOfRetries` *and* `retryInterval`. Retry Interval is time delay for next retry in seconds.
       - Number of retry parameter should be set between 1 to 5. Any other value will throw an Error Message.
@@ -136,7 +137,8 @@ keytool -list -v -keystore <Your_keystore_name>`
 - It should have two entries.
   - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
-
+  
+  
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
 
@@ -180,6 +182,12 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       Mock objects library for java  
 
 ## Changes
+
+Version Cybersource-sdk-java 6.2.6 (MAY,2018)
+_______________________________
+  1) Added certificateCacheEnabled optional feature. certificateCacheEnabled parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made.If the certificateCacheEnabled is true then only at the first time certificate of a merchant will loaded from filesystem.
+  2) Intreduced a new feature to check merchant .p12 certificate file validity at run time. If it is replaced at runtime then SDK will reload the new certificate into the cache.
+  3) Changed clientLibrary version to 6.2.6;
 
 Version Cybersource-sdk-java 6.2.5 (OCT,2017)
 _______________________________
