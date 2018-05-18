@@ -79,8 +79,6 @@ public class SecurityUtil {
      * @throws SignException - Signature exception
      * @throws SignEncryptException
      * @throws ConfigException
-     * @throws IOException
-     * @throws CredentialException
      */
     public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException, ConfigException {
                
