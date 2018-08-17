@@ -98,17 +98,21 @@ public class MerchantConfig {
     }
     
     public String getKeyAlias() {
-        if ( keyAlias != null )
+        if ( keyAlias != null ){
             return keyAlias;
-        else
+        }
+        else {
             return getMerchantID();
+        }
     }
     
     public char[] getKeyPassword() {
-        if ( kp != null )
+        if ( kp != null ){
             return kp;
-        else
+        }
+        else{
             return getMerchantID().toCharArray();
+        }
     }
     
     public boolean getSendToProduction() {
@@ -251,7 +255,10 @@ public class MerchantConfig {
         
         keysDirectory = getProperty(merchantID, "keysDirectory");
         keyAlias = getProperty(merchantID, "keyAlias");
-        kp = getProperty(merchantID, "keyPassword").toCharArray();
+        if(getProperty(merchantID, "keyPassword")!=null)
+        {
+            kp=getProperty(merchantID, "keyPassword").toCharArray();
+        }
         sendToProduction = getBooleanProperty(merchantID, "sendToProduction", false);
         sendToAkamai = getBooleanProperty(merchantID, "sendToAkamai", false);
         targetAPIVersion = getProperty(merchantID, "targetAPIVersion");
@@ -259,7 +266,9 @@ public class MerchantConfig {
         serverURL = getProperty(merchantID, "serverURL");
         namespaceURI = getProperty(merchantID, "namespaceURI");
         if(getProperty(merchantID, "password")!=null)
-        pw=getProperty(merchantID, "password").toCharArray();  
+        {
+            pw=getProperty(merchantID, "password").toCharArray();
+        }
         enableLog = getBooleanProperty(merchantID, "enableLog", false);
         logSignedData = getBooleanProperty(merchantID, "logNonPCICompliantSignedData", false);
         logDirectory = getProperty(merchantID, "logDirectory");
@@ -272,10 +281,17 @@ public class MerchantConfig {
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
         if(getProperty(merchantID, "proxyPassword")!=null)
-        pp=getProperty(merchantID, "proxyPassword").toCharArray();
+        {
+            pp=getProperty(merchantID, "proxyPassword").toCharArray();
+        }
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
-        cp=getProperty(merchantID,"cacertPassword","changeit").toCharArray();
+
+        if(getProperty(merchantID, "cacertPassword","changeit")!=null)
+        {
+            cp=getProperty(merchantID, "cacertPassword","changeit").toCharArray();
+        }
+
         customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
         certificateCacheEnabled=getBooleanProperty(merchantID,"certificateCacheEnabled",true); 
         // compute and store effective namespace URI
@@ -499,14 +515,13 @@ public class MerchantConfig {
             appendPair(sb, "RetryInterval", retryInterval);
         }
         appendPair(sb, "timeout", timeout);
+
         if (proxyHost != null) {
             appendPair(sb, "proxyHost", proxyHost);
             appendPair(sb, "proxyPort", proxyPort);
             if (proxyUser != null) {
                 appendPair(sb, "proxyUser", proxyUser);
-                appendPair(sb, "proxyPassword",
-                           pp != null
-                           ? "(masked)" : null);
+                appendPair(sb, "proxyPassword", pp != null ? "(masked)" : null);
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);

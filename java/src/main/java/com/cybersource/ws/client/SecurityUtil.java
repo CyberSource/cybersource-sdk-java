@@ -125,9 +125,11 @@ public class SecurityUtil {
             logger.log(Logger.LT_EXCEPTION, "Exception while instantiating KeyStore");
             throw new SignException(e);
         }
-        
+
+        FileInputStream fi = null;
         try {
-            merchantKeyStore.load(new FileInputStream(merchantConfig.getKeyFile()), merchantConfig.getKeyPassword());
+            fi=new FileInputStream(merchantConfig.getKeyFile());
+            merchantKeyStore.load(fi,merchantConfig.getKeyPassword());
         } catch (IOException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
             throw new SignException(e);
@@ -140,6 +142,18 @@ public class SecurityUtil {
         } catch (ConfigException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
             throw new SignException(e);
+        }
+        finally {
+            if(null != fi){
+                try{
+                    fi.close();
+                }
+                catch (IOException e)
+                {
+                    logger.log(Logger.LT_EXCEPTION, "Exception while closing FileStream, '" + merchantConfig.getKeyFilename() + "'");
+                    throw new SignException(e);
+                }
+            }
         }
         
         // our p12 files do not contain an alias as a normal name, its the common name and serial number
@@ -266,14 +280,27 @@ public class SecurityUtil {
 	public static void readJdkCert(MerchantConfig merchantConfig, Logger logger)
 			throws SignEncryptException, SignException, ConfigException {
 		KeyStore keystore = null;
-		try {
-			FileInputStream is = new FileInputStream(merchantConfig.getKeyFile());
+        FileInputStream is =null;
+        try {
+			is=new FileInputStream(merchantConfig.getKeyFile());
 			keystore = KeyStore.getInstance(KeyStore.getDefaultType());
 			keystore.load(is, merchantConfig.getKeyPassword());
 		} catch (Exception e) {
 			logger.log(Logger.LT_EXCEPTION, "Failed to load the key , '" + merchantConfig.getKeyAlias() + "'");
 			throw new SignException(e);
 		}
+        finally {
+            if(null != is){
+                try{
+                    is.close();
+                }
+                catch (IOException e)
+                {
+                    logger.log(Logger.LT_EXCEPTION, "Exception while closing FileStream, '" + merchantConfig.getKeyFilename() + "'");
+                    throw new SignException(e);
+                }
+            }
+        }
 
 		String merchantKeyAlias = null;
 		try {
