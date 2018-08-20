@@ -159,7 +159,7 @@ class HttpClientConnection extends Connection {
                 state.setProxyCredentials(
                         AuthScope.ANY,
                         new UsernamePasswordCredentials(
-                                mc.getProxyUser(), mc.getProxyPassword()));
+                                mc.getProxyUser(), new String(mc.getProxyPassword())));
                 httpClient.setState(state);
             }
         }
@@ -234,5 +234,6 @@ class HttpClientConnection extends Connection {
 }
 
 /* Copyright 2006 CyberSource Corporation */
+
 
 

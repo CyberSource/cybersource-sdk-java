@@ -114,14 +114,14 @@ public class SecurityUtilIT {
     
     @Test
     public void testSoapWrapAndSign() throws Exception {
-    	Document doc = SecurityUtil.createSignedDoc(wrappedDoc,config.getMerchantID(),config.getKeyPassword(),logger);
+    	Document doc = SecurityUtil.createSignedDoc(wrappedDoc,config.getMerchantID(),new String(config.getKeyPassword()),logger);
         NodeList signatureElement = doc.getElementsByTagName("wsse:Security");
         assert (signatureElement.getLength() >= 1);
     }
     
     @Test
     public void testSoapWrapSignedAndEncrypt() throws Exception {
-    	Document signedDoc = SecurityUtil.createSignedDoc(wrappedDoc,config.getMerchantID(),config.getKeyPassword(),logger);
+    	Document signedDoc = SecurityUtil.createSignedDoc(wrappedDoc,config.getMerchantID(),new String(config.getKeyPassword()),logger);
         NodeList signatureElement = signedDoc.getElementsByTagName("wsse:Security");
         assert (signatureElement.getLength() >= 1);
     	Document doc = SecurityUtil.handleMessageCreation(wrappedDoc, config.getMerchantID(),logger);
@@ -208,5 +208,6 @@ public class SecurityUtilIT {
     
  }
     
+
 
 

@@ -42,14 +42,14 @@ public class MerchantConfig {
     private final String merchantID;
     private String keysDirectory;
     private String keyAlias;
-    private String keyPassword;
+    private char[] kp;
     private boolean sendToProduction;
     private boolean sendToAkamai;
     private String targetAPIVersion;
     private String keyFilename;
     private String serverURL;
     private String namespaceURI;
-    private String password;
+    private char[] pw;
     private boolean enableJdkCert;
     private boolean enableCacert;
     private boolean enableLog;
@@ -62,8 +62,8 @@ public class MerchantConfig {
     private String proxyHost;
     private int proxyPort;
     private String proxyUser;
-    private String proxyPassword;
-    private String cacertPassword;
+    private char[] pp;
+    private char[] cp;
     private String customHttpClass;
     private boolean customHttpClassEnabled;
     private boolean certificateCacheEnabled; 
@@ -77,7 +77,7 @@ public class MerchantConfig {
 	// computed values
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
-    private String effectivePassword;
+    private char[] epp;
     private  boolean useSignAndEncrypted;
     
     //Retry Pattern
@@ -98,17 +98,21 @@ public class MerchantConfig {
     }
     
     public String getKeyAlias() {
-        if ( keyAlias != null )
+        if ( keyAlias != null ){
             return keyAlias;
-        else
+        }
+        else {
             return getMerchantID();
+        }
     }
     
-    public String getKeyPassword() {
-        if ( keyPassword != null )
-            return keyPassword;
-        else
-            return getMerchantID();
+    public char[] getKeyPassword() {
+        if ( kp != null ){
+            return kp;
+        }
+        else{
+            return getMerchantID().toCharArray();
+        }
     }
     
     public boolean getSendToProduction() {
@@ -135,8 +139,8 @@ public class MerchantConfig {
         return namespaceURI;
     }
     
-    public String getPassword() {
-        return password;
+    public char[] getPassword() {
+        return pw;
     }
     
     public boolean getEnableLog() {
@@ -179,8 +183,8 @@ public class MerchantConfig {
         return proxyUser;
     }
     
-    public String getProxyPassword() {
-        return proxyPassword != null ? proxyPassword : "";
+    public char[] getProxyPassword() {
+        return pp != null ? pp :new char[0];
     }
     
     public boolean isCertificateCacheEnabled() {  
@@ -219,8 +223,8 @@ public class MerchantConfig {
      *
      * @return the effective key password.
      */
-    public String getEffectivePassword() {
-        return effectivePassword;
+    public char[] getEffectivePassword() {
+        return epp;
     }
     
     
@@ -251,14 +255,20 @@ public class MerchantConfig {
         
         keysDirectory = getProperty(merchantID, "keysDirectory");
         keyAlias = getProperty(merchantID, "keyAlias");
-        keyPassword = getProperty(merchantID, "keyPassword");
+        if(getProperty(merchantID, "keyPassword")!=null)
+        {
+            kp=getProperty(merchantID, "keyPassword").toCharArray();
+        }
         sendToProduction = getBooleanProperty(merchantID, "sendToProduction", false);
         sendToAkamai = getBooleanProperty(merchantID, "sendToAkamai", false);
         targetAPIVersion = getProperty(merchantID, "targetAPIVersion");
         keyFilename = getProperty(merchantID, "keyFilename");
         serverURL = getProperty(merchantID, "serverURL");
         namespaceURI = getProperty(merchantID, "namespaceURI");
-        password = getProperty(merchantID, "password");
+        if(getProperty(merchantID, "password")!=null)
+        {
+            pw=getProperty(merchantID, "password").toCharArray();
+        }
         enableLog = getBooleanProperty(merchantID, "enableLog", false);
         logSignedData = getBooleanProperty(merchantID, "logNonPCICompliantSignedData", false);
         logDirectory = getProperty(merchantID, "logDirectory");
@@ -270,10 +280,18 @@ public class MerchantConfig {
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
-        proxyPassword = getProperty(merchantID, "proxyPassword");
+        if(getProperty(merchantID, "proxyPassword")!=null)
+        {
+            pp=getProperty(merchantID, "proxyPassword").toCharArray();
+        }
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
-        cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
+
+        if(getProperty(merchantID, "cacertPassword","changeit")!=null)
+        {
+            cp=getProperty(merchantID, "cacertPassword","changeit").toCharArray();
+        }
+
         customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
         certificateCacheEnabled=getBooleanProperty(merchantID,"certificateCacheEnabled",true); 
         // compute and store effective namespace URI
@@ -316,7 +334,7 @@ public class MerchantConfig {
         }
         
         // compute and store effective password
-        effectivePassword = password != null ? password : merchantID;
+        epp = pw != null ? pw:merchantID.toCharArray();
         
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
         
@@ -475,7 +493,7 @@ public class MerchantConfig {
         appendPair(sb, "merchantID", merchantID);
         appendPair(sb, "keysDirectory", keysDirectory);
         appendPair(sb, "keyAlias", keyAlias);
-        appendPair(sb, "keyPassword", keyPassword);
+        appendPair(sb, "keyPassword", new String(kp) != null ? "(masked)" : null);
         appendPair(sb, "sendToProduction", sendToProduction);
         appendPair(sb, "sendToAkamai", sendToAkamai);
         appendPair(sb, "targetAPIVersion", targetAPIVersion);
@@ -497,14 +515,13 @@ public class MerchantConfig {
             appendPair(sb, "RetryInterval", retryInterval);
         }
         appendPair(sb, "timeout", timeout);
+
         if (proxyHost != null) {
             appendPair(sb, "proxyHost", proxyHost);
             appendPair(sb, "proxyPort", proxyPort);
             if (proxyUser != null) {
                 appendPair(sb, "proxyUser", proxyUser);
-                appendPair(sb, "proxyPassword",
-                           proxyPassword != null
-                           ? "(masked)" : null);
+                appendPair(sb, "proxyPassword", pp != null ? "(masked)" : null);
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
@@ -591,8 +608,9 @@ public class MerchantConfig {
     public boolean isJdkCertEnabled() {
         return enableJdkCert;
     }
-    public String getCacertPassword(){
-        return cacertPassword;
+    public char[] getCacertPassword(){
+        return cp;
     }
 	
 }
+

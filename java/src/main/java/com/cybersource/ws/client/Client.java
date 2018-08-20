@@ -238,7 +238,7 @@ public class Client {
         logger.log(Logger.LT_INFO, "Client, End of loading Merchant Certificates ", true);       
         
         // sign Document object
-        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc, mc.getMerchantID(), mc.getKeyPassword(), logger);
+        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc, mc.getMerchantID(), new String(mc.getKeyPassword()), logger);
         logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
 
         if ( mc.getUseSignAndEncrypted() ) {
@@ -325,4 +325,5 @@ public class Client {
 
     
 } 
+
 

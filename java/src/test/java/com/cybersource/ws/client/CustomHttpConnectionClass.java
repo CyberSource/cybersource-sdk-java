@@ -103,7 +103,7 @@ public class CustomHttpConnectionClass extends Connection{
                 state.setProxyCredentials(
                         AuthScope.ANY,
                         new UsernamePasswordCredentials(
-                                mc.getProxyUser(), mc.getProxyPassword()));
+                                mc.getProxyUser(), new String(mc.getProxyPassword())));
                 httpClient.setState(state);
             }
         }
@@ -184,4 +184,5 @@ public class CustomHttpConnectionClass extends Connection{
     }
 
 }
+
 
