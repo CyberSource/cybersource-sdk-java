@@ -48,7 +48,7 @@ public class Utility {
     /**
      * Version number of this release.
      */
-    public static final String VERSION = "6.2.6";
+    public static final String VERSION = "6.2.7";
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
