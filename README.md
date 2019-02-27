@@ -183,7 +183,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.7 (JAN,2019)
+Version Cybersource-sdk-java 6.2.7 (FEB,2019)
 _______________________________
 Fixed security vulnerabilities found in the below jar dependencies.
 1)xmlsec
