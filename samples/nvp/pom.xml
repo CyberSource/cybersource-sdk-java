@@ -7,11 +7,14 @@
     <version>1.0.0</version>
     <name>RunSample</name>
     <url>http://maven.apache.org</url>
+     <properties>
+      <javasdk.version>[6.2.0, 6.2.8-SNAPSHOT]</javasdk.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.2.7-SNAPSHOT</version>
+            <version>${javasdk.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
