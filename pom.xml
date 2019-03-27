@@ -12,10 +12,6 @@
         <module>java</module>
     </modules>
 
-    <properties>
-    <javasdk.version>[6.2.0, 6.2.8-SNAPSHOT]</javasdk.version>
-    </properties>
-
     <packaging>pom</packaging>
 
     <parent>
@@ -26,7 +22,7 @@
 
     <groupId>com.cybersource</groupId>
     <artifactId>cybersource-sdk-master</artifactId>
-    <version>${javasdk.version}</version>
+    <version>6.2.7-SNAPSHOT</version>
 
 
 </project>
