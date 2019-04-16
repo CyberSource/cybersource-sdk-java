@@ -3,13 +3,3 @@ language: java
 jdk:
   - oraclejdk8
   - openjdk7
-addons:
-  apt:
-    packages:
-      - openjdk-6-jdk
-jdk: openjdk6
-
-before_install:
-  # for gh-311 (modify to use the TLSv1.2 on Java 7)
-  - export _JAVA_OPTIONS=-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2
-  - jdk_switcher use openjdk6
