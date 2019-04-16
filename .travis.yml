@@ -1,7 +1,10 @@
 language: java
 "dist": "xenial"
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
 jdk:
-  - oraclejdk8
   - openjdk8
   - openjdk6
-  - openjdk7
+  
