@@ -1,7 +1,8 @@
 language: java
-"dist": "xenial"
+"dist": "trusty"
 jdk:
   - oraclejdk8
+  - openjdk8
   - oraclejdk7
   - openjdk7
   - openjdk6
