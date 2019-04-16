@@ -9,7 +9,6 @@ import org.w3c.dom.Node;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class UtilityTest extends BaseTest {
     String propertiesFilename;
