@@ -17,12 +17,13 @@ public class UtilityTest extends BaseTest {
 
     @Before
     public void setUp() {
-      InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
-        if(is != null) {
-            propertiesFilename = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
+     URL fileUrl = Thread.currentThread().getContextClassLoader().getResource("test_cybs.properties");
+        String filepath = "";
+        if(fileUrl != null) {
+            propertiesFilename = fileUrl.getFile();
             try {
                 properties = new Properties();
-                properties.load(is);
+                properties.load(new FileReader(propertiesFilename));
             } catch (IOException e) {
                 fail("Unable to load properties file");
             }
