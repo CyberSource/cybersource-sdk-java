@@ -1,9 +1,7 @@
 language: java
 "dist": "trusty"
-addons:
-  apt:
-    packages:
-      - openjdk-6-jdk
 jdk:
   - oraclejdk8
+  - oraclejdk9
   - openjdk6
+  - openjdk7
