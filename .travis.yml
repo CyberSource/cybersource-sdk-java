@@ -1,7 +1,5 @@
 language: java
-"dist": "precise"
+"dist": "xenial"
 jdk:
   - openjdk6
-before_install:
-  - export MAVEN_OPTS=-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2
 
