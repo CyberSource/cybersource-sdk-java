@@ -1,4 +1,5 @@
 language: java
 "dist": "precise"
+export MAVEN_OPTS=-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2
 jdk:
   - openjdk6
