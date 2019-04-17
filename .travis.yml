@@ -1,4 +1,4 @@
 language: java
-"dist": "trusty"
+"dist": "precise"
 jdk:
   - openjdk6
