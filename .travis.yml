@@ -11,6 +11,5 @@ matrix:
         - echo "MAVEN_OPTS='-Dlicense.skip=true'" > ~/.mavenrc
         - TRAVIS_JDK_VERSION=openjdk6      
 jdk:
-  - openjdk6
   - oraclejdk8
   - openjdk7
