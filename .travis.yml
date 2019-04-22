@@ -3,9 +3,11 @@ matrix:
   include:
     - env: JDK='OpenJDK 6'
       before_install:
+        - rm "${JAVA_HOME}/lib/security/cacerts"
+        - ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
         - echo "MAVEN_OPTS='-Dlicense.skip=true'" > ~/.mavenrc
         - TRAVIS_JDK_VERSION=openjdk6
 jdk:
-  - oraclejdk8
-  - openjdk7
   - openjdk6
+  - openjdk7
+  - oraclejdk8
