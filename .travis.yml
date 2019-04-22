@@ -22,7 +22,7 @@ jdk:
   - openjdk6
   - openjdk7
   - oraclejdk8
-  - oraclejdk9
-  - openjdk10
 
 script: ./mvnw verify javadoc:javadoc site:site
+
+script: ./mvnw deploy --batch-mode --activate-profiles generate-docs --settings .travis.settings.xml
