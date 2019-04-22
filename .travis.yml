@@ -1,13 +1,7 @@
 language: java
-"dist": "trusty"
-matrix:
-  include:
-    - env: JDK='OpenJDK 6'
-      before_install:
-        - echo "MAVEN_OPTS='-Dlicense.skip=true'" > ~/.mavenrc
-        - TRAVIS_JDK_VERSION=openjdk6
+"dist": "precise"
 jdk:
-  - oraclejdk9
-  - openjdk8
+  - oraclejdk8
+  - oraclejdk7
   - openjdk7
   - openjdk6
