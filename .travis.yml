@@ -2,4 +2,4 @@ language: java
 "dist": "xenial"
 jdk:
   - openjdk8
-  - openjdk-ea
+  - openjdk7
