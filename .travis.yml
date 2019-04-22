@@ -5,9 +5,6 @@ jdk:
   - oraclejdk7
   - openjdk7
   - openjdk6
-  - oraclejdk6
 before_install: 
  # for gh-311 (modify to use the TLSv1.2 on Java 7) 
  - export _JAVA_OPTIONS=-Dhttps.protocols=TLSv1.2
-install: mvn install -Dmaven.compiler.target=1.8 -Dmaven.compiler.source=1.8 -DskipTests=true
-script: mvn test -Dmaven.compiler.target=1.8 -Dmaven.compiler.source=1.8
