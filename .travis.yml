@@ -1,12 +1,8 @@
 language: java
 "dist": "trusty"
-addons:
-  apt:
-    packages:
-      - openjdk-6-jdk
-before_install:
-  - jdk_switcher use openjdk6
 jdk:
-  - openjdk6
-  - openjdk7
   - oraclejdk8
+  - openjdk7
+before_install: 
+ # (modify to use the TLSv1.2 on Java 7) 
+ - export _JAVA_OPTIONS=-Dhttps.protocols=TLSv1.1,TLSv1.2
