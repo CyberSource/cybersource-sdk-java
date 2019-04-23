@@ -7,5 +7,4 @@ jdk:
   - openjdk6
 before_install: 
  # for gh-311 (modify to use the TLSv1.2 on Java 7) 
- - export _JAVA_OPTIONS=-Dhttps.protocols=TLSv1.2
- -Djdk.tls.client.protocols=TLSv1.1,TLSv1.2
+ - export _JAVA_OPTIONS=-Djdk.tls.client.protocols==TLSv1.1,TLSv1.2
