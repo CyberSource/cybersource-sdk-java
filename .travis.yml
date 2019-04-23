@@ -1,10 +1,26 @@
 language: java
-"dist": "precise"
+
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
+
 jdk:
   - oraclejdk8
-  - oraclejdk7
   - openjdk7
   - openjdk6
-before_install: 
- # for gh-311 (modify to use the TLSv1.2 on Java 7) 
- - export _JAVA_OPTIONS=-Dhttps.protocols=TLSv1.1,TLSv1.2
+
+before_install:
+  - echo "Downloading Maven 3.2.5" 
+   && wget https://archive.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip 
+   && unzip -qq apache-maven-3.2.5-bin.zip 
+   && export M2_HOME=$PWD/apache-maven-3.2.5 
+   && export PATH=$M2_HOME/bin:$PATH 
+   && mvn -version
+
+install:
+  - mvn clean install -Pci-install -B -U -e
+  - sh ./tools/check_format.sh
+
+script:
+  - mvn clean package -Pci-test
