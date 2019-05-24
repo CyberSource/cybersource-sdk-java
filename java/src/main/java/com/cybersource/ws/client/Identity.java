@@ -40,7 +40,9 @@ public class Identity {
 	private long lastModifiedDate;
     
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
-    
+
+    private char[] pswd;
+
     private Logger logger = null;
     
     /**
@@ -122,11 +124,8 @@ public class Identity {
     */
     
 	public boolean isValid(File keyFile) {
-		
 		boolean changeKeyFileStatus=(this.lastModifiedDate == keyFile.lastModified());
-
 		if (!changeKeyFileStatus) {
-
 			logger.log(Logger.LT_INFO, "Key file changed");
 			logger.log(Logger.LT_INFO, "Timestamp of current key file:"+keyFile.lastModified());	
 		}
@@ -142,6 +141,7 @@ public class Identity {
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
                 }
                 name = merchantConfig.getMerchantID();
+                pswd = merchantConfig.getKeyPassword().toCharArray();
                 serialNumber = subjectDNrray[1];
                 keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
             } else {
@@ -197,8 +197,11 @@ public class Identity {
         
         return serialNumber;
     }
-    
-    
+
+    public char[] getPswd() {
+        return pswd;
+    }
+
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
