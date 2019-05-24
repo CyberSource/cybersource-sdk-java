@@ -163,13 +163,20 @@ public class SecurityUtilIT {
         
     	Mockito.when(identity.getPrivateKey()).thenReturn(newPkay);
     	Mockito.when(identity.getX509Cert()).thenReturn(x509Cert);
-    	Mockito.when(identity.getName()).thenReturn("MahenCertTest");
     	Mockito.when(identity.getKeyAlias()).thenReturn("MahenCertTest");
+        Mockito.when(identity.getPswd()).thenReturn("testPwd".toCharArray());
     	
     	MessageHandlerKeyStore mhKeyStore= new MessageHandlerKeyStore();    	
+
     	MessageHandlerKeyStore spyMhKeyStore = Mockito.spy(mhKeyStore);
     	Mockito.when(spyMhKeyStore.getKeyStore()).thenReturn(myKeystore);
     	spyMhKeyStore.addIdentityToKeyStore(identity,logger);
+
+    	Mockito.verify(identity,times(1)).getKeyAlias();
+        Mockito.verify(identity,times(1)).getPrivateKey();
+        Mockito.verify(identity,times(1)).getPswd();
+        Mockito.verify(identity,times(1)).getX509Cert();
+
     }
     
 	@Test  

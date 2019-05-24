@@ -30,7 +30,7 @@ public class IdentityTest{
     }
 
     @Test
-    public void testSetUpMerchant() throws InstantiationException, IllegalAccessException, SignException, ConfigException{
+    public void testSetUpMerchant() throws SignException, ConfigException{
     	File p12file = Mockito.mock(File.class);
     	MerchantConfig mc = Mockito.mock(MerchantConfig.class);
     	
@@ -43,9 +43,11 @@ public class IdentityTest{
     	Mockito.when(principal.getName()).thenReturn(keyAlias);
     	
     	Mockito.when(mc.getKeyFile()).thenReturn(p12file);
+		Mockito.when(mc.getKeyPassword()).thenReturn("testPwd");
     	Identity identity = new Identity(mc,x509Cert,pkey,logger);
     	assertEquals(identity.getName(), mc.getMerchantID());
     	assertEquals(identity.getSerialNumber(), "400000009910179089277");
+		assertEquals(String.valueOf(identity.getPswd()), "testPwd");
     	assertNotNull(identity.getPrivateKey());
     }
     

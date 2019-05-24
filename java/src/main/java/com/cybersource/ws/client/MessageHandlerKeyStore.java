@@ -26,7 +26,7 @@ public class MessageHandlerKeyStore extends Merlin {
         try {
             if (privateKey != null) {
                 X509Certificate[] certChain = {certificate};
-                getKeyStore().setKeyEntry(id.getKeyAlias(), privateKey, id.getName().toCharArray(), certChain);
+                getKeyStore().setKeyEntry(id.getKeyAlias(), privateKey, id.getPswd(), certChain);
             } else {
                 getKeyStore().setCertificateEntry(id.getKeyAlias(), certificate);
             }
