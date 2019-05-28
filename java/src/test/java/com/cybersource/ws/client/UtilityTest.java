@@ -16,7 +16,7 @@ public class UtilityTest extends BaseTest {
 
     @Before
     public void setUp() {
-        URL fileUrl = Thread.currentThread().getContextClassLoader().getResource("test_cybs.properties");
+     URL fileUrl = Thread.currentThread().getContextClassLoader().getResource("test_cybs.properties");
         String filepath = "";
         if(fileUrl != null) {
             propertiesFilename = fileUrl.getFile();
