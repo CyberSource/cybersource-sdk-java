@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -186,10 +186,13 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________
 
-1)Fixed security vulnerabilities found in the jar dependencies. 1)xmlsec 2)opensaml 3)bcprov
+1) Fixed security vulnerabilities found in the jar dependencies. 1)xmlsec 2)opensaml 3)bcprov
 xmlsec jar :-upgraded from version 1.4.3 to version 2.0.7
 opensaml jar :- Removed this jar as its not impacting our code base
 bcprov jar :- upgraded from version 1.54 to version 1.61
+
+2) Fixed reseller issue. Now using keyfile password to store/load p12 certs. 
+
 
 _______________________________
 
