@@ -187,7 +187,7 @@ Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________
 
 1) Fixed security vulnerabilities found in the jar dependencies. 1)xmlsec 2)opensaml 3)bcprov
-xmlsec jar :-upgraded from version 1.4.3 to version 2.0.7
+xmlsec jar :-upgraded from version 1.4.3 to version 1.5.6
 opensaml jar :- Removed this jar as its not impacting our code base
 bcprov jar :- upgraded from version 1.54 to version 1.61
 
