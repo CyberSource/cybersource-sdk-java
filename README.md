@@ -164,9 +164,9 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 ## Third Party jars
     1. org.apache.ws.security.wss4j:1.6.19
       The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications from the OASIS Web Services Security TC.
-    2. org.bouncycastle:bcprov-jdk15on:1.54
+    2. org.bouncycastle:bcprov-jdk15on:1.61
       This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
-    3. org.apache.santuario:xmlsec:1.5.8
+    3. org.apache.santuario:xmlsec:1.5.6
       The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing, and supports XML Digital Signature APIs.
     4. org.apache.commons:commons-lang3:3.4
       Apache Commons Lang, a package of Java utility classes for the classes that are in java.lang's hierarchy, or are considered to be so standard as to justify existence in java.lang.
@@ -185,14 +185,11 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________
-
-1) Fixed security vulnerabilities found in the jar dependencies. 1)xmlsec 2)opensaml 3)bcprov
-xmlsec jar :-upgraded from version 1.4.3 to version 1.5.6
-opensaml jar :- Removed this jar as its not impacting our code base
-bcprov jar :- upgraded from version 1.54 to version 1.61
-
-2) Fixed reseller issue. Now using keyfile password to store/load p12 certs. 
-
+  1) Fixed security vulnerabilities found in the jar dependencies.
+        xmlsec jar :-upgraded from version 1.4.3 to version 1.5.6
+        opensaml jar :- Removed this jar as its not impacting our code base
+        bcprov jar :- upgraded from version 1.54 to version 1.61
+  2) Fixed keyfile password issue. Now using keyfile password to store/load p12 certs. 
 
 _______________________________
 

@@ -36,7 +36,7 @@
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
             <version>1.6.19</version>
-	  <exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>org.opensaml</groupId>
                     <artifactId>opensaml</artifactId>
