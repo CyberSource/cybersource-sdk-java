@@ -31,6 +31,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 /**
@@ -57,6 +61,8 @@ class JDKHttpURLConnection extends Connection {
         URL url = new URL(serverURL);
 
         con = ConnectionHelper.openConnection(url, mc);
+        con.setRequestProperty("v-c-origin-iat", String.valueOf(System.currentTimeMillis()));
+        logRequestHeaders();
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         ConnectionHelper.setTimeout(con, mc.getTimeout());
@@ -130,6 +136,29 @@ class JDKHttpURLConnection extends Connection {
             }
         }
     }
+    
+	@Override
+	void logResponseHeaders() {
+	
+		try {
+		if(con!=null && con.getResponseCode() != -1 ) {
+	        logger.log(Logger.LT_INFO, "Response Headers : "+con.getHeaderFields());
+			
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
+		
+	}
+    
+    
+    @Override
+	void logRequestHeaders() {
+		// TODO Auto-generated method stub		
+        logger.log(Logger.LT_INFO, "Request Headers : "+con.getRequestProperties());
+        
+	}
 }
 
 /* Copyright 2006 CyberSource Corporation */

@@ -37,6 +37,11 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import org.apache.commons.httpclient.Header;
 
 /**
  * Class helps in posting the Request document for the Transaction using HttpClient.
@@ -81,6 +86,8 @@ class HttpClientConnection extends Connection {
 
         postMethod.setRequestEntity(
                 new StringRequestEntity(requestString, null, "UTF-8"));
+        postMethod.setRequestHeader("v-c-origin-ia", String.valueOf(System.currentTimeMillis()));
+        logRequestHeaders();
 
         httpClient.executeMethod(postMethod);
     }
@@ -231,6 +238,29 @@ class HttpClientConnection extends Connection {
             return false;
         }
     }
+    
+	@Override
+	void logRequestHeaders() {
+		// TODO Auto-generated method stub
+		
+		Header[] headers=postMethod.getRequestHeaders();
+		for(Header header:headers){
+	        logger.log(Logger.LT_INFO, "Request Headers: " +header);
+
+		}	
+	}
+	
+	@Override
+	public void logResponseHeaders() {
+		Header[] headers = postMethod.getResponseHeaders();
+		 Map<String, String> headerMap = new HashMap<String, String>();
+		 for(Header header: headers){
+			 headerMap.put(header.getName(), header.getValue());
+		 }
+	    
+		 logger.log(Logger.LT_INFO, "Response Headers"+ headerMap);
+	}
+	
 }
 
 /* Copyright 2006 CyberSource Corporation */
