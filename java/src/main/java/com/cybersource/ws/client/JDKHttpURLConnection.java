@@ -147,9 +147,10 @@ class JDKHttpURLConnection extends Connection {
     
     @Override
 	void logRequestHeaders() {
-        logger.log(Logger.LT_INFO, "Request Headers : "+con.getRequestProperties());
-        
-	}
+		if(con!=null) {
+        	logger.log(Logger.LT_INFO, "Request Headers : "+con.getRequestProperties());
+        	}
+	      }
 }
 
 /* Copyright 2006 CyberSource Corporation */
