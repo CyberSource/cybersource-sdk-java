@@ -137,25 +137,16 @@ class JDKHttpURLConnection extends Connection {
         }
     }
     
-	@Override
-	void logResponseHeaders() {
-	
-		try {
-		if(con!=null && con.getResponseCode() != -1 ) {
-	        logger.log(Logger.LT_INFO, "Response Headers : "+con.getHeaderFields());
-			
+    @Override
+    void logResponseHeaders() {
+		if(con!=null) {
+	        logger.log(Logger.LT_INFO, "Response headers : "+con.getHeaderFields());			
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-				
-		
-	}
     
     
     @Override
 	void logRequestHeaders() {
-		// TODO Auto-generated method stub		
         logger.log(Logger.LT_INFO, "Request Headers : "+con.getRequestProperties());
         
 	}

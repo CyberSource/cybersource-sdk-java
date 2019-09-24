@@ -241,14 +241,13 @@ class HttpClientConnection extends Connection {
     
 	@Override
 	void logRequestHeaders() {
-		// TODO Auto-generated method stub
-		
 		Header[] headers=postMethod.getRequestHeaders();
+		Map<String, String> headerMap = new HashMap<String, String>();
 		for(Header header:headers){
-	        logger.log(Logger.LT_INFO, "Request Headers: " +header);
-
-		}	
-	}
+			headerMap.put(header.getName(), header.getValue());
+		 }
+        	logger.log(Logger.LT_INFO, "Request Headers: " + headerMap);
+	    }
 	
 	@Override
 	public void logResponseHeaders() {
@@ -258,8 +257,8 @@ class HttpClientConnection extends Connection {
 			 headerMap.put(header.getName(), header.getValue());
 		 }
 	    
-		 logger.log(Logger.LT_INFO, "Response Headers"+ headerMap);
-	}
+		 logger.log(Logger.LT_INFO, "Response Headers:" +headerMap);
+	     }
 	
 }
 
