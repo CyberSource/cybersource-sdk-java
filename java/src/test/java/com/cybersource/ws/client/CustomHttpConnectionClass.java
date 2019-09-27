@@ -182,6 +182,16 @@ public class CustomHttpConnectionClass extends Connection{
             return false;
         }
     }
+    
+ 	@Override
+ 	public void logResponseHeaders() {	
+ 		
+ 	}
+     
+     
+     @Override
+ 	public void logRequestHeaders() {
 
+ 	}
 }
 

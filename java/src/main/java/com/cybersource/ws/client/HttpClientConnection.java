@@ -26,7 +26,6 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.w3c.dom.Document;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -37,7 +36,10 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.List;
+import org.apache.commons.httpclient.Header;
+import java.util.ArrayList;
+import java.util.Arrays;
 /**
  * Class helps in posting the Request document for the Transaction using HttpClient.
  * Converts the document to String format and also helps in setting up the Proxy connections.
@@ -81,7 +83,8 @@ class HttpClientConnection extends Connection {
 
         postMethod.setRequestEntity(
                 new StringRequestEntity(requestString, null, "UTF-8"));
-
+        postMethod.setRequestHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+		logRequestHeaders();
         httpClient.executeMethod(postMethod);
     }
 
@@ -231,6 +234,19 @@ class HttpClientConnection extends Connection {
             return false;
         }
     }
+    
+    @Override
+	public void logRequestHeaders() {		
+		List<Header> reqheaders=Arrays.asList(postMethod.getRequestHeaders());
+        logger.log(Logger.LT_INFO, "Request Headers: " +reqheaders);
+	}
+	
+	@Override
+	public void logResponseHeaders() {
+		List<Header> respheaders=Arrays.asList(postMethod.getResponseHeaders());
+		 logger.log(Logger.LT_INFO, "Response Headers"+ respheaders);
+	}
+	
 }
 
 /* Copyright 2006 CyberSource Corporation */

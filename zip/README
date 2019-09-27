@@ -199,6 +199,11 @@ Mock objects library for java
 
 ##Changes
 
+Version Cybersource-sdk-java 6.2.8 (SEPT,2019)
+_______________________________
+
+  1)Added request header and logged request and response headers
+
 Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________
   1) Fixed security vulnerabilities found in the jar dependencies.

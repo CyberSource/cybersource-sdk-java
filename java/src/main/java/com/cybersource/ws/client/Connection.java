@@ -124,9 +124,8 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             throws FaultException, ClientException {
         try {
             logger.log(Logger.LT_INFO, "Reading response...");
-
             int responseCode = getHttpResponseCode();
-
+            logResponseHeaders();
             // if successful, there's nothing left to do here.
             // we'll process the response in a later method.
             if (responseCode == HttpURLConnection.HTTP_OK) return;
@@ -214,7 +213,15 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
         return baos;
     }
+    /*
+     * Log Request and Response Headers
+     * 
+     */
+
+    	abstract public void logRequestHeaders();
+    	abstract public void logResponseHeaders();
 }
+
 
 /* Copyright 2006 CyberSource Corporation */
 
