@@ -10,7 +10,7 @@ To install the `cybersource-sdk-java` from central repository, add dependency to
 <dependency>
   <groupId>com.cybersource</groupId>
   <artifactId>cybersource-sdk-java</artifactId>
-  <version>6.2.7</version>
+  <version>6.2.8</version>
 </dependency> 
 ```
 Run `mvn install` to install dependency
@@ -19,7 +19,7 @@ Run `mvn install` to install dependency
 Add the dependency to your build.gradle
 ```java
 dependencies {
-  compile 'com.cybersource:cybersource-sdk-java:6.2.6'
+  compile 'com.cybersource:cybersource-sdk-java:6.2.8'
 }
 ```
 ## Requirements
@@ -182,6 +182,11 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       Mock objects library for java  
 
 ## Changes
+
+Version Cybersource-sdk-java 6.2.8 (SEPT,2019)
+_______________________________
+
+  1)Added request header and logged request and response headers
 
 Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________

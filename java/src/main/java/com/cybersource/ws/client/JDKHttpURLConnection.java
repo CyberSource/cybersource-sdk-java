@@ -61,7 +61,7 @@ class JDKHttpURLConnection extends Connection {
         URL url = new URL(serverURL);
 
         con = ConnectionHelper.openConnection(url, mc);
-        con.setRequestProperty("v-c-origin-iat", String.valueOf(System.currentTimeMillis()));
+        con.setRequestProperty(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         logRequestHeaders();
         con.setRequestMethod("POST");
         con.setDoOutput(true);

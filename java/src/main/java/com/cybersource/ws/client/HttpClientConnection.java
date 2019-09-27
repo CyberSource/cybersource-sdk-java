@@ -83,7 +83,7 @@ class HttpClientConnection extends Connection {
 
         postMethod.setRequestEntity(
                 new StringRequestEntity(requestString, null, "UTF-8"));
-        postMethod.setRequestHeader("v-c-origin-iat", String.valueOf(System.currentTimeMillis()));
+        postMethod.setRequestHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
 		logRequestHeaders();
         httpClient.executeMethod(postMethod);
     }
