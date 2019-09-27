@@ -138,7 +138,7 @@ class JDKHttpURLConnection extends Connection {
     }
     
     @Override
-    void logResponseHeaders() {
+    public void logResponseHeaders() {
 		if(con!=null) {
 	        logger.log(Logger.LT_INFO, "Response headers : "+con.getHeaderFields());			
 			}
@@ -146,7 +146,7 @@ class JDKHttpURLConnection extends Connection {
     
     
     @Override
-	void logRequestHeaders() {
+    public void logRequestHeaders() {
 		if(con!=null) {
         	logger.log(Logger.LT_INFO, "Request Headers : "+con.getRequestProperties());
         	}

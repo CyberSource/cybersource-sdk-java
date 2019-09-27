@@ -236,7 +236,7 @@ class HttpClientConnection extends Connection {
     }
     
     @Override
-	void logRequestHeaders() {		
+	public void logRequestHeaders() {		
 		List<Header> reqheaders=Arrays.asList(postMethod.getRequestHeaders());
         logger.log(Logger.LT_INFO, "Request Headers: " +reqheaders);
 	}

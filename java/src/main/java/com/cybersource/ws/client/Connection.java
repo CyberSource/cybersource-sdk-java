@@ -218,8 +218,8 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
      * 
      */
 
-    	abstract void logRequestHeaders();
-    	abstract void logResponseHeaders();
+    	abstract public void logRequestHeaders();
+    	abstract public void logResponseHeaders();
 }
 
 
