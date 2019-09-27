@@ -184,13 +184,13 @@ public class CustomHttpConnectionClass extends Connection{
     }
     
  	@Override
- 	void logResponseHeaders() {	
+ 	public void logResponseHeaders() {	
  		
  	}
      
      
      @Override
- 	void logRequestHeaders() {
+ 	public void logRequestHeaders() {
 
  	}
 }
