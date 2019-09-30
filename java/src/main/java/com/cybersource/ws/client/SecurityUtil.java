@@ -304,7 +304,7 @@ public class SecurityUtil {
 					Identity identity = new Identity(merchantConfig, (X509Certificate) keyEntry.getCertificate(),
 							keyEntry.getPrivateKey(), logger);
 					localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-					identities.put(identity.getName(), identity);
+					identities.put(identity.getKeyAlias(), identity);
 					continue;
 				}
 				Identity identity = new Identity(merchantConfig,
@@ -348,7 +348,7 @@ public class SecurityUtil {
                 if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(certificate))) {
                     identity = new Identity(merchantConfig, (X509Certificate) certificate, key, logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-                    identities.put(identity.getName(), identity);
+                    identities.put(identity.getKeyAlias(), identity);
                 } else {
                     identity = new Identity(merchantConfig, (X509Certificate) certificate, logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
