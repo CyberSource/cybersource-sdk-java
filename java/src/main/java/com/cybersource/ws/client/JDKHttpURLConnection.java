@@ -67,7 +67,6 @@ class JDKHttpURLConnection extends Connection {
                 "Sending " + requestBytes.length + " bytes to " + serverURL);
         out.write(requestBytes);
         out.close();
-        System.out.println(System.getProperty("http.maxConnections"));
         System.out.println("JDKHttpURLConnection.postDocument time taken is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
         _isRequestSent = true;
     }
