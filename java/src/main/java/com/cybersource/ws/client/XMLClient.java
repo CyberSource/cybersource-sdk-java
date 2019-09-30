@@ -18,8 +18,10 @@
 
 package com.cybersource.ws.client;
 
-import org.apache.ws.security.util.XMLUtils;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -31,7 +33,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -304,14 +305,14 @@ public class XMLClient {
         }
 
         // for each of the version fields...
-        for (int i = 0; i < VERSION_FIELDS.length; ++i) {
+        for (String versionField : VERSION_FIELDS) {
             // if the current element is not null, compare it with
             // the current version field in the loop
             if (currElem != null) {
                 // if they match, save the element next to it, delete
                 // the current element and make the saved element the current
                 // element
-                if (VERSION_FIELDS[i].equals(currElem.getNodeName())) {
+                if (versionField.equals(currElem.getNodeName())) {
                     save = currElem.getNextSibling();
                     requestMessage.removeChild(currElem);
                     currElem = save;
@@ -374,13 +375,13 @@ public class XMLClient {
         Document wrappedDoc = soapWrap(doc, mc, builder, logger);
         logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true); 
         
-        Document resultDocument = null;
+        Document resultDocument;
         
         SecurityUtil.loadMerchantP12File(mc,logger);
         logger.log(Logger.LT_INFO, "Client, End of loading Merchant Certificate   ", true);       
         
         // sign Document object
-        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc,mc.getMerchantID(),mc.getKeyPassword(),logger);
+        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc,mc.getKeyAlias(),mc.getKeyPassword(),logger);
         logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
 
         if ( mc.getUseSignAndEncrypted() ) {

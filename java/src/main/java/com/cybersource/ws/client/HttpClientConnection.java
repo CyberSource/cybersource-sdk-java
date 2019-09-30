@@ -26,20 +26,16 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.w3c.dom.Document;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.List;
-import org.apache.commons.httpclient.Header;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 /**
  * Class helps in posting the Request document for the Transaction using HttpClient.
  * Converts the document to String format and also helps in setting up the Proxy connections.
@@ -59,9 +55,7 @@ class HttpClientConnection extends Connection {
      * @see com.cybersource.ws.client.Connection#postDocument(org.w3c.dom.Document)
      */
     void postDocument(Document request)
-            throws IOException, TransformerConfigurationException,
-            TransformerException, MalformedURLException,
-            ProtocolException {
+            throws IOException, TransformerException {
     	
     	/*
     	 * SimpleHttpConnectionManager(boolean alwaysClose) : 
@@ -108,8 +102,7 @@ class HttpClientConnection extends Connection {
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
-    int getHttpResponseCode()
-            throws IOException {
+    int getHttpResponseCode(){
         return postMethod != null ? postMethod.getStatusCode() : -1;
     }
 
@@ -225,7 +218,6 @@ class HttpClientConnection extends Connection {
          	        Thread.sleep(retryWaitInterval);
          	        logger.log( Logger.LT_INFO+" Retrying Request -- ",mc.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
                  } catch (InterruptedException e) {
-         	        // TODO Auto-generated catch block
          	        e.printStackTrace();
                  }
                 return true;

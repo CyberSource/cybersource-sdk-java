@@ -28,13 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -54,26 +49,26 @@ class JDKHttpURLConnection extends Connection {
     }
 
     void postDocument(Document request)
-            throws IOException, TransformerConfigurationException,
-            TransformerException, MalformedURLException,
-            ProtocolException {
+            throws IOException,
+            TransformerException{
+        long startTime = System.nanoTime();
         String serverURL = mc.getEffectiveServerURL();
         URL url = new URL(serverURL);
 
         con = ConnectionHelper.openConnection(url, mc);
         con.setRequestProperty(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-        logRequestHeaders();
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         ConnectionHelper.setTimeout(con, mc.getTimeout());
-
+        logRequestHeaders();
         OutputStream out = con.getOutputStream();
-        byte[] requestBytes = documentToByteArray(request);
+         byte[] requestBytes = documentToByteArray(request);
         logger.log(Logger.LT_INFO,
                 "Sending " + requestBytes.length + " bytes to " + serverURL);
         out.write(requestBytes);
         out.close();
-
+        System.out.println(System.getProperty("http.maxConnections"));
+        System.out.println("JDKHttpURLConnection.postDocument time taken is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
         _isRequestSent = true;
     }
 
@@ -110,8 +105,7 @@ class JDKHttpURLConnection extends Connection {
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseErrorStream()
      */
-    InputStream getResponseErrorStream()
-            throws IOException {
+    InputStream getResponseErrorStream() {
         return con != null ? con.getErrorStream() : null;
     }
 
