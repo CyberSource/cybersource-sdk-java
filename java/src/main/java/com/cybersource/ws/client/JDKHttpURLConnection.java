@@ -51,7 +51,7 @@ class JDKHttpURLConnection extends Connection {
     void postDocument(Document request)
             throws IOException,
             TransformerException{
-        long startTime = System.nanoTime();
+        //long startTime = System.nanoTime();
         String serverURL = mc.getEffectiveServerURL();
         URL url = new URL(serverURL);
 
@@ -67,7 +67,7 @@ class JDKHttpURLConnection extends Connection {
                 "Sending " + requestBytes.length + " bytes to " + serverURL);
         out.write(requestBytes);
         out.close();
-        System.out.println("JDKHttpURLConnection.postDocument time taken is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
+        //System.out.println("JDKHttpURLConnection.postDocument time taken is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
         _isRequestSent = true;
     }
 

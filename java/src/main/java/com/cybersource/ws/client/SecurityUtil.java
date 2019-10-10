@@ -225,7 +225,7 @@ public class SecurityUtil {
     public static Document createSignedDoc(Document workingDocument,String keyAlias, String password,Logger logger) throws SignException {
         
         logger.log(Logger.LT_INFO, "Signing request...");
-        long startTime = System.nanoTime();
+        //long startTime = System.nanoTime();
         WSSecHeader secHeader = new WSSecHeader();
         try {
             secHeader.insertSecurityHeader(workingDocument);
@@ -250,7 +250,7 @@ public class SecurityUtil {
         sign.setParts(Collections.singletonList(msgBodyPart));
         try {
             Document document = sign.build(workingDocument, localKeyStoreHandler, secHeader);
-            System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
+            //System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
             return document;
         } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + keyAlias + "'");

@@ -183,10 +183,12 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.8 (SEPT,2019)
+Version Cybersource-sdk-java 6.2.8 (OCT,2019)
 _______________________________
 
   1)Added request header and logged request and response headers
+  
+  2)Caching of certificate is done using keyAlias earlier it was done using merchant_id
 
 Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________

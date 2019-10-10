@@ -193,9 +193,9 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     private Document parseReceivedDocument()
             throws IOException, SAXException {
         logger.log(Logger.LT_INFO, "Parsing response...");
-        long startTime = System.nanoTime();
+        //long startTime = System.nanoTime();
         Document document = builder.parse(getResponseStream());
-        System.out.println("Connection.parseReceivedDocument time taken to parse the response is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
+        //System.out.println("Connection.parseReceivedDocument time taken to parse the response is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
         return document;
     }
 
