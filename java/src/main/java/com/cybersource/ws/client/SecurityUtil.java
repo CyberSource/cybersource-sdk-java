@@ -10,23 +10,17 @@ import org.apache.ws.security.message.WSSecSignature;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.UnrecoverableEntryException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.concurrent.TimeUnit;
 
 
 public class SecurityUtil {
@@ -82,8 +76,8 @@ public class SecurityUtil {
      */
     public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException, ConfigException {
                
-        Identity identity=identities.get(merchantConfig.getMerchantID());
-        if(!merchantConfig.isCertificateCacheEnabled() || identity == null || !(identity.isValid(merchantConfig.getKeyFile()))){
+        Identity identity=identities.get(merchantConfig.getKeyAlias());
+        if(!merchantConfig.isCertificateCacheEnabled() || identity == null || !(identity.isValid(merchantConfig.getKeyFile(), logger))){
             try {
                 if (localKeyStoreHandler == null)
                     initKeystore();
@@ -143,7 +137,7 @@ public class SecurityUtil {
         }
         
         // our p12 files do not contain an alias as a normal name, its the common name and serial number
-        String merchantKeyAlias = null;
+        String merchantKeyAlias;
         try {
             Enumeration enumKeyStore = merchantKeyStore.aliases();
             while (enumKeyStore.hasMoreElements()) {
@@ -166,7 +160,7 @@ public class SecurityUtil {
                     
                     Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey(),logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-                    identities.put(identity.getName(), identity);
+                    identities.put(identity.getKeyAlias(), identity);
                     continue;
                 }
                 Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias),logger);
@@ -180,7 +174,7 @@ public class SecurityUtil {
     }
     
     
-    public static Document handleMessageCreation(Document signedDoc, String merchantID, Logger logger) throws SignEncryptException, SignException{
+    public static Document handleMessageCreation(Document signedDoc, String merchantId, Logger logger) throws SignEncryptException, SignException{
         
         logger.log(Logger.LT_INFO, "Encrypting Signed doc ...");
         
@@ -221,17 +215,17 @@ public class SecurityUtil {
             // encrypted using the public key of the receiver
             signedEncryptedDoc = encrBuilder.build(signedDoc, localKeyStoreHandler, secHeader);
         } catch (WSSecurityException e) {
-            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantID + "'" + " with " + SERVER_ALIAS);
-            throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantID + "'" + " with " + SERVER_ALIAS, e);
+            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS);
+            throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS, e);
         }
         encrBuilder.prependToHeader(secHeader);
         return signedEncryptedDoc;
     }
     
-    public static Document createSignedDoc(Document workingDocument,String merchantID, String password,Logger logger) throws SignException {
+    public static Document createSignedDoc(Document workingDocument,String keyAlias, String password,Logger logger) throws SignException {
         
         logger.log(Logger.LT_INFO, "Signing request...");
-        
+        //long startTime = System.nanoTime();
         WSSecHeader secHeader = new WSSecHeader();
         try {
             secHeader.insertSecurityHeader(workingDocument);
@@ -243,7 +237,7 @@ public class SecurityUtil {
         
         WSSecSignature sign = new WSSecSignature();
         
-        sign.setUserInfo(identities.get(merchantID).getKeyAlias(), password);
+        sign.setUserInfo(keyAlias, password);
         
         //sign.setUserInfo(mc.getKeyAlias(), mc.getPassword());
         sign.setDigestAlgo(DIGEST_ALGORITHM);
@@ -255,17 +249,19 @@ public class SecurityUtil {
         WSEncryptionPart msgBodyPart = new WSEncryptionPart(WSConstants.ELEM_BODY, WSConstants.URI_SOAP11_ENV, "");
         sign.setParts(Collections.singletonList(msgBodyPart));
         try {
-            return sign.build(workingDocument, localKeyStoreHandler, secHeader);
+            Document document = sign.build(workingDocument, localKeyStoreHandler, secHeader);
+            //System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
+            return document;
         } catch (WSSecurityException e) {
-            logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + merchantID + "'");
+            logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + keyAlias + "'");
             throw new SignException(e.getMessage());
         }
     }
     
     
 	public static void readJdkCert(MerchantConfig merchantConfig, Logger logger)
-			throws SignEncryptException, SignException, ConfigException {
-		KeyStore keystore = null;
+			throws SignEncryptException, SignException {
+		KeyStore keystore;
 		try {
 			FileInputStream is = new FileInputStream(merchantConfig.getKeyFile());
 			keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -275,14 +271,14 @@ public class SecurityUtil {
 			throw new SignException(e);
 		}
 
-		String merchantKeyAlias = null;
+		String merchantKeyAlias;
 		try {
 			Enumeration enumKeyStore = keystore.aliases();
 			if (!enumKeyStore.hasMoreElements()) {
 				throw new SignException("Empty Keystore or Missing Certificate ");
 			}
 			while (enumKeyStore.hasMoreElements()) {
-				KeyStore.PrivateKeyEntry keyEntry = null;
+				KeyStore.PrivateKeyEntry keyEntry;
 				merchantKeyAlias = (String) enumKeyStore.nextElement();
 				if (merchantKeyAlias.contains(merchantConfig.getKeyAlias())) {
 					try {
@@ -308,7 +304,7 @@ public class SecurityUtil {
 					Identity identity = new Identity(merchantConfig, (X509Certificate) keyEntry.getCertificate(),
 							keyEntry.getPrivateKey(), logger);
 					localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-					identities.put(identity.getName(), identity);
+					identities.put(identity.getKeyAlias(), identity);
 					continue;
 				}
 				Identity identity = new Identity(merchantConfig,
@@ -338,7 +334,7 @@ public class SecurityUtil {
 			if (cert == null) {
 				throw new SignException("Empty Keystore or Missing Certificate ");
 			}
-			PrivateKey key = null;
+			PrivateKey key;
 			try {
 				key = (PrivateKey) keystore.getKey(merchantConfig.getKeyAlias(),
 						merchantConfig.getKeyAlias().toCharArray());
@@ -348,18 +344,17 @@ public class SecurityUtil {
 				throw new SignException(e);
 			}
 
-			for (int i = 0; i < cert.length; i++) {
-
-				if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(cert[i]))) {
-					identity = new Identity(merchantConfig, (X509Certificate) cert[i], key, logger);
-					localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-					identities.put(identity.getName(), identity);
-				} else {
-					identity = new Identity(merchantConfig, (X509Certificate) cert[i], logger);
-					localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
-					identities.put(identity.getName(), identity);
-				}
-			}
+            for (Certificate certificate : cert) {
+                if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(certificate))) {
+                    identity = new Identity(merchantConfig, (X509Certificate) certificate, key, logger);
+                    localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+                    identities.put(identity.getKeyAlias(), identity);
+                } else {
+                    identity = new Identity(merchantConfig, (X509Certificate) certificate, logger);
+                    localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
+                    identities.put(identity.getName(), identity);
+                }
+            }
 			java.security.cert.Certificate serverCert = keystore.getCertificate(SERVER_ALIAS);
 			if (serverCert == null) {
 				throw new SignException("Missing Server Certificate ");
@@ -394,7 +389,6 @@ public class SecurityUtil {
 				} catch (IOException e) {
 					logger.log(Logger.LT_EXCEPTION,
 							"Exception while closing FileStream, '" + merchantConfig.getKeyFilename() + "'");
-					throw new SignException(e);
 				}
 		}
 
