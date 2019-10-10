@@ -124,7 +124,7 @@ openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -
 
 - Create JKS from p12 using keytool
 ```
-keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
+keytool -importkeystore -destkeystore <Your_keystore_name>.jks -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
 ```
 - Now import the CyberSource_SJC_US.crt to your keystore
 ```
