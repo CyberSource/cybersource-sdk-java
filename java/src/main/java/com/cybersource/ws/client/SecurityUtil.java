@@ -77,7 +77,7 @@ public class SecurityUtil {
     public static void loadMerchantP12File(MerchantConfig merchantConfig, Logger logger) throws SignException, SignEncryptException, ConfigException {
                
         Identity identity=identities.get(merchantConfig.getKeyAlias());
-        if(!merchantConfig.isCertificateCacheEnabled() || identity == null || !(identity.isValid(merchantConfig.getKeyFile()))){
+        if(!merchantConfig.isCertificateCacheEnabled() || identity == null || !(identity.isValid(merchantConfig.getKeyFile(), logger))){
             try {
                 if (localKeyStoreHandler == null)
                     initKeystore();

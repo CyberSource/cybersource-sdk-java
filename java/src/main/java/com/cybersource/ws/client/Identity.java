@@ -43,8 +43,6 @@ public class Identity {
 
     private char[] pswd;
 
-    private Logger logger;
-    
     /**
      * Creates an Identity instance.this type of the instance can
      * only be used to store server certificate identity.
@@ -56,8 +54,6 @@ public class Identity {
     public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate,Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert=x509Certificate;
-        this.logger=logger;
-
         if(merchantConfig.isJdkCertEnabled() || merchantConfig.isCacertEnabled()){
             setupJdkServerCerts();
         }
@@ -97,16 +93,13 @@ public class Identity {
      * @param privateKey
      * @throws SignException
      */
-    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey,Logger logger) throws SignException {
+    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey, Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert = x509Certificate;
         this.privateKey = privateKey;
-        this.logger=logger;
-
         try {
 			this.lastModifiedDate=merchantConfig.getKeyFile().lastModified();
 		} catch (ConfigException e) {
-			
 			logger.log(Logger.LT_EXCEPTION,
                     "Identity object ,cannot instantiate with key file lastModifiedDate. "
                     + e.getMessage());
@@ -120,7 +113,7 @@ public class Identity {
      * else isValid method will return true and certificate reload will not occur.
     */
     
-	public boolean isValid(File keyFile) {
+	public boolean isValid(File keyFile, Logger logger) {
 		boolean changeKeyFileStatus=(this.lastModifiedDate == keyFile.lastModified());
 		if (!changeKeyFileStatus) {
 			logger.log(Logger.LT_INFO, "Key file changed");
