@@ -33,11 +33,9 @@ import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
 /**
  * Class helps in posting the Request document for the Transaction using HttpClient.
  * Converts the document to String format and also helps in setting up the Proxy connections.
@@ -57,9 +55,7 @@ class HttpClientConnection extends Connection {
      * @see com.cybersource.ws.client.Connection#postDocument(org.w3c.dom.Document)
      */
     void postDocument(Document request)
-            throws IOException, TransformerConfigurationException,
-            TransformerException, MalformedURLException,
-            ProtocolException {
+            throws IOException, TransformerException {
     	
     	/*
     	 * SimpleHttpConnectionManager(boolean alwaysClose) : 
@@ -81,7 +77,8 @@ class HttpClientConnection extends Connection {
 
         postMethod.setRequestEntity(
                 new StringRequestEntity(requestString, null, "UTF-8"));
-
+        postMethod.setRequestHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+		logRequestHeaders();
         httpClient.executeMethod(postMethod);
     }
 
@@ -105,8 +102,7 @@ class HttpClientConnection extends Connection {
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
-    int getHttpResponseCode()
-            throws IOException {
+    int getHttpResponseCode(){
         return postMethod != null ? postMethod.getStatusCode() : -1;
     }
 
@@ -222,7 +218,6 @@ class HttpClientConnection extends Connection {
          	        Thread.sleep(retryWaitInterval);
          	        logger.log( Logger.LT_INFO+" Retrying Request -- ",mc.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
                  } catch (InterruptedException e) {
-         	        // TODO Auto-generated catch block
          	        e.printStackTrace();
                  }
                 return true;
@@ -231,6 +226,19 @@ class HttpClientConnection extends Connection {
             return false;
         }
     }
+    
+    @Override
+	public void logRequestHeaders() {		
+		List<Header> reqheaders=Arrays.asList(postMethod.getRequestHeaders());
+        logger.log(Logger.LT_INFO, "Request Headers: " +reqheaders);
+	}
+	
+	@Override
+	public void logResponseHeaders() {
+		List<Header> respheaders=Arrays.asList(postMethod.getResponseHeaders());
+		 logger.log(Logger.LT_INFO, "Response Headers"+ respheaders);
+	}
+	
 }
 
 /* Copyright 2006 CyberSource Corporation */

@@ -19,28 +19,19 @@
 package com.cybersource.ws.client;
 
 
-import org.apache.ws.security.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.security.cert.X509Certificate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
-import java.security.KeyStore;
-import java.security.cert.PKIXParameters;
-import java.security.cert.TrustAnchor;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -49,8 +40,6 @@ import java.util.Properties;
  * form of a Map object.
  */
 public class Client {
-    private static final String HEADER_FORMAT = "{0}={1}";
-
     private static final String SOAP_ENVELOPE1 = "<soap:Envelope xmlns:soap=\"" +
             "http://schemas.xmlsoap.org/soap/envelope/\">\n<soap:Body id=\"body1\">\n" +
             "<nvpRequest xmlns=\"{0}\">\n{1}</nvpRequest>" +
@@ -99,8 +88,6 @@ public class Client {
         MerchantConfig mc;
         LoggerWrapper logger = null;
         Connection con = null;
-
-
         try {
             setVersionInformation(request);
 
@@ -229,16 +216,16 @@ public class Client {
             		+ mapToString(request, true, PCI.REQUEST));
         }
         
-        Document wrappedDoc = soapWrap(request, mc, builder,logger);
+        Document wrappedDoc = soapWrap(request, mc, builder);
         logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true); 
         
-        Document resultDocument = null;
+        Document resultDocument;
         
         SecurityUtil.loadMerchantP12File(mc,logger);
         logger.log(Logger.LT_INFO, "Client, End of loading Merchant Certificates ", true);       
         
         // sign Document object
-        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc, mc.getMerchantID(), mc.getKeyPassword(), logger);
+        resultDocument = SecurityUtil.createSignedDoc(wrappedDoc, mc.getKeyAlias(), mc.getKeyPassword(), logger);
         logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
 
         if ( mc.getUseSignAndEncrypted() ) {
@@ -254,7 +241,7 @@ public class Client {
         return resultDocument ;
     }
 
-    private static Document soapWrap(Map request, MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws SAXException, IOException{
+    private static Document soapWrap(Map request, MerchantConfig mc, DocumentBuilder builder) throws SAXException, IOException{
     	// wrap in SOAP envelope
         Object[] arguments
                 = {mc.getEffectiveNamespaceURI(),

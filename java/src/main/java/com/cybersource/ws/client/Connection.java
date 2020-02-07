@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -123,10 +124,9 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     private void checkForFault()
             throws FaultException, ClientException {
         try {
-            logger.log(Logger.LT_INFO, "Reading response...");
-
+            logger.log(Logger.LT_INFO, "waiting for response...");
             int responseCode = getHttpResponseCode();
-
+            logResponseHeaders();
             // if successful, there's nothing left to do here.
             // we'll process the response in a later method.
             if (responseCode == HttpURLConnection.HTTP_OK) return;
@@ -193,7 +193,10 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     private Document parseReceivedDocument()
             throws IOException, SAXException {
         logger.log(Logger.LT_INFO, "Parsing response...");
-        return builder.parse(getResponseStream());
+        //long startTime = System.nanoTime();
+        Document document = builder.parse(getResponseStream());
+        //System.out.println("Connection.parseReceivedDocument time taken to parse the response is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
+        return document;
     }
 
     /**
@@ -214,7 +217,15 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
         return baos;
     }
+    /*
+     * Log Request and Response Headers
+     * 
+     */
+
+    	abstract public void logRequestHeaders();
+    	abstract public void logResponseHeaders();
 }
+
 
 /* Copyright 2006 CyberSource Corporation */
 

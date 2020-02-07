@@ -10,7 +10,7 @@ To install the `cybersource-sdk-java` from central repository, add dependency to
 <dependency>
   <groupId>com.cybersource</groupId>
   <artifactId>cybersource-sdk-java</artifactId>
-  <version>6.2.7</version>
+  <version>6.2.8</version>
 </dependency> 
 ```
 Run `mvn install` to install dependency
@@ -19,7 +19,7 @@ Run `mvn install` to install dependency
 Add the dependency to your build.gradle
 ```java
 dependencies {
-  compile 'com.cybersource:cybersource-sdk-java:6.2.6'
+  compile 'com.cybersource:cybersource-sdk-java:6.2.8'
 }
 ```
 ## Requirements
@@ -124,7 +124,7 @@ openssl pkcs12 -export -certfile CyberSourceCertAuth.crt -in <Merchant_ID>.crt -
 
 - Create JKS from p12 using keytool
 ```
-keytool -importkeystore -destkeystore <Your_keystore_name> -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
+keytool -importkeystore -destkeystore <Your_keystore_name>.jks -deststorepass <your_password> -srckeystore identity.p12 -srcstoretype PKCS12 -srcstorepass <Merchant_ID>
 ```
 - Now import the CyberSource_SJC_US.crt to your keystore
 ```
@@ -182,6 +182,13 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       Mock objects library for java  
 
 ## Changes
+
+Version Cybersource-sdk-java 6.2.8 (OCT,2019)
+_______________________________
+
+  1)Added request header and logged request and response headers
+  
+  2)Caching of certificate is done using keyAlias earlier it was done using merchant_id
 
 Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________

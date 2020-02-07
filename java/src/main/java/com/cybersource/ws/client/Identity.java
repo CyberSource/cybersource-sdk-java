@@ -43,8 +43,6 @@ public class Identity {
 
     private char[] pswd;
 
-    private Logger logger = null;
-    
     /**
      * Creates an Identity instance.this type of the instance can
      * only be used to store server certificate identity.
@@ -56,9 +54,6 @@ public class Identity {
     public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate,Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert=x509Certificate;
-        if(this.logger == null){
-        	this.logger=logger;
-        }
         if(merchantConfig.isJdkCertEnabled() || merchantConfig.isCacertEnabled()){
             setupJdkServerCerts();
         }
@@ -66,8 +61,8 @@ public class Identity {
           setUpServer();
         }
     }
+
     private void setupJdkServerCerts() throws SignException {
-        
         if (x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
@@ -82,7 +77,6 @@ public class Identity {
                 }else{
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
                 }
-                
             } else {
                 throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
             }
@@ -99,17 +93,13 @@ public class Identity {
      * @param privateKey
      * @throws SignException
      */
-    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey,Logger logger) throws SignException {
+    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate, PrivateKey privateKey, Logger logger) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert = x509Certificate;
         this.privateKey = privateKey;
-        if(this.logger == null){
-        	this.logger=logger;
-        }
         try {
 			this.lastModifiedDate=merchantConfig.getKeyFile().lastModified();
 		} catch (ConfigException e) {
-			
 			logger.log(Logger.LT_EXCEPTION,
                     "Identity object ,cannot instantiate with key file lastModifiedDate. "
                     + e.getMessage());
@@ -123,7 +113,7 @@ public class Identity {
      * else isValid method will return true and certificate reload will not occur.
     */
     
-	public boolean isValid(File keyFile) {
+	public boolean isValid(File keyFile, Logger logger) {
 		boolean changeKeyFileStatus=(this.lastModifiedDate == keyFile.lastModified());
 		if (!changeKeyFileStatus) {
 			logger.log(Logger.LT_INFO, "Key file changed");
@@ -136,14 +126,14 @@ public class Identity {
         if (serialNumber == null && x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
-                String subjectDNrray[] = subjectDN.split("SERIALNUMBER=");
+                String[] subjectDNrray = subjectDN.split("SERIALNUMBER=");
                 if (subjectDNrray.length != 2) {
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
                 }
                 name = merchantConfig.getMerchantID();
                 pswd = merchantConfig.getKeyPassword().toCharArray();
                 serialNumber = subjectDNrray[1];
-                keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
+                keyAlias = merchantConfig.getKeyAlias();
             } else {
                 throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
             }
@@ -155,7 +145,7 @@ public class Identity {
         if (serialNumber == null && x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
-                String subjectDNrray[] = subjectDN.split("SERIALNUMBER=");
+                String[] subjectDNrray = subjectDN.split("SERIALNUMBER=");
                 if (subjectDNrray.length == 1 && subjectDNrray[0].contains("CyberSourceCertAuth")){
                     name = keyAlias = "CyberSourceCertAuth";
                 }
