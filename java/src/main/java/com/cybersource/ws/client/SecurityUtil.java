@@ -344,13 +344,13 @@ public class SecurityUtil {
 				throw new SignException(e);
 			}
 
-            for (Certificate certificate : cert) {
-                if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(certificate))) {
-                    identity = new Identity(merchantConfig, (X509Certificate) certificate, key, logger);
+            for (int i = 0; i < cert.length; i++) {
+                if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(cert[i]))) {
+                    identity = new Identity(merchantConfig, (X509Certificate) cert[i], key, logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getKeyAlias(), identity);
                 } else {
-                    identity = new Identity(merchantConfig, (X509Certificate) certificate, logger);
+                    identity = new Identity(merchantConfig, (X509Certificate) cert[i], logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
                 }

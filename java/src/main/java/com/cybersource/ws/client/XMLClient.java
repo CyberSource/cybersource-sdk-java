@@ -305,14 +305,14 @@ public class XMLClient {
         }
 
         // for each of the version fields...
-        for (String versionField : VERSION_FIELDS) {
+        for (int i = 0; i < VERSION_FIELDS.length; ++i) {
             // if the current element is not null, compare it with
             // the current version field in the loop
             if (currElem != null) {
                 // if they match, save the element next to it, delete
                 // the current element and make the saved element the current
                 // element
-                if (versionField.equals(currElem.getNodeName())) {
+                if (VERSION_FIELDS[i].equals(currElem.getNodeName())) {
                     save = currElem.getNextSibling();
                     requestMessage.removeChild(currElem);
                     currElem = save;
