@@ -181,8 +181,8 @@ public class SecurityUtilIT {
     
 	@Test  
     public void testcertificateCacheEnabled() throws Exception{  
-        merchantProperties.setProperty("keyFilename", merchantProperties.getProperty("keyAlias") + ".p12");  
-  
+        merchantProperties.setProperty("keyFilename", merchantProperties.getProperty("keyAlias") + ".p12");
+        merchantProperties.setProperty("certificateCacheEnabled", "true");
         // caching enabled (default)  
         final MerchantConfig configCertificateCachingEnabled =  
                 new MerchantConfig(merchantProperties, "merchant_id_optional_caching_test");  
@@ -191,7 +191,7 @@ public class SecurityUtilIT {
         SecurityUtil.loadMerchantP12File(configCertificateCachingEnabledSpy, logger);  
         SecurityUtil.loadMerchantP12File(configCertificateCachingEnabledSpy, logger);  
   
-        verify(configCertificateCachingEnabledSpy, times(3)).getKeyFile();  
+        verify(configCertificateCachingEnabledSpy, times(2)).getKeyFile();
   
         // caching disabled  
         merchantProperties.setProperty("certificateCacheEnabled", "false");  

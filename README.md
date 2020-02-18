@@ -183,7 +183,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.8 (OCT,2019)
+Version Cybersource-sdk-java 6.2.8 (FEB,2020)
 _______________________________
 
   1)Added request header and logged request and response headers
