@@ -66,7 +66,8 @@ public class MerchantConfig {
     private String cacertPassword;
     private String customHttpClass;
     private boolean customHttpClassEnabled;
-    private boolean certificateCacheEnabled; 
+    private boolean certificateCacheEnabled;
+    private boolean merchantConfigCacheEnabled;
     
     public String getcustomHttpClass() {
 		return customHttpClass;
@@ -185,8 +186,12 @@ public class MerchantConfig {
     
     public boolean isCertificateCacheEnabled() {  
         return certificateCacheEnabled;  
-    }  
-    
+    }
+
+    public boolean isMerchantConfigCacheEnabled() {
+        return merchantConfigCacheEnabled;
+    }
+
     /**
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
@@ -275,7 +280,8 @@ public class MerchantConfig {
         enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
         customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
-        certificateCacheEnabled=getBooleanProperty(merchantID,"certificateCacheEnabled",true); 
+        certificateCacheEnabled=getBooleanProperty(merchantID,"certificateCacheEnabled",true);
+        merchantConfigCacheEnabled=getBooleanProperty(merchantID, "merchantConfigCacheEnabled", false);
         // compute and store effective namespace URI
         
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -509,6 +515,7 @@ public class MerchantConfig {
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
         appendPair(sb, "certificateCacheEnabled", certificateCacheEnabled);
+        appendPair(sb, "merchantConfigCacheEnabled", merchantConfigCacheEnabled);
         return (sb.toString());
     }
     

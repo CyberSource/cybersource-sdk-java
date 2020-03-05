@@ -34,6 +34,8 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Class containing runTransaction() methods that accept the requests in the
@@ -48,8 +50,9 @@ public class Client {
     private static final String ELEM_NVP_REPLY = "nvpReply";
 
     private static final String MERCHANT_ID = "merchantID";
+    private static final String KEY_ALIAS = "keyAlias";
 
-    
+    private static ConcurrentHashMap<String, MerchantConfig> mcObjects = new ConcurrentHashMap<String, MerchantConfig>();
 
     /**
      * Runs a transaction.
@@ -91,15 +94,11 @@ public class Client {
         try {
             setVersionInformation(request);
 
-            String merchantID = request.get(MERCHANT_ID);
-            if (merchantID == null) {
-                // if no merchantID is present in the request, get its
-                // value from the properties and add it to the request.
-                mc = new MerchantConfig(props, null);
-                merchantID = mc.getMerchantID();
-                request.put(MERCHANT_ID, merchantID);
+            boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled"));
+            if(isMerchantConfigCacheEnabled) {
+                mc = getInstanceMap(request, props);
             } else {
-                mc = new MerchantConfig(props, merchantID);
+                mc = getMerchantConfigObject(request, props);
             }
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
@@ -310,6 +309,58 @@ public class Client {
        return Utility.mapToString(src, mask, type);
     }
 
-    
-} 
+    static private MerchantConfig getMerchantConfigObject(Map<String, String> request, Properties props) throws ConfigException {
+        MerchantConfig mc;
+        String merchantID = request.get(MERCHANT_ID);
+        if (merchantID == null) {
+            // if no merchantID is present in the request, get its
+            // value from the properties and add it to the request.
+            mc = new MerchantConfig(props, null);
+            merchantID = mc.getMerchantID();
+            request.put(MERCHANT_ID, merchantID);
+        } else {
+            mc = new MerchantConfig(props, merchantID);
+        }
+        return mc;
+    }
+
+    private static String getMerchantId(Map<String, String> request, Properties props) {
+        String merchantID = request.get(MERCHANT_ID);
+        if (merchantID == null) {
+            // if no merchantID is present in the request, get its
+            // value from the properties
+            merchantID = props.getProperty(MERCHANT_ID);
+        }
+        return merchantID;
+    }
+
+    private static String getKeyForInstanceMap(Map<String, String> request, Properties props) {
+        String keyAlias = props.getProperty(KEY_ALIAS);
+        if(keyAlias != null) {
+            return keyAlias;
+        }
+
+        return getMerchantId(request, props);
+    }
+
+    private static MerchantConfig getInstanceMap(Map<String, String> request, Properties props) throws ConfigException {
+        String key = getKeyForInstanceMap(request, props);
+        AtomicReference<ConfigException> error = new AtomicReference<>();
+
+        mcObjects.computeIfAbsent(key, k -> {
+            try {
+                return getMerchantConfigObject(request, props);
+            } catch (ConfigException ie) {
+                error.set(ie);
+            }
+            return null;
+        });
+
+        if(error.get() != null) {
+            throw error.get();
+        }
+
+        return mcObjects.get(key);
+    }
+}
 
