@@ -42,7 +42,7 @@ public class RetryIT{
 		props.setProperty("useHttpClient", "true");
 		props.setProperty("allowRetry", "true");
 		props.setProperty("numberOfRetries", "10");
-		props.setProperty("retryInterval", "10");
+		props.setProperty("retryInterval", "10000");
 		props.setProperty("serverURL",SERVER_URL);
 		// request 1 Should fail as the number of retry attempt is exceeding 3
 		try{
@@ -62,7 +62,7 @@ public class RetryIT{
 		props.setProperty("useHttpClient", "false");
 		props.setProperty("allowRetry", "true");
 		props.setProperty("numberOfRetries", "10");
-		props.setProperty("retryInterval", "10");
+		props.setProperty("retryInterval", "10000");
 		props.setProperty("serverURL",WRONG_SERVER_URL);
 
 		try{
@@ -82,7 +82,7 @@ public class RetryIT{
 		props.setProperty("useHttpClient", "true");
 		props.setProperty("allowRetry", "true");
 		props.setProperty("numberOfRetries", "-10");
-		props.setProperty("retryInterval", "-10");
+		props.setProperty("retryInterval", "-10000");
 		try
 		{
 			Client.runTransaction(new HashMap(), props);
@@ -99,7 +99,7 @@ public class RetryIT{
 		props.setProperty("useHttpClient", "true");
 		props.setProperty("allowRetry", "false");
 		props.setProperty("numberOfRetries", "-10");
-		props.setProperty("retryInterval", "-10");
+		props.setProperty("retryInterval", "-10000");
 		Map reply = Client.runTransaction(new HashMap(), props);
 		assertNotNull(reply.get("requestID"));
 
