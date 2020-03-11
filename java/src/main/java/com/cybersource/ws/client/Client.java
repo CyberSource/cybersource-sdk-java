@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -95,11 +96,15 @@ public class Client {
             setVersionInformation(request);
 
             boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled"));
+
+            long startTime = System.nanoTime();
             if(isMerchantConfigCacheEnabled) {
                 mc = getInstanceMap(request, props);
             } else {
                 mc = getMerchantConfigObject(request, props);
             }
+//            System.out.println(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime));
+//            System.out.println(mc);
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
@@ -170,6 +175,7 @@ public class Client {
 		} finally {
             if (con != null) {
                 con.release();
+                System.out.println("Hello");
             }
         }
     }
@@ -343,21 +349,28 @@ public class Client {
         return getMerchantId(request, props);
     }
 
+    static class ErrorWrapper {
+        String error;
+        ErrorWrapper(String error) {
+            this.error = error;
+        }
+    }
+
     private static MerchantConfig getInstanceMap(Map<String, String> request, Properties props) throws ConfigException {
         String key = getKeyForInstanceMap(request, props);
-        AtomicReference<ConfigException> error = new AtomicReference<>();
+        ErrorWrapper ew = new ErrorWrapper("");
 
         mcObjects.computeIfAbsent(key, k -> {
             try {
                 return getMerchantConfigObject(request, props);
-            } catch (ConfigException ie) {
-                error.set(ie);
+            } catch (ConfigException e) {
+                ew.error = e.getMessage();
             }
             return null;
         });
 
-        if(error.get() != null) {
-            throw error.get();
+        if(!ew.error.equals("")) {
+            throw new ConfigException(ew.error);
         }
 
         return mcObjects.get(key);
