@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
 
@@ -79,7 +80,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     abstract void postDocument(Document request)
             throws IOException, TransformerConfigurationException,
             TransformerException, MalformedURLException,
-            ProtocolException;
+            ProtocolException, URISyntaxException;
 
     abstract int getHttpResponseCode()
             throws IOException;
@@ -103,7 +104,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             postDocument(request);
             checkForFault();
             return (parseReceivedDocument());
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new ClientException(e, isRequestSent(), logger);
         } catch (TransformerConfigurationException e) {
             throw new ClientException(e, isRequestSent(), logger);

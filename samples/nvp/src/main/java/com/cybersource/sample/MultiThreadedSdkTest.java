@@ -41,7 +41,7 @@ public class MultiThreadedSdkTest {
 
         HashMap<String, String> requestMap = getRequestMap();
         Client c = new Client();
-        for (int i=0; i<10; i++) {
+        for (int i=0; i<5; i++) {
 //            try {
 //                Thread.sleep(10000000);
 //            } catch (InterruptedException ie) {

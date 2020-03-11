@@ -18,13 +18,21 @@
 
 package com.cybersource.ws.client;
 
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.auth.AuthPolicy;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.NoHttpResponseException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.config.AuthSchemes;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.protocol.HttpContext;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -35,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 /**
  * Class helps in posting the Request document for the Transaction using HttpClient.
@@ -43,7 +52,9 @@ import java.util.List;
  * @author sunagara
  */
 class HttpClientConnection extends Connection {
-    private PostMethod postMethod = null;
+    HttpPost httpPost = null;
+    HttpResponse httpResponse = null;
+    HttpClientContext httpContext = null;
 
     HttpClientConnection(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
@@ -54,48 +65,41 @@ class HttpClientConnection extends Connection {
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#postDocument(org.w3c.dom.Document)
      */
-    void postDocument(Document request)
-            throws IOException, TransformerException {
-    	
-    	/*
-    	 * SimpleHttpConnectionManager(boolean alwaysClose) : 
-    	 * alwaysClose - if set true, the connection manager will always close connections upon release.
-    	 */
-    	
-        HttpClient httpClient = new HttpClient(new SimpleHttpConnectionManager(true));
-        setTimeout(httpClient, mc.getTimeout() * 1000);
-        setProxy(httpClient);
+    void postDocument(Document request) throws TransformerException, IOException {
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setSocketTimeout(mc.getTimeout())
+                .setConnectTimeout(mc.getTimeout());
 
-        String serverURL = mc.getEffectiveServerURL();
-        postMethod = new PostMethod(serverURL);
-        postMethod.getParams().setParameter(
-                HttpMethodParams.RETRY_HANDLER, new MyRetryHandler());
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setRetryHandler(new newRetryHandler());
 
-        String requestString = documentToString(request);
-        logger.log(Logger.LT_INFO,
-                "Sending " + requestString.length() + " bytes to " + serverURL);
+        setProxyNew(httpClientBuilder, requestConfigBuilder);
 
-        postMethod.setRequestEntity(
-                new StringRequestEntity(requestString, null, "UTF-8"));
-        postMethod.setRequestHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-		logRequestHeaders();
-        httpClient.executeMethod(postMethod);
+        HttpClient httpClient = httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build()).build();
+
+        httpPost = new HttpPost(mc.getEffectiveServerURL());
+        StringEntity stringEntity = new StringEntity(documentToString(request), "UTF-8");
+        httpPost.setEntity(stringEntity);
+        httpPost.setHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+        logRequestHeaders();
+        httpContext = HttpClientContext.create();
+        httpResponse = httpClient.execute(httpPost, httpContext);
     }
 
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#isRequestSent()
      */
     public boolean isRequestSent() {
-        return postMethod != null && postMethod.isRequestSent();
+        return httpContext != null && httpContext.isRequestSent();
     }
 
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#release()
      */
     public void release() {
-        if (postMethod != null) {
-            postMethod.releaseConnection();
-            postMethod = null;
+        if(httpPost != null) {
+            httpPost.releaseConnection();
+            httpPost = null;
         }
     }
 
@@ -103,7 +107,7 @@ class HttpClientConnection extends Connection {
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
     int getHttpResponseCode(){
-        return postMethod != null ? postMethod.getStatusCode() : -1;
+        return httpResponse != null ? httpResponse.getStatusLine().getStatusCode() : -1;
     }
 
     /* (non-Javadoc)
@@ -111,7 +115,7 @@ class HttpClientConnection extends Connection {
      */
     InputStream getResponseStream()
             throws IOException {
-        return postMethod != null ? postMethod.getResponseBodyAsStream() : null;
+        return httpResponse != null ? httpResponse.getEntity().getContent() : null;
     }
 
     /* (non-Javadoc)
@@ -122,41 +126,26 @@ class HttpClientConnection extends Connection {
         return getResponseStream();
     }
 
-    /**
-     * Methos helps to set the timeout for HTTP request call.
-     * cybs.properties can be used to configure the timeout details.
-     * @param httpClient
-     * @param timeoutInMs
-     */
-    private void setTimeout(HttpClient httpClient, int timeoutInMs) {
-        HttpConnectionManagerParams params
-                = httpClient.getHttpConnectionManager().getParams();
-        params.setConnectionTimeout(timeoutInMs);
-        params.setSoTimeout(timeoutInMs);
-    }
 
     /**
-     * This method is useful in Client environment where Firewall is set to prevent accessing the external services. 
-     * Proxy settings are required in such scenarios. 
-     * @param httpClient
-     */
-    private void setProxy(HttpClient httpClient) {
-        if (mc.getProxyHost() != null) {
-            httpClient.getHostConfiguration().setProxy(
-                    mc.getProxyHost(), mc.getProxyPort());
+    * This method is useful in Client environment where Firewall is set to prevent accessing the external services.
+    * Proxy settings are required in such scenarios.
+    * @param httpClientBuilder
+    * @param requestConfigBuilder
+    */
+    private void setProxyNew(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder) {
+        if(mc.getProxyHost() != null) {
+            requestConfigBuilder.setProxy(new HttpHost(mc.getProxyHost(), mc.getProxyPort()));
 
-            if (mc.getProxyUser() != null) {
-                List<String> authPrefs = new ArrayList<String>();
-                authPrefs.add(AuthPolicy.BASIC);
-                httpClient.getParams().setParameter(
-                        AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
+            if(mc.getProxyUser() != null) {
+                requestConfigBuilder.setProxyPreferredAuthSchemes(new ArrayList<String>(Collections.singleton(AuthSchemes.BASIC)));
 
-                HttpState state = new HttpState();
-                state.setProxyCredentials(
-                        AuthScope.ANY,
-                        new UsernamePasswordCredentials(
-                                mc.getProxyUser(), mc.getProxyPassword()));
-                httpClient.setState(state);
+                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(
+                        org.apache.http.auth.AuthScope.ANY,
+                        new org.apache.http.auth.UsernamePasswordCredentials(mc.getProxyUser(), mc.getProxyPassword())
+                );
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
         }
     }
@@ -184,61 +173,52 @@ class HttpClientConnection extends Connection {
     }
 
     /**
-     *  We had to override the default retryMethod as it also
-     *  retries if there is no response from the server. 
-     *  We don't want to take any chances.
-     *
-     */
-    private class MyRetryHandler implements HttpMethodRetryHandler {
-       
-    	long retryWaitInterval=mc.getRetryInterval();
- 	   	int maxRetries= mc.getNumberOfRetries();
- 	   	
-        // I copied this code from
-        // http://jakarta.apache.org/commons/httpclient/exception-handling.html#HTTP%20transport%20safety
-        // and changed the NoHttpResponseException case to
-        // return false.
-        public boolean retryMethod(
-                final HttpMethod method,
-                final IOException exception,
-                int executionCount) {
-            if (executionCount > maxRetries) {
-                // Do not retry if over max retry count
+    *  We had to override the default retryMethod as it also
+    *  retries if there is no response from the server.
+    *  We don't want to take any chances.
+    */
+    class newRetryHandler implements HttpRequestRetryHandler {
+        long retryWaitInterval = mc.getRetryInterval();
+        int maxRetries = mc.getNumberOfRetries();
+
+        @Override
+        public boolean retryRequest(IOException exception, int executionCount, HttpContext httpContext) {
+            if(executionCount > maxRetries) {
                 return false;
             }
-            if (exception instanceof NoHttpResponseException) {
-                // Retry if the server dropped connection on us
-                // return true; <-- this was the original behavior.
+
+            if(exception instanceof NoHttpResponseException) {
                 return false;
             }
-            if (!method.isRequestSent()) {
-                // Retry if the request has not been sent fully or
-                // if it's OK to retry methods that have been sent
-            	try {
-         	        Thread.sleep(retryWaitInterval);
-         	        logger.log( Logger.LT_INFO+" Retrying Request -- ",mc.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
-                 } catch (InterruptedException e) {
-         	        e.printStackTrace();
-                 }
-                return true;
+
+            Boolean b = (Boolean) httpContext.getAttribute("http.request_sent");
+            boolean sent = b != null && b;
+
+            if(!sent) {
+                try {
+                    Thread.sleep(retryWaitInterval);
+                    logger.log( Logger.LT_INFO + " Retrying Request -- ", mc.getUniqueKey().toString() + " Retry Count -- " + executionCount);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            // otherwise do not retry
+
             return false;
         }
     }
-    
+
     @Override
-	public void logRequestHeaders() {		
-		List<Header> reqheaders=Arrays.asList(postMethod.getRequestHeaders());
-        logger.log(Logger.LT_INFO, "Request Headers: " +reqheaders);
-	}
-	
-	@Override
-	public void logResponseHeaders() {
-		List<Header> respheaders=Arrays.asList(postMethod.getResponseHeaders());
-		 logger.log(Logger.LT_INFO, "Response Headers"+ respheaders);
-	}
-	
+    public void logRequestHeaders() {
+        List<org.apache.http.Header> reqHeaders = Arrays.asList(httpPost.getAllHeaders());
+        logger.log(Logger.LT_INFO, "Request Headers: " + reqHeaders);
+    }
+
+    @Override
+    public void logResponseHeaders() {
+        List<org.apache.http.Header> respheaders = Arrays.asList(httpResponse.getAllHeaders());
+        logger.log(Logger.LT_INFO, "Response Headers"+ respheaders);
+    }
+
 }
 
 /* Copyright 2006 CyberSource Corporation */
