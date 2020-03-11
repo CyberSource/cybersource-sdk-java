@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.cybersource</groupId>
     <artifactId>cybersource-sdk-java</artifactId>
-    <version>6.2.9-SNAPSHOT</version>
+    <version>6.2.10-SNAPSHOT</version>
     <name>cybersource-sdk-java</name>
     <description>Simple Order API Client</description>
     <url>http://www.cybersource.com</url>
@@ -191,15 +191,20 @@
     		<version>1.5.6</version>
 		</dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.11</version>
+        </dependency>
+        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
             <exclusions>
-	          <exclusion>
-	            <groupId>commons-logging</groupId>
-	            <artifactId>commons-logging</artifactId>
-	          </exclusion>
-        	</exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>

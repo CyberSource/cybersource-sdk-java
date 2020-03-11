@@ -8,7 +8,7 @@
     <name>RunSample</name>
     <url>http://maven.apache.org</url>
      <properties>
-      <javasdk.version>[6.2.0, 6.2.9-SNAPSHOT]</javasdk.version>
+      <javasdk.version>6.2.10-SNAPSHOT</javasdk.version>
     </properties>
     <dependencies>
         <dependency>
@@ -26,6 +26,11 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.11</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
