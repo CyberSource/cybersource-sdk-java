@@ -58,6 +58,7 @@ public class MerchantConfig {
     private String logFilename;
     private int logMaximumSize;
     private boolean useHttpClient;
+    private boolean useHttpClientPooling;
     private int timeout;
     private String proxyHost;
     private int proxyPort;
@@ -162,6 +163,10 @@ public class MerchantConfig {
     
     public boolean getUseHttpClient() {
         return useHttpClient;
+    }
+
+    public boolean getUseHttpClientPooling() {
+        return useHttpClientPooling;
     }
     
     public int getTimeout() {
@@ -270,6 +275,7 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
+        useHttpClientPooling = getBooleanProperty(merchantID, "useHttpClientPooling", ConnectionHelper.getDefaultUseHttpClientPooling());
         customHttpClass = getProperty(merchantID, "customHttpClass");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
         proxyHost = getProperty(merchantID, "proxyHost");
@@ -501,6 +507,7 @@ public class MerchantConfig {
             appendPair(sb, "allowRetry", allowRetry);
             appendPair(sb, "RetryCount", numberOfRetries);
             appendPair(sb, "RetryInterval", retryInterval);
+            appendPair(sb, "useHttpClientPooling", useHttpClientPooling);
         }
         appendPair(sb, "timeout", timeout);
         if (proxyHost != null) {

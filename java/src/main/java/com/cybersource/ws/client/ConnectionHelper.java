@@ -43,6 +43,10 @@ class ConnectionHelper {
         return false;
     }
 
+    public static boolean getDefaultUseHttpClientPooling() {
+        return false;
+    }
+
     /**
      * Sets the timeout for HTTP Request
      * @param con

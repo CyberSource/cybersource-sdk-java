@@ -67,6 +67,9 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     public static Connection getInstance(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         if (mc.getUseHttpClient()) {
+            if (mc.getUseHttpClientPooling()) {
+                return new PoolingHttpClientConnection(mc, builder, logger);
+            }
             return new HttpClientConnection(mc, builder, logger);
         }
         // HttpClient is not set in properties file then JDKHttpURLConnection class instance.
@@ -101,8 +104,10 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     public Document post(Document request)
             throws ClientException, FaultException {
         try {
+            long startTime = System.currentTimeMillis();
             postDocument(request);
             checkForFault();
+            System.out.println(System.currentTimeMillis() - startTime);
             return (parseReceivedDocument());
         } catch (IOException | URISyntaxException e) {
             throw new ClientException(e, isRequestSent(), logger);

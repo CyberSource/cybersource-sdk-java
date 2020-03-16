@@ -174,8 +174,7 @@ public class Client {
                     e, con != null && con.isRequestSent(), logger);
 		} finally {
             if (con != null) {
-                con.release();
-                System.out.println("Hello");
+                    con.release();
             }
         }
     }
