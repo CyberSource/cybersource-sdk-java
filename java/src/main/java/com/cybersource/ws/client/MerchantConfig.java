@@ -59,6 +59,9 @@ public class MerchantConfig {
     private int logMaximumSize;
     private boolean useHttpClient;
     private boolean useHttpClientPooling;
+    private int maxTotalConnections;
+    private int defaultMaxPerRoute;
+
     private int timeout;
     private String proxyHost;
     private int proxyPort;
@@ -168,6 +171,14 @@ public class MerchantConfig {
     public boolean getUseHttpClientPooling() {
         return useHttpClientPooling;
     }
+
+    public int getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    public int getDefaultMaxPerRoute() {
+        return defaultMaxPerRoute;
+    }
     
     public int getTimeout() {
         return timeout;
@@ -275,7 +286,6 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
-        useHttpClientPooling = getBooleanProperty(merchantID, "useHttpClientPooling", ConnectionHelper.getDefaultUseHttpClientPooling());
         customHttpClass = getProperty(merchantID, "customHttpClass");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
         proxyHost = getProperty(merchantID, "proxyHost");
@@ -341,6 +351,7 @@ public class MerchantConfig {
                 throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
             }
         }
+
 		if(isCacertEnabled()){
         	if(StringUtils.isBlank(keysDirectory)){
         		keysDirectory = System.getProperty("java.home") + "/lib/security".replace('/', File.separatorChar);
@@ -348,7 +359,15 @@ public class MerchantConfig {
         	if(StringUtils.isBlank(keyFilename)){
         		keyFilename = "cacerts";
         	}
-      }
+        }
+
+		if (useHttpClient) {
+            useHttpClientPooling = getBooleanProperty(merchantID, "useHttpClientPooling", false);
+            if (useHttpClientPooling) {
+                maxTotalConnections = getIntegerProperty(merchantID, "maxTotalConnections", 200);
+                defaultMaxPerRoute = getIntegerProperty(merchantID, "defaultMaxPerRoute", 190);
+            }
+        }
     }
     
     /**
@@ -508,6 +527,10 @@ public class MerchantConfig {
             appendPair(sb, "RetryCount", numberOfRetries);
             appendPair(sb, "RetryInterval", retryInterval);
             appendPair(sb, "useHttpClientPooling", useHttpClientPooling);
+            if (useHttpClientPooling) {
+                appendPair(sb, "maxTotalConnections", maxTotalConnections);
+                appendPair(sb, "defaultMaxPerRoute", defaultMaxPerRoute);
+            }
         }
         appendPair(sb, "timeout", timeout);
         if (proxyHost != null) {

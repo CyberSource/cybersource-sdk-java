@@ -13,10 +13,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -40,7 +38,7 @@ public class PoolingHttpClientConnection extends Connection {
     HttpResponse httpResponse = null;
     HttpClientContext httpContext = null;
     CloseableHttpClient httpClient = null;
-    static PoolingHttpClientConnectionManager connectionManager;
+    static PoolingHttpClientConnectionManager connectionManager = null;
 
     PoolingHttpClientConnection(MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         super(mc, builder, logger);
@@ -50,12 +48,20 @@ public class PoolingHttpClientConnection extends Connection {
 
     private void initializeConnectionManager() {
         if(connectionManager == null) {
-            connectionManager = new PoolingHttpClientConnectionManager();
+            synchronized (PoolingHttpClientConnection.class) {
+                if (connectionManager == null) {
+                    connectionManager = new PoolingHttpClientConnectionManager();
+                    connectionManager.setDefaultMaxPerRoute(mc.getDefaultMaxPerRoute());
+                    connectionManager.setMaxTotal(mc.getMaxTotalConnections());
+                }
+            }
         }
+        System.out.println(connectionManager);
     }
 
     @Override
     void postDocument(Document request) throws IOException, TransformerConfigurationException, TransformerException, MalformedURLException, ProtocolException, URISyntaxException {
+        System.out.println("Using pooling http client");
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setSocketTimeout(mc.getTimeout())
                 .setConnectTimeout(mc.getTimeout());
@@ -86,8 +92,12 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     @Override
-    public void release() throws IOException {
-        EntityUtils.consume(httpResponse.getEntity());
+    public void release() {
+        try {
+            EntityUtils.consume(httpResponse.getEntity());
+        } catch (IOException e) {
+            httpPost.releaseConnection();
+        }
     }
 
     @Override
@@ -155,9 +165,12 @@ public class PoolingHttpClientConnection extends Connection {
 
     private void setProxy(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder) {
         if(mc.getProxyHost() != null) {
-            requestConfigBuilder.setProxy(new HttpHost(mc.getProxyHost(), mc.getProxyPort()));
+            HttpHost proxy =  new HttpHost(mc.getProxyHost(), mc.getProxyPort());
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            httpClientBuilder.setRoutePlanner(routePlanner);
 
             if(mc.getProxyUser() != null) {
+                httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
                 requestConfigBuilder.setProxyPreferredAuthSchemes(Collections.singletonList(AuthSchemes.BASIC));
 
                 CredentialsProvider credentialsProvider = new BasicCredentialsProvider();

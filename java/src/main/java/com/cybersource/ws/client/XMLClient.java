@@ -234,11 +234,7 @@ public class XMLClient {
                     e, con != null && con.isRequestSent(), logger);
 		} finally {
             if (con != null) {
-                try {
-                    con.release();
-                } catch (IOException e) {
-                    throw new ClientException(e, con != null && con.isRequestSent(), logger);
-                }
+                con.release();
             }
        }
     }
