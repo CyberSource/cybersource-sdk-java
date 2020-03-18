@@ -159,7 +159,7 @@ CyberSource supports Message Level Encryption (MLE) for Simple Order API. Messag
 Retry Pattern allows to retry sending a failed request and it will only work with `useHttpClient=true`. `allowRetry` flag enables the retry mechanism. 
   - Set the value of `allowRetry` parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant in the config parameter 'numberOfRetries'.
   - numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 5. User can set a delay in between the retry attempts.
-  - Config parameter for this property is 'retryInterval' in `cybs.property` file. The default value for 'retryInterval' parameter is 5000 which means a delay of 5 seconds.
+  - Config parameter for this property is 'retryInterval' in `cybs.property` file. The default value for 'retryInterval' parameter is 5000 which means a delay of 5000 milliSeconds.
 
 ## Third Party jars
     1. org.apache.ws.security.wss4j:1.6.19
@@ -180,6 +180,17 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       JUnit is a unit testing framework for Java.
     9. org.mockito:mockito-all:1.10.19
       Mock objects library for java  
+
+## Troubleshooting
+1. put try cache for ClientException as below to print the complete stacktrace.
+    - ```
+      try {
+          Client.runTransaction(requestMap, merchantProperties);
+      } catch (ClientException e){
+          e.getInnerException().printStackTrace();
+      }
+      ```
+    
 
 ## Changes
 
