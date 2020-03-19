@@ -129,8 +129,14 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     private String documentToString(Document request) throws IOException, TransformerException {
-        try (ByteArrayOutputStream baos = makeStream(request)) {
-            return baos.toString("UTF-8");
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = makeStream(request);
+            return baos.toString("utf-8");
+        } finally {
+            if (baos != null) {
+                baos.close();
+            }
         }
     }
 

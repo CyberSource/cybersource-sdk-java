@@ -109,13 +109,15 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             checkForFault();
             System.out.println(System.currentTimeMillis() - startTime);
             return (parseReceivedDocument());
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             throw new ClientException(e, isRequestSent(), logger);
         } catch (TransformerConfigurationException e) {
             throw new ClientException(e, isRequestSent(), logger);
         } catch (TransformerException e) {
             throw new ClientException(e, isRequestSent(), logger);
         } catch (SAXException e) {
+            throw new ClientException(e, isRequestSent(), logger);
+        } catch (URISyntaxException e) {
             throw new ClientException(e, isRequestSent(), logger);
         }
 
