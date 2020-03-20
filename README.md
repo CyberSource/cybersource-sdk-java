@@ -161,6 +161,12 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
   - numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 5. User can set a delay in between the retry attempts.
   - Config parameter for this property is 'retryInterval' in `cybs.property` file. The default value for 'retryInterval' parameter is 5000 which means a delay of 5000 milliSeconds.
 
+## Pooling HttpClient
+
+We allow pooling connections with httpClient. This works with `useHttpClient=true` and `useHttpClientPooling=true`.
+ - `maxTotalConnections` - Max number of connections to be kept in pool.
+ - `defaultMaxPerRoute` - Max number of connections per route.
+
 ## Third Party jars
     1. org.apache.ws.security.wss4j:1.6.19
       The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications from the OASIS Web Services Security TC.
