@@ -60,7 +60,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     @Override
-    void postDocument(Document request) throws IOException, TransformerConfigurationException, TransformerException, MalformedURLException, ProtocolException, URISyntaxException {
+    void postDocument(Document request) throws IOException, TransformerException {
         System.out.println("Using pooling http client");
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setSocketTimeout(mc.getTimeout())

@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class containing runTransaction() methods that accept the requests in the
@@ -58,6 +59,7 @@ public class XMLClient {
     private static final String ELEM_CLIENT_LIBRARY_VERSION
             = "clientLibraryVersion";
     private static final String ELEM_CLIENT_ENVIRONMENT = "clientEnvironment";
+    private static final String ELEM_KEY_ALIAS = "keyAlias";
 
     private static final String[] VERSION_FIELDS
             = {ELEM_CLIENT_LIBRARY,
@@ -67,6 +69,7 @@ public class XMLClient {
     private static Document soapEnvelope;
     private static Exception initException = null;
 
+    private static ConcurrentHashMap<String, MerchantConfig> mcObjects = new ConcurrentHashMap<String, MerchantConfig>();
 
     static {
         try {
@@ -149,7 +152,6 @@ public class XMLClient {
             throw new ClientException(initException, false, null);
         }
 
-        String nsURI;
         MerchantConfig mc;
         LoggerWrapper logger = null;
         Connection con = null;
@@ -159,23 +161,17 @@ public class XMLClient {
             // we locate the first merchantID element with any namespace
             // (actually, there should be just one.  Otherwise, there's
             // something wrong with their XML request).
-            String merchantID
-                    = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
-            if (merchantID == null) {
-                // if no merchantID is present in the request, get its
-                // value from the properties and add it to the request.
-                mc = new MerchantConfig(props, null);
-                merchantID = mc.getMerchantID();
-                nsURI = mc.getEffectiveNamespaceURI();
-                setMerchantID(request, merchantID, nsURI);
+            boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled"));
+
+            if(isMerchantConfigCacheEnabled) {
+                mc = getInstanceMap(request, props);
             } else {
-                mc = new MerchantConfig(props, merchantID);
-                nsURI = mc.getEffectiveNamespaceURI();
+                mc = getMerchantConfigObject(request, props);
             }
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
-            setVersionInformation(request, nsURI);
+            setVersionInformation(request, mc.getEffectiveNamespaceURI());
 
             DocumentBuilder builder = Utility.newDocumentBuilder();
 
@@ -485,6 +481,54 @@ public class XMLClient {
         }
 
         return (unwrappedDoc);
+    }
+
+    static private MerchantConfig getMerchantConfigObject(Document request, Properties props) throws ConfigException {
+        MerchantConfig mc;
+        String merchantID = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
+        if (merchantID == null) {
+            // if no merchantID is present in the request, get its
+            // value from the properties and add it to the request.
+            mc = new MerchantConfig(props, null);
+            merchantID = mc.getMerchantID();
+            setMerchantID(request, merchantID, mc.getEffectiveNamespaceURI());
+        } else {
+            mc = new MerchantConfig(props, merchantID);
+        }
+        return mc;
+    }
+
+    private static String getMerchantId(Document request, Properties props) {
+        String merchantID = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
+        if (merchantID == null) {
+            // if no merchantID is present in the request, get its
+            // value from the properties
+            merchantID = props.getProperty(ELEM_MERCHANT_ID);
+        }
+        return merchantID;
+    }
+
+    private static String getKeyForInstanceMap(Document request, Properties props) {
+        String keyAlias = props.getProperty(ELEM_KEY_ALIAS);
+        if(keyAlias != null) {
+            return keyAlias;
+        }
+
+        return getMerchantId(request, props);
+    }
+
+    private static MerchantConfig getInstanceMap(Document request, Properties props) throws ConfigException {
+        String key = getKeyForInstanceMap(request, props);
+
+        if(!mcObjects.containsKey(key)) {
+            synchronized (Client.class) {
+                if (!mcObjects.containsKey(key)) {
+                    mcObjects.put(key, getMerchantConfigObject(request, props));
+                }
+            }
+        }
+
+        return mcObjects.get(key);
     }
 } 
 
