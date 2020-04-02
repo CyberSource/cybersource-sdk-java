@@ -18,11 +18,12 @@
 
 package com.cybersource.ws.client;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.UUID;
-import org.apache.commons.lang3.StringUtils;
 /**
  * An internal class used by the clients to hold and derive the properties
  * applicable to the current transaction.
@@ -35,6 +36,16 @@ public class MerchantConfig {
     
     private final static int DEFAULT_TIMEOUT = 130;
     private final static int DEFAULT_PROXY_PORT = 8080;
+
+    private final static int DEFAULT_MAX_POOL_CONNECTIONS = 20;
+    private final static int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 20;
+    private final static int MAX_CONNECTIONS_PER_ROUTE = 20;
+    private final static int DEFAULT_CONNECTION_REQUEST_TIMEOUT_MS = 500;
+    private final static int DEFAULT_CONNECTION_TIMEOUT_MS = 500;
+    private final static int DEFAULT_SOCKET_TIMEOUT_MS = 500;
+    private final static int DEFAULT_EVICT_THREAD_SLEEP_TIME_MS = 5000;
+    private final static int DEFAULT_MAX_KEEP_ALIVE_TIME_MS = 30000;
+
     private UUID uniqueKey=UUID.randomUUID();
     
     private final Properties props;
@@ -58,6 +69,15 @@ public class MerchantConfig {
     private String logFilename;
     private int logMaximumSize;
     private boolean useHttpClient;
+    private boolean usePoolingHttpClient;
+    private int publishMaxConnections;
+    private int defaultMaxConnectionsPerRoute;
+    private int maxConnectionsPerRoute;
+    private int connectionRequestTimeoutMs;
+    private int connectionTimeoutMs;
+    private int socketTimeoutMs;
+    private int evictThreadSleepTimeMs;
+    private int maxKeepAliveTimeMs;
     private int timeout;
     private String proxyHost;
     private int proxyPort;
@@ -163,11 +183,47 @@ public class MerchantConfig {
     public boolean getUseHttpClient() {
         return useHttpClient;
     }
-    
+
+    public boolean getUsePoolingHttpClient() {
+        return usePoolingHttpClient;
+    }
+
     public int getTimeout() {
         return timeout;
     }
-    
+
+    public int getPublishMaxConnections() {
+        return publishMaxConnections;
+    }
+
+    public int getDefaultMaxConnectionsPerRoute() {
+        return defaultMaxConnectionsPerRoute;
+    }
+
+    public int getMaxConnectionsPerRoute() {
+        return maxConnectionsPerRoute;
+    }
+
+    public int getConnectionRequestTimeoutMs() {
+        return connectionRequestTimeoutMs;
+    }
+
+    public int getConnectionTimeoutMs() {
+        return connectionTimeoutMs;
+    }
+
+    public int getSocketTimeoutMs() {
+        return socketTimeoutMs;
+    }
+
+    public int getEvictThreadSleepTimeMs() {
+        return evictThreadSleepTimeMs;
+    }
+
+    public int getMaxKeepAliveTimeMs() {
+        return maxKeepAliveTimeMs;
+    }
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -271,6 +327,14 @@ public class MerchantConfig {
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
         customHttpClass = getProperty(merchantID, "customHttpClass");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
+        publishMaxConnections = getIntegerProperty(merchantID, "publishMaxConnections", DEFAULT_MAX_POOL_CONNECTIONS);
+        defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
+        maxConnectionsPerRoute = getIntegerProperty(merchantID, "maxConnectionsPerRoute", MAX_CONNECTIONS_PER_ROUTE);
+        connectionRequestTimeoutMs = getIntegerProperty(merchantID, "connectionRequestTimeoutMs", DEFAULT_CONNECTION_REQUEST_TIMEOUT_MS);
+        connectionTimeoutMs = getIntegerProperty(merchantID, "connectionTimeoutMs", DEFAULT_CONNECTION_TIMEOUT_MS);
+        socketTimeoutMs = getIntegerProperty(merchantID, "socketTimeoutMs", DEFAULT_SOCKET_TIMEOUT_MS);
+        evictThreadSleepTimeMs = getIntegerProperty(merchantID, "evictThreadSleepTimeMs", DEFAULT_EVICT_THREAD_SLEEP_TIME_MS);
+        maxKeepAliveTimeMs = getIntegerProperty(merchantID, "maxKeepAliveTimeMs", DEFAULT_MAX_KEEP_ALIVE_TIME_MS);
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
@@ -326,13 +390,16 @@ public class MerchantConfig {
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
         
         allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
-        if (useHttpClient && allowRetry) {
-            numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 5);
-            if(numberOfRetries>0)
-                retryInterval = getIntegerProperty(merchantID, "retryInterval", 5000);
-            if( numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0){
-                throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
+        if (useHttpClient) {
+            if(allowRetry) {
+                numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 5);
+                if (numberOfRetries > 0)
+                    retryInterval = getIntegerProperty(merchantID, "retryInterval", 5000);
+                if (numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0) {
+                    throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
+                }
             }
+            usePoolingHttpClient = getBooleanProperty(merchantID, "usePoolingHttpClient", false);
         }
 		if(isCacertEnabled()){
         	if(StringUtils.isBlank(keysDirectory)){
