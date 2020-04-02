@@ -113,20 +113,14 @@ public class PoolingHttpClientConnection extends Connection {
     public void release() {
         try {
             EntityUtils.consume(httpResponse.getEntity());
-            httpResponse.close();
-            httpClient.close();
-            connectionManager.close();
-            staleMonitorThread.shutdown();
         } catch (IOException e) {
             //need to check this part
-            httpPost.releaseConnection();
-        } finally {
             httpPost.releaseConnection();
         }
     }
 
     @Override
-    int getHttpResponseCode() throws IOException {
+    int getHttpResponseCode() {
         return httpResponse != null ? httpResponse.getStatusLine().getStatusCode() : -1;
     }
 

@@ -168,7 +168,7 @@ public class Client {
                     e, con != null && con.isRequestSent(), logger);
 		} finally {
             if (con != null) {
-                //con.release();
+                con.release();
             }
         }
     }
