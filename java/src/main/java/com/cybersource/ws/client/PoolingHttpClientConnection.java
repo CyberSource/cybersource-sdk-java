@@ -120,6 +120,8 @@ public class PoolingHttpClientConnection extends Connection {
         } catch (IOException e) {
             //need to check this part
             httpPost.releaseConnection();
+        } finally {
+            httpPost.releaseConnection();
         }
     }
 
@@ -168,12 +170,12 @@ public class PoolingHttpClientConnection extends Connection {
         int maxRetries = mc.getNumberOfRetries();
 
         @Override
-        public boolean retryRequest(IOException e, int i, HttpContext httpContext) {
-            if(i > maxRetries) {
+        public boolean retryRequest(IOException exception, int executionCount, HttpContext httpContext) {
+            if(executionCount > maxRetries) {
                 return false;
             }
 
-            if(e instanceof NoHttpResponseException) {
+            if(exception instanceof NoHttpResponseException) {
                 return false;
             }
 
@@ -182,7 +184,7 @@ public class PoolingHttpClientConnection extends Connection {
             if(!httpClientContext.isRequestSent()) {
                 try {
                     Thread.sleep(retryWaitInterval);
-                    logger.log(Logger.LT_INFO, "Retrying Request -- " + mc.getUniqueKey() + " Retry Count -- " + i);
+                    logger.log(Logger.LT_INFO, "Retrying Request -- " + mc.getUniqueKey() + " Retry Count -- " + executionCount);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
