@@ -67,7 +67,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         if (mc.getUseHttpClient()) {
             return new HttpClientConnection(mc, builder, logger);
-        } else if (mc.getUsePoolingHttpClient()) {
+        } else if (mc.getUseHttpClientWithConnectionPool()) {
             return new PoolingHttpClientConnection(mc, builder, logger);
         } else {
             // HttpClient is not set in properties file then JDKHttpURLConnection class instance.

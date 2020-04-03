@@ -62,7 +62,18 @@ You do not need to download and build the source to use the SDK but if you want 
       - To know how to convert p12 to JKS refer the JKS creation section of this document.
     - If 'enableCacert' property parameter is set to true, certificates will be read from the cacerts file specified at keysDirectory location.If keysDirectory path is not set,certificate will be loaded from Java Installation cacerts file. The cacerts file should be of the same name as specified in keyFilename.
     - If `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
-    - `allowRetry` config parameter will only work for HttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
+    - If `useHttpClient` parameter is set to true (default is false), then simple HttpClientConnection will be enabled
+    - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled
+    - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will take default values from the application.
+     - `maxConnections` set the maximum number of total open connections. default value is 200
+     - `defaultMaxConnectionsPerRoute` Set the maximum number of concurrent connections per route. default value is 200
+     - `maxConnectionsPerRoute` Set the total number of concurrent connections to a specific route. default value is 200
+     - `connectionRequestTimeoutMs` the time to wait for a connection from the connection manager/pool. default value is 1000
+     - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 130000
+     - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 130000
+     - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 5000
+     - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connection can be idle before it is evicted from the pool. default value is 30000
+    - `allowRetry` config parameter will only work for HttpClient and PoolingHttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     - Set integer values and long values for config parameter `numberOfRetries` *and* `retryInterval` respectively. Retry Interval is time delay for next retry in milliSeconds.
       - Number of retry parameter should be set between 1 to 3. Any other value will throw an Error Message.
       - Refer to the [Retry Pattern](README.md#retry-pattern) section below.
@@ -71,6 +82,7 @@ You do not need to download and build the source to use the SDK but if you want 
       - Enter the custom class name in customHttpClass field. Provide the full package name along with the class name.
         example customHttpClass= <packagename.customHttpClass>
       - The custom HTTP Class must have a three argument constructor which accepts MerchantConfig, DocumentBuilder and LoggerWrapper as argument. Then it should call the constructor of the parent class.
+    - `merchantConfigCacheEnabled` If this property is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
 - Build this project using Maven.
   - `mvn clean` - Cleans the Project
   - `mvn install` - Builds the project and creates a jar file of client SDK. Includes running all unit tests and integration tests

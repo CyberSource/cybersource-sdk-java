@@ -345,16 +345,16 @@ public class Client {
     }
 
     private static MerchantConfig getInstanceMap(Map<String, String> request, Properties props) throws ConfigException {
-        String key = getKeyForInstanceMap(request, props);
+        String midOrKeyAlias = getKeyForInstanceMap(request, props);
 
-        if(!mcObjects.containsKey(key)) {
+        if(!mcObjects.containsKey(midOrKeyAlias)) {
             synchronized (Client.class) {
-                if (!mcObjects.containsKey(key)) {
-                    mcObjects.put(key, getMerchantConfigObject(request, props));
+                if (!mcObjects.containsKey(midOrKeyAlias)) {
+                    mcObjects.put(midOrKeyAlias, getMerchantConfigObject(request, props));
                 }
             }
         }
-        return mcObjects.get(key);
+        return mcObjects.get(midOrKeyAlias);
     }
 }
 

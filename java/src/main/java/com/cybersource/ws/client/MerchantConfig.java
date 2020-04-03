@@ -69,8 +69,8 @@ public class MerchantConfig {
     private String logFilename;
     private int logMaximumSize;
     private boolean useHttpClient;
-    private boolean usePoolingHttpClient;
-    private int publishMaxConnections;
+    private boolean useHttpClientWithConnectionPool;
+    private int maxConnections;
     private int defaultMaxConnectionsPerRoute;
     private int maxConnectionsPerRoute;
     private int connectionRequestTimeoutMs;
@@ -184,16 +184,16 @@ public class MerchantConfig {
         return useHttpClient;
     }
 
-    public boolean getUsePoolingHttpClient() {
-        return usePoolingHttpClient;
+    public boolean getUseHttpClientWithConnectionPool() {
+        return useHttpClientWithConnectionPool;
     }
 
     public int getTimeout() {
         return timeout;
     }
 
-    public int getPublishMaxConnections() {
-        return publishMaxConnections;
+    public int getMaxConnections() {
+        return maxConnections;
     }
 
     public int getDefaultMaxConnectionsPerRoute() {
@@ -325,7 +325,7 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
-        usePoolingHttpClient = getBooleanProperty(merchantID, "usePoolingHttpClient", false);
+        useHttpClientWithConnectionPool = getBooleanProperty(merchantID, "useHttpClientWithConnectionPool", false);
         customHttpClass = getProperty(merchantID, "customHttpClass");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
 
@@ -383,8 +383,8 @@ public class MerchantConfig {
         
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
 
-        if(usePoolingHttpClient) {
-            publishMaxConnections = getIntegerProperty(merchantID, "publishMaxConnections", DEFAULT_MAX_POOL_CONNECTIONS);
+        if(useHttpClientWithConnectionPool) {
+            maxConnections = getIntegerProperty(merchantID, "publishMaxConnections", DEFAULT_MAX_POOL_CONNECTIONS);
             defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
             maxConnectionsPerRoute = getIntegerProperty(merchantID, "maxConnectionsPerRoute", MAX_CONNECTIONS_PER_ROUTE);
             connectionRequestTimeoutMs = getIntegerProperty(merchantID, "connectionRequestTimeoutMs", DEFAULT_CONNECTION_REQUEST_TIMEOUT_MS);
@@ -395,7 +395,7 @@ public class MerchantConfig {
         }
         
         allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
-        if (useHttpClient || usePoolingHttpClient) {
+        if (useHttpClient || useHttpClientWithConnectionPool) {
             if(allowRetry) {
                 numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 3);
                 if (numberOfRetries > 0)
