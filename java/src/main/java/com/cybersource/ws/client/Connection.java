@@ -66,13 +66,13 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     public static Connection getInstance(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         if (mc.getUseHttpClient()) {
-            if(mc.getUsePoolingHttpClient()) {
-                return new PoolingHttpClientConnection(mc, builder, logger);
-            }
             return new HttpClientConnection(mc, builder, logger);
+        } else if (mc.getUsePoolingHttpClient()) {
+            return new PoolingHttpClientConnection(mc, builder, logger);
+        } else {
+            // HttpClient is not set in properties file then JDKHttpURLConnection class instance.
+            return new JDKHttpURLConnection(mc, builder, logger);
         }
-        // HttpClient is not set in properties file then JDKHttpURLConnection class instance.
-        return new JDKHttpURLConnection(mc, builder, logger);
     }
 
     abstract public boolean isRequestSent();

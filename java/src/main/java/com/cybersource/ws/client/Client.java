@@ -93,7 +93,7 @@ public class Client {
         try {
             setVersionInformation(request);
 
-            boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled"));
+            boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
             if(isMerchantConfigCacheEnabled) {
                 mc = getInstanceMap(request, props);
             } else {
