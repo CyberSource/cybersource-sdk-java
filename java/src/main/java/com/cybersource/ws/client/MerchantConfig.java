@@ -384,7 +384,7 @@ public class MerchantConfig {
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
 
         if(useHttpClientWithConnectionPool) {
-            maxConnections = getIntegerProperty(merchantID, "publishMaxConnections", DEFAULT_MAX_POOL_CONNECTIONS);
+            maxConnections = getIntegerProperty(merchantID, "maxConnections", DEFAULT_MAX_POOL_CONNECTIONS);
             defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
             maxConnectionsPerRoute = getIntegerProperty(merchantID, "maxConnectionsPerRoute", MAX_CONNECTIONS_PER_ROUTE);
             connectionRequestTimeoutMs = getIntegerProperty(merchantID, "connectionRequestTimeoutMs", DEFAULT_CONNECTION_REQUEST_TIMEOUT_MS);
