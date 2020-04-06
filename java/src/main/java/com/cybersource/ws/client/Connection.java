@@ -64,7 +64,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     }
 
     public static Connection getInstance(
-            MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
+            MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws ClientException {
         if (mc.getUseHttpClient()) {
             return new HttpClientConnection(mc, builder, logger);
         } else if (mc.getUseHttpClientWithConnectionPool()) {
@@ -77,7 +77,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
     abstract public boolean isRequestSent();
 
-    abstract public void release();
+    abstract public void release() throws ClientException;
 
     abstract void postDocument(Document request)
             throws IOException, TransformerConfigurationException,
@@ -107,6 +107,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             checkForFault();
             return (parseReceivedDocument());
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ClientException(e, isRequestSent(), logger);
         } catch (TransformerConfigurationException e) {
             throw new ClientException(e, isRequestSent(), logger);

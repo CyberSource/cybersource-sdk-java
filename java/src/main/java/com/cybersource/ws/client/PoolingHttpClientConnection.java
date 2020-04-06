@@ -34,22 +34,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class PoolingHttpClientConnection extends Connection {
-    HttpPost httpPost = null;
-    CloseableHttpResponse httpResponse = null;
-    HttpClientContext httpContext;
-    static CloseableHttpClient httpClient = null;
-    private IdleConnectionMonitorThread staleMonitorThread;
-    final String STALE_CONNECTION_MONITOR_THREAD_NAME = "http-stale-connection-cleaner-thread";
-    static PoolingHttpClientConnectionManager connectionManager = null;
+    private HttpPost httpPost = null;
+    private CloseableHttpResponse httpResponse = null;
+    private static CloseableHttpClient httpClient = null;
+    private static IdleConnectionMonitorThread staleMonitorThread;
+    private final static String STALE_CONNECTION_MONITOR_THREAD_NAME = "http-stale-connection-cleaner-thread";
+    private static PoolingHttpClientConnectionManager connectionManager = null;
 
-    PoolingHttpClientConnection(MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
+    PoolingHttpClientConnection(MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws ClientException {
         super(mc, builder, logger);
         initializeConnectionManager();
         logger.log(Logger.LT_INFO, "Using PoolingHttpClient for connections.");
     }
 
-    private void initializeConnectionManager() {
-        if(connectionManager == null) {
+    private void initializeConnectionManager() throws ClientException {
+        if (connectionManager == null) {
             synchronized (PoolingHttpClientConnection.class) {
                 if (connectionManager == null) {
                     String url = mc.getEffectiveServerURL();
@@ -58,12 +57,14 @@ public class PoolingHttpClientConnection extends Connection {
                         String hostname = uri.getHost();
                         connectionManager = new PoolingHttpClientConnectionManager();
                         connectionManager.setDefaultMaxPerRoute(mc.getDefaultMaxConnectionsPerRoute());
-                        connectionManager.setMaxTotal(mc.getPublishMaxConnections());
+                        connectionManager.setMaxTotal(mc.getMaxConnections());
                         final HttpHost httpHost = new HttpHost(hostname);
                         connectionManager.setMaxPerRoute(new HttpRoute(httpHost), mc.getMaxConnectionsPerRoute());
                         initHttpClient();
                     } catch (URISyntaxException e) {
                         logger.log(Logger.LT_FAULT, "invalid server url");
+                        throw new ClientException(e, logger);
+
                     }
                 }
             }
@@ -79,13 +80,13 @@ public class PoolingHttpClientConnection extends Connection {
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-                .setRetryHandler(new CustomRetryHandler())
-                .setConnectionManager(connectionManager)
-                .setConnectionManagerShared(true);
+                 .setRetryHandler(new CustomRetryHandler())
+                .setConnectionManager(connectionManager);
 
         setProxy(httpClientBuilder, requestConfigBuilder);
 
         httpClient = httpClientBuilder
+                .disableConnectionState()
                 .setDefaultRequestConfig(requestConfigBuilder.build())
                 .build();
         staleMonitorThread.setName(STALE_CONNECTION_MONITOR_THREAD_NAME);
@@ -95,27 +96,33 @@ public class PoolingHttpClientConnection extends Connection {
 
     @Override
     void postDocument(Document request) throws IOException, TransformerException {
-        httpPost = new HttpPost(mc.getEffectiveServerURL());
-        StringEntity stringEntity = new StringEntity(documentToString(request), "UTF-8");
+
+        String serverURL = mc.getEffectiveServerURL();
+        httpPost = new HttpPost(serverURL);
+        String requestString = documentToString(request);
+        logger.log(Logger.LT_INFO,
+                "Sending " + requestString.length() + " bytes to " + serverURL);
+        StringEntity stringEntity = new StringEntity(requestString, "UTF-8");
         httpPost.setEntity(stringEntity);
         httpPost.setHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         logRequestHeaders();
-        httpContext = HttpClientContext.create();
-        httpResponse = httpClient.execute(httpPost, httpContext);
+        httpResponse = httpClient.execute(httpPost);
     }
 
     @Override
     public boolean isRequestSent() {
-        return httpContext != null && httpContext.isRequestSent();
+        return true;
     }
 
     @Override
-    public void release() {
+    public void release() throws ClientException {
         try {
             EntityUtils.consume(httpResponse.getEntity());
+            httpResponse.close();
         } catch (IOException e) {
             //need to check this part
-            httpPost.releaseConnection();
+            //httpPost.releaseConnection();
+            throw new ClientException(e, logger);
         }
     }
 

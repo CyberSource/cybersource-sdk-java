@@ -150,6 +150,14 @@ keytool -list -v -keystore <Your_keystore_name>`
   - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
   
+##Troubleshooting
+put below block of code to handle the ClientException to print the complete stacktrace.
+
+try {
+    Client.runTransaction(requestMap, merchantProperties);
+}catch (ClientException e){
+    e.getInnerException().printStackTrace();
+}
   
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 

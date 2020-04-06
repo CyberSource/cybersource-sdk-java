@@ -383,6 +383,10 @@ public class MerchantConfig {
         
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
 
+        if(useHttpClient && useHttpClientWithConnectionPool) {
+            throw new ConfigException("both variables useHttpClient and useHttpClientWithConnectionPool cannot be true at same time");
+        }
+
         if(useHttpClientWithConnectionPool) {
             maxConnections = getIntegerProperty(merchantID, "maxConnections", DEFAULT_MAX_POOL_CONNECTIONS);
             defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);

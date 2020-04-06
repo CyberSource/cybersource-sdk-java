@@ -131,6 +131,16 @@ and a follow-on capture appear.
 must rebuild the sample before using it. Use the compileSample batch file or
 shell script provided in the sample directory.
 
+##Troubleshooting
+put below block of code to handle the ClientException to print the complete stacktrace.
+
+try {
+    Client.runTransaction(requestMap, merchantProperties);
+}catch (ClientException e){
+    e.getInnerException().printStackTrace();
+}
+
+
 ##Message Level Encryption
 
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 

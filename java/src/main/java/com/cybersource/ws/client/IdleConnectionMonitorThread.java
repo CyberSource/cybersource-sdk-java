@@ -1,6 +1,7 @@
 package com.cybersource.ws.client;
 
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,8 +26,11 @@ public  class IdleConnectionMonitorThread extends Thread {
                 synchronized (this) {
                     long idleTime = getIdleTime();
                     wait(getSleepTime());
+                    PoolingHttpClientConnectionManager poolConnMgr = (PoolingHttpClientConnectionManager) connMgr;
+                    System.out.println("before closing expired and idl conn, stats is "+poolConnMgr.getTotalStats());
                     connMgr.closeExpiredConnections();
                     connMgr.closeIdleConnections(idleTime, TimeUnit.MILLISECONDS);
+                    System.out.println("after closing expired and idl conn, stats is "+poolConnMgr.getTotalStats());
                 }
             }
         } catch (InterruptedException ex) {
