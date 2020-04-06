@@ -57,6 +57,8 @@ public class ConnectionIT {
             e.printStackTrace();
         } catch (ConfigException e) {
             e.printStackTrace();
+        } catch (ClientException e) {
+            e.printStackTrace();
         }
     }
 
