@@ -154,7 +154,7 @@ public class XMLClient {
             throw new ClientException(initException, false, null);
         }
 
-        String nsURI = null;
+        String nsURI;
         MerchantConfig mc;
         LoggerWrapper logger = null;
         Connection con = null;
@@ -171,9 +171,8 @@ public class XMLClient {
             } else {
                 mc = getMerchantConfigObject(request, props);
             }
-            nsURI = mc.getEffectiveNamespaceURI();
 
-            System.out.println(nsURI);
+            nsURI = mc.getEffectiveNamespaceURI();
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
