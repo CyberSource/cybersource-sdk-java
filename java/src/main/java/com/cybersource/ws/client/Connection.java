@@ -107,7 +107,6 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             checkForFault();
             return (parseReceivedDocument());
         } catch (IOException e) {
-            e.printStackTrace();
             throw new ClientException(e, isRequestSent(), logger);
         } catch (TransformerConfigurationException e) {
             throw new ClientException(e, isRequestSent(), logger);
