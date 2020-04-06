@@ -70,6 +70,7 @@ public class MerchantConfig {
     private int logMaximumSize;
     private boolean useHttpClient;
     private boolean useHttpClientWithConnectionPool;
+    private boolean addShutDownHook;
     private int maxConnections;
     private int defaultMaxConnectionsPerRoute;
     private int maxConnectionsPerRoute;
@@ -186,6 +187,10 @@ public class MerchantConfig {
 
     public boolean getUseHttpClientWithConnectionPool() {
         return useHttpClientWithConnectionPool;
+    }
+
+    public boolean isAddShutDownHook() {
+        return addShutDownHook;
     }
 
     public int getTimeout() {
@@ -388,6 +393,7 @@ public class MerchantConfig {
         }
 
         if(useHttpClientWithConnectionPool) {
+            addShutDownHook = getBooleanProperty(merchantID, "addShutDownHook", true);
             maxConnections = getIntegerProperty(merchantID, "maxConnections", DEFAULT_MAX_POOL_CONNECTIONS);
             defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
             maxConnectionsPerRoute = getIntegerProperty(merchantID, "maxConnectionsPerRoute", MAX_CONNECTIONS_PER_ROUTE);

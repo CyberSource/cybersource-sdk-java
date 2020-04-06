@@ -61,6 +61,9 @@ public class PoolingHttpClientConnection extends Connection {
                         final HttpHost httpHost = new HttpHost(hostname);
                         connectionManager.setMaxPerRoute(new HttpRoute(httpHost), mc.getMaxConnectionsPerRoute());
                         initHttpClient();
+                        if(mc.isAddShutDownHook()) {
+                            addShutdownHook();
+                        }
                     } catch (URISyntaxException e) {
                         logger.log(Logger.LT_FAULT, "invalid server url");
                         throw new ClientException(e, logger);
@@ -114,14 +117,34 @@ public class PoolingHttpClientConnection extends Connection {
         return true;
     }
 
+    protected void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
+    }
+
+    private Thread createShutdownHookThread() {
+        return new Thread() {
+            public void run() {
+                try {
+                    PoolingHttpClientConnection.this.onShutdown();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    public static void onShutdown() throws IOException {
+            httpClient.close();
+            connectionManager.close();
+            staleMonitorThread.shutdown();
+    }
+
     @Override
     public void release() throws ClientException {
         try {
             EntityUtils.consume(httpResponse.getEntity());
             httpResponse.close();
         } catch (IOException e) {
-            //need to check this part
-            //httpPost.releaseConnection();
             throw new ClientException(e, logger);
         }
     }
