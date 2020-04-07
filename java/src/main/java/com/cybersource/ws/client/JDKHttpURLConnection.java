@@ -48,13 +48,12 @@ class JDKHttpURLConnection extends Connection {
         logger.log(Logger.LT_INFO, "Using HttpURLConnection for connections.");
     }
 
-    void postDocument(Document request)
+    void postDocument(Document request, long requestSentTime)
             throws IOException,
             TransformerException{
         //long startTime = System.nanoTime();
         String serverURL = mc.getEffectiveServerURL();
         URL url = new URL(serverURL);
-
         con = ConnectionHelper.openConnection(url, mc);
         con.setRequestProperty(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         con.setRequestMethod("POST");

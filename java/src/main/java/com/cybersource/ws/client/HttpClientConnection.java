@@ -54,7 +54,7 @@ class HttpClientConnection extends Connection {
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#postDocument(org.w3c.dom.Document)
      */
-    void postDocument(Document request)
+    void postDocument(Document request, long requestSentTime)
             throws IOException, TransformerException {
     	
     	/*

@@ -79,7 +79,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
     abstract public void release() throws ClientException;
 
-    abstract void postDocument(Document request)
+    abstract void postDocument(Document request, long requestSentTime)
             throws IOException, TransformerConfigurationException,
             TransformerException, MalformedURLException,
             ProtocolException;
@@ -100,10 +100,10 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
      * @throws ClientException
      * @throws FaultException
      */
-    public Document post(Document request)
+    public Document post(Document request, long requestSentTime)
             throws ClientException, FaultException {
         try {
-            postDocument(request);
+            postDocument(request, requestSentTime);
             checkForFault();
             return (parseReceivedDocument());
         } catch (IOException e) {

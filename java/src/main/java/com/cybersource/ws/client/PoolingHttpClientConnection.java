@@ -35,6 +35,7 @@ import java.util.List;
 
 public class PoolingHttpClientConnection extends Connection {
     private HttpPost httpPost = null;
+    private HttpClientContext httpContext = null;
     private CloseableHttpResponse httpResponse = null;
     private static CloseableHttpClient httpClient = null;
     private static IdleConnectionMonitorThread staleMonitorThread;
@@ -64,7 +65,7 @@ public class PoolingHttpClientConnection extends Connection {
                         if(mc.isAddShutDownHook()) {
                             addShutdownHook();
                         }
-                    } catch (URISyntaxException e) {
+                    } catch (Exception e) {
                         logger.log(Logger.LT_FAULT, "invalid server url");
                         throw new ClientException(e, logger);
 
@@ -89,7 +90,6 @@ public class PoolingHttpClientConnection extends Connection {
         setProxy(httpClientBuilder, requestConfigBuilder);
 
         httpClient = httpClientBuilder
-                .disableConnectionState()
                 .setDefaultRequestConfig(requestConfigBuilder.build())
                 .build();
         staleMonitorThread.setName(STALE_CONNECTION_MONITOR_THREAD_NAME);
@@ -98,7 +98,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     @Override
-    void postDocument(Document request) throws IOException, TransformerException {
+    void postDocument(Document request, long requestSentTime) throws IOException, TransformerException {
 
         String serverURL = mc.getEffectiveServerURL();
         httpPost = new HttpPost(serverURL);
@@ -107,14 +107,16 @@ public class PoolingHttpClientConnection extends Connection {
                 "Sending " + requestString.length() + " bytes to " + serverURL);
         StringEntity stringEntity = new StringEntity(requestString, "UTF-8");
         httpPost.setEntity(stringEntity);
+        httpPost.setHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-requestSentTime));
         httpPost.setHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         logRequestHeaders();
-        httpResponse = httpClient.execute(httpPost);
+        httpContext = HttpClientContext.create();
+        httpResponse = httpClient.execute(httpPost, httpContext);
     }
 
     @Override
     public boolean isRequestSent() {
-        return true;
+        return httpContext != null && httpContext.isRequestSent();
     }
 
     protected void addShutdownHook() {
@@ -134,9 +136,15 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     public static void onShutdown() throws IOException {
+        if(httpClient!=null) {
             httpClient.close();
+        }
+        if(connectionManager!=null) {
             connectionManager.close();
+        }
+        if(staleMonitorThread!=null) {
             staleMonitorThread.shutdown();
+        }
     }
 
     @Override

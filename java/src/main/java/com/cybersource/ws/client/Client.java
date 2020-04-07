@@ -91,6 +91,7 @@ public class Client {
         LoggerWrapper logger = null;
         Connection con = null;
         try {
+            long requestSentTime = System.currentTimeMillis();
             setVersionInformation(request);
 
             boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
@@ -143,7 +144,7 @@ public class Client {
             else{
             	con = Connection.getInstance(mc, builder, logger);
             }
-            Document wrappedReply = con.post(signedDoc);
+            Document wrappedReply = con.post(signedDoc, requestSentTime);
             Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
             logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ",false);
             
@@ -352,7 +353,7 @@ public class Client {
             synchronized (Client.class) {
                 if (!mcObjects.containsKey(midOrKeyAlias)) {
                     mcObjects.put(midOrKeyAlias, getMerchantConfigObject(request, props));
-                }
+               }
             }
         }
         return mcObjects.get(midOrKeyAlias);

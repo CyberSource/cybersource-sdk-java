@@ -160,6 +160,7 @@ public class XMLClient {
         Connection con = null;
 
         try {
+            long requestSentTime = System.currentTimeMillis();
             // At this point, we do not know what namespace to use yet so
             // we locate the first merchantID element with any namespace
             // (actually, there should be just one.  Otherwise, there's
@@ -215,7 +216,7 @@ public class XMLClient {
             else{
             	con = Connection.getInstance(mc, builder, logger);
             }
-            Document wrappedReply = con.post(signedDoc);
+            Document wrappedReply = con.post(signedDoc, requestSentTime);
 
             Document doc = soapUnwrap(wrappedReply, mc, builder, logger);
             logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ", false);
