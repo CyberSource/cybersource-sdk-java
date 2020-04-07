@@ -64,14 +64,14 @@ You do not need to download and build the source to use the SDK but if you want 
     - If `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - If `useHttpClient` parameter is set to true (default is false), then simple HttpClientConnection will be enabled
     - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled
-    - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will take default values from the application.
+    - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
      - `maxConnections` set the maximum number of total open connections. default value is 200
      - `defaultMaxConnectionsPerRoute` Set the maximum number of concurrent connections per route. default value is 200
      - `maxConnectionsPerRoute` Set the total number of concurrent connections to a specific route. default value is 200
      - `connectionRequestTimeoutMs` the time to wait for a connection from the connection manager/pool. default value is 1000
-     - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 130000
-     - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 130000
-     - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 5000
+     - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 2000
+     - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 2000
+     - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 3000
      - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connection can be idle before it is evicted from the pool. default value is 30000
     - `allowRetry` config parameter will only work for HttpClient and PoolingHttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     - Set integer values and long values for config parameter `numberOfRetries` *and* `retryInterval` respectively. Retry Interval is time delay for next retry in milliSeconds.
@@ -202,6 +202,14 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       Mock objects library for java  
 
 ## Changes
+
+Version Cybersource-sdk-java 6.2.9 (APR,2020)
+_______________________________
+
+ Performance Improvement:
+  1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
+  2)Added PoolingHttpClientConnection implementation
+  3)Changed retry interval from second to milliseconds
 
 Version Cybersource-sdk-java 6.2.8 (FEB,2020)
 _______________________________

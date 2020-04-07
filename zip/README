@@ -74,14 +74,14 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 	
 
     l. If "useHttpClientWithConnectionPool" parameter is set to true (default is false), then poolingHttpClientConnection will be enabled
-    m. Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will take default values from the application.
+    m. Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
          - `maxConnections` set the maximum number of total open connections. default value is 200
          - `defaultMaxConnectionsPerRoute` Set the maximum number of concurrent connections per route. default value is 200
          - `maxConnectionsPerRoute` Set the total number of concurrent connections to a specific route. default value is 200
          - `connectionRequestTimeoutMs` the time to wait for a connection from the connection manager/pool. default value is 1000
-         - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 130000
-         - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 130000
-         - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 5000
+         - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 2000
+         - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 2000
+         - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 3000
          - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connaection can be idle before it is evicted from the pool. default value is 30000
 
     n. If "merchantConfigCacheEnabled" is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
@@ -222,6 +222,14 @@ JUnit is a unit testing framework for Java.
 Mock objects library for java  
 
 ##Changes
+
+Version Cybersource-sdk-java 6.2.9 (APR,2020)
+_______________________________
+
+ Performance Improvement:
+  1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
+  2)Added PoolingHttpClientConnection implementation
+  3)Changed retry interval from second to milliseconds
 
 Version Cybersource-sdk-java 6.2.8 (FEB,2020)
 _______________________________
