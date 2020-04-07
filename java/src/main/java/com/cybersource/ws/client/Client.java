@@ -200,7 +200,7 @@ public class Client {
      * @throws ConfigException 
      */
     private static Document soapWrapAndSign(
-            Map request, MerchantConfig mc, DocumentBuilder builder,
+            Map<String, String> request, MerchantConfig mc, DocumentBuilder builder,
             LoggerWrapper logger)
             throws
             IOException, SignException, SAXException, SignEncryptException, ConfigException {
@@ -228,7 +228,7 @@ public class Client {
 
         if ( mc.getUseSignAndEncrypted() ) {
         	// Encrypt signed Document
-            resultDocument = SecurityUtil.handleMessageCreation(resultDocument, mc.getMerchantID(), logger);
+            resultDocument = SecurityUtil.handleMessageCreation(resultDocument, request.get(MERCHANT_ID), logger);
             logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
         }
         if (logSignedData) {

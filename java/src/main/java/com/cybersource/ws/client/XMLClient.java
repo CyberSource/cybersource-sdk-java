@@ -387,7 +387,7 @@ public class XMLClient {
 
         if ( mc.getUseSignAndEncrypted() ) {
         	// Encrypt signed Document
-            resultDocument = SecurityUtil.handleMessageCreation(resultDocument , mc.getMerchantID() , logger);
+            resultDocument = SecurityUtil.handleMessageCreation(resultDocument , Utility.getElementText(doc, ELEM_MERCHANT_ID, "*") , logger);
             logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
         }
         if (logSignedData) {
