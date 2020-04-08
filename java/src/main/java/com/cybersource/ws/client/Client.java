@@ -1,20 +1,20 @@
 /*
- * Copyright 2003-2014 CyberSource Corporation
- *
- * THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
- * AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
- * DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
- * COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
- * EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
- * WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
- * DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
- * OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
- * ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
- * DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
- * DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
- * WITH ANY PARTICULAR OPERATING SYSTEM.
- */
+* Copyright 2003-2014 CyberSource Corporation
+*
+* THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
+* AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
+* DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
+* COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
+* EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
+* WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
+* DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+* SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
+* OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
+* ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
+* DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
+* DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
+* WITH ANY PARTICULAR OPERATING SYSTEM.
+*/
 
 package com.cybersource.ws.client;
 
@@ -84,7 +84,7 @@ public class Client {
      * @throws ClientException if any other exception occurs.
      */
     @SuppressWarnings("unchecked")
-    public static Map runTransaction(
+	public static Map runTransaction(
             Map<String, String> request, Properties props,
             Logger _logger, boolean prepare, boolean logTranStart)
             throws FaultException, ClientException {
@@ -94,6 +94,7 @@ public class Client {
         try {
             long requestSentTime = System.currentTimeMillis();
             setVersionInformation(request);
+
             boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
             if(isMerchantConfigCacheEnabled) {
                 mc = getInstanceMap(request, props);
@@ -112,37 +113,37 @@ public class Client {
 //          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
 //          writer.close();
             if(mc.isCustomHttpClassEnabled()){
-                Class<Connection> customConnectionClass;
-                try {
-                    customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
-                    Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class};
-                    con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
+				Class<Connection> customConnectionClass;
+				try {
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
+					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class};
+					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
-                } catch (InstantiationException e) {
-                    logger.log(Logger.LT_INFO, "Failed to Instantiate the class "+e);
-                    throw new ClientException(e, false, null);
-                } catch (IllegalAccessException e) {
-                    logger.log(Logger.LT_INFO, "Could not Access the method invoked "+e);
-                    throw new ClientException(e, false, null);
-                } catch (ClassNotFoundException e) {
-                    logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
-                    throw new ClientException(e, false, null);
-                } catch (IllegalArgumentException e) {
-                    logger.log(Logger.LT_INFO, "Method invoked with Illegal Argument list  "+e);
-                    throw new ClientException(e, false, null);
-                } catch (SecurityException e) {
-                    logger.log(Logger.LT_INFO, "Security Exception "+e);
-                    throw new ClientException(e, false, null);
-                } catch (InvocationTargetException e) {
-                    logger.log(Logger.LT_INFO, "Exception occured while calling the method "+e);
-                    throw new ClientException(e, false, null);
-                } catch (NoSuchMethodException e) {
-                    logger.log(Logger.LT_INFO, "Method not found ");
-                    throw new ClientException(e, false, null);
-                }
+				} catch (InstantiationException e) {
+					logger.log(Logger.LT_INFO, "Failed to Instantiate the class "+e);
+					throw new ClientException(e, false, null);
+				} catch (IllegalAccessException e) {
+					logger.log(Logger.LT_INFO, "Could not Access the method invoked "+e);
+					throw new ClientException(e, false, null);
+				} catch (ClassNotFoundException e) {
+					logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
+					throw new ClientException(e, false, null);
+				} catch (IllegalArgumentException e) {
+					logger.log(Logger.LT_INFO, "Method invoked with Illegal Argument list  "+e);
+					throw new ClientException(e, false, null);
+				} catch (SecurityException e) {
+					logger.log(Logger.LT_INFO, "Security Exception "+e);
+					throw new ClientException(e, false, null);
+				} catch (InvocationTargetException e) {
+					logger.log(Logger.LT_INFO, "Exception occured while calling the method "+e);
+					throw new ClientException(e, false, null);
+				} catch (NoSuchMethodException e) {
+					logger.log(Logger.LT_INFO, "Method not found ");
+					throw new ClientException(e, false, null);
+				}
             }
             else{
-                con = Connection.getInstance(mc, builder, logger);
+            	con = Connection.getInstance(mc, builder, logger);
             }
             Document wrappedReply = con.post(signedDoc, requestSentTime);
             Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
@@ -162,12 +163,12 @@ public class Client {
             throw new ClientException(
                     e, con != null && con.isRequestSent(), logger);
         } catch (SAXException e) {
-            throw new ClientException(
+        	throw new ClientException(
                     e, con != null && con.isRequestSent(), logger);
-        } catch (SignEncryptException e) {
-            throw new ClientException(
+		} catch (SignEncryptException e) {
+			throw new ClientException(
                     e, con != null && con.isRequestSent(), logger);
-        } finally {
+		} finally {
             if (con != null) {
                 con.release();
             }
@@ -208,11 +209,11 @@ public class Client {
         boolean logSignedData = mc.getLogSignedData();
         if (!logSignedData) {
             logger.log(
-                    Logger.LT_REQUEST,
-                    "UUID   >  "+(mc.getUniqueKey()).toString() + "\n" +
-                            "Input request is" + "\n" +
-                            "======================================= \n"
-                            + mapToString(request, true, PCI.REQUEST));
+            		Logger.LT_REQUEST,
+            		"UUID   >  "+(mc.getUniqueKey()).toString() + "\n" +
+            		"Input request is" + "\n" +
+            		"======================================= \n"
+            		+ mapToString(request, true, PCI.REQUEST));
         }
 
         Document wrappedDoc = soapWrap(request, mc, builder);
@@ -228,20 +229,20 @@ public class Client {
         logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
 
         if ( mc.getUseSignAndEncrypted() ) {
-            // Encrypt signed Document
+        	// Encrypt signed Document
             resultDocument = SecurityUtil.handleMessageCreation(resultDocument, request.get(MERCHANT_ID), logger);
             logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
         }
         if (logSignedData) {
-            logger.log(Logger.LT_REQUEST,Utility.nodeToString(resultDocument, PCI.REQUEST));
-            //logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
+           logger.log(Logger.LT_REQUEST,Utility.nodeToString(resultDocument, PCI.REQUEST));
+        	//logger.log(Logger.LT_REQUEST,XMLUtils.PrettyDocumentToString(resultDocument));
         }
 
         return resultDocument ;
     }
 
     private static Document soapWrap(Map request, MerchantConfig mc, DocumentBuilder builder) throws SAXException, IOException{
-        // wrap in SOAP envelope
+    	// wrap in SOAP envelope
         Object[] arguments
                 = {mc.getEffectiveNamespaceURI(),
                 mapToString(request, false, PCI.REQUEST)};
@@ -265,7 +266,7 @@ public class Client {
     private static HashMap soapUnwrap(
             Document doc, MerchantConfig mc, LoggerWrapper logger) {
 
-        // 3/8/2016 if the message was encrypted we need to decrypt it
+    	// 3/8/2016 if the message was encrypted we need to decrypt it
 
         boolean logSignedData = mc.getLogSignedData();
 
@@ -303,12 +304,12 @@ public class Client {
      * @param mask Flag whether or not to mask "unsafe" fields.
      * @param type Relevant only when mask is true, indicates whether this
      *             is the request or the reply map.  Pass either
-     *             PCI.REQUEST or PCI.REPLY.a
+     *             PCI.REQUEST or PCI.REPLY.
      * @return resulting string; will be empty if the Map object was null or
      *         empty.
      */
     static String mapToString(Map src, boolean mask, int type) {
-        return Utility.mapToString(src, mask, type);
+       return Utility.mapToString(src, mask, type);
     }
 
     static private MerchantConfig getMerchantConfigObject(Map<String, String> request, Properties props) throws ConfigException {
@@ -323,7 +324,6 @@ public class Client {
         } else {
             mc = new MerchantConfig(props, merchantID);
         }
-        System.out.println("merchant config object got created");
         return mc;
     }
 
@@ -353,7 +353,7 @@ public class Client {
             synchronized (Client.class) {
                 if (!mcObjects.containsKey(midOrKeyAlias)) {
                     mcObjects.put(midOrKeyAlias, getMerchantConfigObject(request, props));
-                }
+               }
             }
         }
         MerchantConfig mc = mcObjects.get(midOrKeyAlias);
