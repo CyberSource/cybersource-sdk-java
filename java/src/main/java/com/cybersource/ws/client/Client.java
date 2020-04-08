@@ -323,7 +323,6 @@ public class Client {
         } else {
             mc = new MerchantConfig(props, merchantID);
         }
-        System.out.println("merchant config object got created");
         return mc;
     }
 
