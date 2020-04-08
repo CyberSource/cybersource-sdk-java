@@ -151,8 +151,10 @@ public class PoolingHttpClientConnection extends Connection {
     @Override
     public void release() throws ClientException {
         try {
-            EntityUtils.consume(httpResponse.getEntity());
-            httpResponse.close();
+            if(httpResponse != null) {
+                EntityUtils.consume(httpResponse.getEntity());
+                httpResponse.close();
+            }
         } catch (IOException e) {
             throw new ClientException(e, logger);
         }
@@ -165,7 +167,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     @Override
     InputStream getResponseStream() throws IOException {
-        return httpResponse.getEntity().getContent();
+        return httpResponse != null ? httpResponse.getEntity().getContent() : null;
     }
 
     @Override
@@ -182,8 +184,10 @@ public class PoolingHttpClientConnection extends Connection {
 
     @Override
     public void logResponseHeaders() {
-        List<Header> respHeaders = Arrays.asList(httpResponse.getAllHeaders());
-        logger.log(Logger.LT_INFO, "Response Headers: " + respHeaders);
+        if(httpResponse != null) {
+            List<Header> respHeaders = Arrays.asList(httpResponse.getAllHeaders());
+            logger.log(Logger.LT_INFO, "Response Headers: " + respHeaders);
+        }
     }
 
     private String documentToString(Document request) throws IOException, TransformerException {

@@ -114,8 +114,9 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             throw new ClientException(e, isRequestSent(), logger);
         } catch (SAXException e) {
             throw new ClientException(e, isRequestSent(), logger);
+        } catch (RuntimeException e) {
+            throw new ClientException(e, isRequestSent(), logger);
         }
-
     }
 
 
