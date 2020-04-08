@@ -229,7 +229,7 @@ _______________________________
  Performance Improvement:
   1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
   2)Added PoolingHttpClientConnection implementation
-  3)Changed retry interval from second to milliseconds
+  3)Changed retry interval from second to millisecond
 
 Version Cybersource-sdk-java 6.2.8 (FEB,2020)
 _______________________________
