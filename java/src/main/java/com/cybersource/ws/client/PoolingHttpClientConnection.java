@@ -28,7 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,54 +43,57 @@ public class PoolingHttpClientConnection extends Connection {
 
     PoolingHttpClientConnection(MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws ClientException {
         super(mc, builder, logger);
-        initializeConnectionManager();
+        initializeConnectionManager(mc);
         logger.log(Logger.LT_INFO, "Using PoolingHttpClient for connections.");
     }
 
-    private void initializeConnectionManager() throws ClientException {
+    private void initializeConnectionManager(MerchantConfig merchantConfig) throws ClientException {
         if (connectionManager == null) {
             synchronized (PoolingHttpClientConnection.class) {
                 if (connectionManager == null) {
-                    String url = mc.getEffectiveServerURL();
+                    String url = this.mc.getEffectiveServerURL();
                     try {
                         URI uri = new URI(url);
                         String hostname = uri.getHost();
                         connectionManager = new PoolingHttpClientConnectionManager();
-                        connectionManager.setDefaultMaxPerRoute(mc.getDefaultMaxConnectionsPerRoute());
-                        connectionManager.setMaxTotal(mc.getMaxConnections());
+                        connectionManager.setDefaultMaxPerRoute(merchantConfig.getDefaultMaxConnectionsPerRoute());
+                        connectionManager.setMaxTotal(merchantConfig.getMaxConnections());
                         final HttpHost httpHost = new HttpHost(hostname);
-                        connectionManager.setMaxPerRoute(new HttpRoute(httpHost), mc.getMaxConnectionsPerRoute());
-                        initHttpClient();
-                        if(mc.isAddShutDownHook()) {
+                        connectionManager.setMaxPerRoute(new HttpRoute(httpHost), merchantConfig.getMaxConnectionsPerRoute());
+                        initHttpClient(merchantConfig, connectionManager);
+                        startStaleConnectionMonitorThread(merchantConfig, connectionManager);
+                        if (this.mc.isAddShutDownHook()) {
                             addShutdownHook();
                         }
                     } catch (Exception e) {
                         logger.log(Logger.LT_FAULT, "invalid server url");
                         throw new ClientException(e, logger);
-
                     }
                 }
             }
         }
     }
 
-    protected void initHttpClient() {
-        staleMonitorThread = new IdleConnectionMonitorThread(connectionManager, mc.getEvictThreadSleepTimeMs(), mc.getMaxKeepAliveTimeMs());
+    protected void initHttpClient(MerchantConfig merchantConfig, PoolingHttpClientConnectionManager poolingHttpClientConnManager) {
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
-                .setSocketTimeout(mc.getSocketTimeoutMs())
-                .setConnectionRequestTimeout(mc.getConnectionRequestTimeoutMs())
-                .setConnectTimeout(mc.getConnectionTimeoutMs());
+                .setSocketTimeout(merchantConfig.getSocketTimeoutMs())
+                .setConnectionRequestTimeout(merchantConfig.getConnectionRequestTimeoutMs())
+                .setConnectTimeout(merchantConfig.getConnectionTimeoutMs());
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-                 .setRetryHandler(new CustomRetryHandler())
-                .setConnectionManager(connectionManager);
+                .setRetryHandler(new CustomRetryHandler())
+                .setConnectionManager(poolingHttpClientConnManager);
 
         setProxy(httpClientBuilder, requestConfigBuilder);
 
         httpClient = httpClientBuilder
                 .setDefaultRequestConfig(requestConfigBuilder.build())
                 .build();
+    }
+
+    private void startStaleConnectionMonitorThread(MerchantConfig merchantConfig, PoolingHttpClientConnectionManager poolingHttpClientConnManager) {
+        staleMonitorThread = new IdleConnectionMonitorThread(poolingHttpClientConnManager, merchantConfig.getEvictThreadSleepTimeMs(), merchantConfig.getMaxKeepAliveTimeMs());
         staleMonitorThread.setName(STALE_CONNECTION_MONITOR_THREAD_NAME);
         staleMonitorThread.setDaemon(true);
         staleMonitorThread.start();
@@ -99,18 +101,17 @@ public class PoolingHttpClientConnection extends Connection {
 
     @Override
     void postDocument(Document request, long requestSentTime) throws IOException, TransformerException {
-
         String serverURL = mc.getEffectiveServerURL();
         httpPost = new HttpPost(serverURL);
         String requestString = documentToString(request);
-        logger.log(Logger.LT_INFO,
-                "Sending " + requestString.length() + " bytes to " + serverURL);
         StringEntity stringEntity = new StringEntity(requestString, "UTF-8");
         httpPost.setEntity(stringEntity);
-        httpPost.setHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-requestSentTime));
+        httpPost.setHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - requestSentTime));
         httpPost.setHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         logRequestHeaders();
         httpContext = HttpClientContext.create();
+        logger.log(Logger.LT_INFO,
+                "Sending " + requestString.length() + " bytes to " + serverURL);
         httpResponse = httpClient.execute(httpPost, httpContext);
     }
 
@@ -119,7 +120,7 @@ public class PoolingHttpClientConnection extends Connection {
         return httpContext != null && httpContext.isRequestSent();
     }
 
-    protected void addShutdownHook() {
+    private void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
     }
 
@@ -136,13 +137,13 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     public static void onShutdown() throws IOException {
-        if(httpClient!=null) {
+        if (httpClient != null) {
             httpClient.close();
         }
-        if(connectionManager!=null) {
+        if (connectionManager != null) {
             connectionManager.close();
         }
-        if(staleMonitorThread!=null) {
+        if (staleMonitorThread != null && staleMonitorThread.isAlive()) {
             staleMonitorThread.shutdown();
         }
     }
@@ -203,17 +204,17 @@ public class PoolingHttpClientConnection extends Connection {
 
         @Override
         public boolean retryRequest(IOException exception, int executionCount, HttpContext httpContext) {
-            if(executionCount > maxRetries) {
+            if (executionCount > maxRetries) {
                 return false;
             }
 
-            if(exception instanceof NoHttpResponseException) {
+            if (exception instanceof NoHttpResponseException) {
                 return false;
             }
 
             HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
 
-            if(!httpClientContext.isRequestSent()) {
+            if (!httpClientContext.isRequestSent()) {
                 try {
                     Thread.sleep(retryWaitInterval);
                     logger.log(Logger.LT_INFO, "Retrying Request -- " + mc.getUniqueKey() + " Retry Count -- " + executionCount);
@@ -227,12 +228,12 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     private void setProxy(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder) {
-        if(mc.getProxyHost() != null) {
-            HttpHost proxy =  new HttpHost(mc.getProxyHost(), mc.getProxyPort());
+        if (mc.getProxyHost() != null) {
+            HttpHost proxy = new HttpHost(mc.getProxyHost(), mc.getProxyPort());
             DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
             httpClientBuilder.setRoutePlanner(routePlanner);
 
-            if(mc.getProxyUser() != null) {
+            if (mc.getProxyUser() != null) {
                 httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
                 requestConfigBuilder.setProxyPreferredAuthSchemes(Collections.singletonList(AuthSchemes.BASIC));
 

@@ -72,13 +72,14 @@ class HttpClientConnection extends Connection {
                 HttpMethodParams.RETRY_HANDLER, new MyRetryHandler());
 
         String requestString = documentToString(request);
-        logger.log(Logger.LT_INFO,
-                "Sending " + requestString.length() + " bytes to " + serverURL);
 
         postMethod.setRequestEntity(
                 new StringRequestEntity(requestString, null, "UTF-8"));
         postMethod.setRequestHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+        postMethod.setRequestHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-requestSentTime));
 		logRequestHeaders();
+        logger.log(Logger.LT_INFO,
+                "Sending " + requestString.length() + " bytes to " + serverURL);
         httpClient.executeMethod(postMethod);
     }
 

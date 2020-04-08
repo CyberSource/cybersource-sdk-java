@@ -56,6 +56,7 @@ class JDKHttpURLConnection extends Connection {
         URL url = new URL(serverURL);
         con = ConnectionHelper.openConnection(url, mc);
         con.setRequestProperty(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+        con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-requestSentTime));
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         ConnectionHelper.setTimeout(con, mc.getTimeout());
