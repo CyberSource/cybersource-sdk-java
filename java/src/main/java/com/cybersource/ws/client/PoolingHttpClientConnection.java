@@ -51,7 +51,7 @@ public class PoolingHttpClientConnection extends Connection {
         if (connectionManager == null) {
             synchronized (PoolingHttpClientConnection.class) {
                 if (connectionManager == null) {
-                    String url = this.mc.getEffectiveServerURL();
+                    String url = merchantConfig.getEffectiveServerURL();
                     try {
                         URI uri = new URI(url);
                         String hostname = uri.getHost();
@@ -62,7 +62,7 @@ public class PoolingHttpClientConnection extends Connection {
                         connectionManager.setMaxPerRoute(new HttpRoute(httpHost), merchantConfig.getMaxConnectionsPerRoute());
                         initHttpClient(merchantConfig, connectionManager);
                         startStaleConnectionMonitorThread(merchantConfig, connectionManager);
-                        if (this.mc.isAddShutDownHook()) {
+                        if (merchantConfig.isAddShutDownHook()) {
                             addShutdownHook();
                         }
                     } catch (Exception e) {
@@ -85,7 +85,7 @@ public class PoolingHttpClientConnection extends Connection {
                 .setRetryHandler(new CustomRetryHandler())
                 .setConnectionManager(poolingHttpClientConnManager);
 
-        setProxy(httpClientBuilder, requestConfigBuilder);
+        setProxy(httpClientBuilder, requestConfigBuilder, merchantConfig);
 
         httpClient = httpClientBuilder
                 .setDefaultRequestConfig(requestConfigBuilder.build())
@@ -227,19 +227,19 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
-    private void setProxy(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder) {
-        if (mc.getProxyHost() != null) {
-            HttpHost proxy = new HttpHost(mc.getProxyHost(), mc.getProxyPort());
+    private void setProxy(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder, MerchantConfig merchantConfig) {
+        if (merchantConfig.getProxyHost() != null) {
+            HttpHost proxy = new HttpHost(merchantConfig.getProxyHost(), merchantConfig.getProxyPort());
             DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
             httpClientBuilder.setRoutePlanner(routePlanner);
 
-            if (mc.getProxyUser() != null) {
+            if (merchantConfig.getProxyUser() != null) {
                 httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
                 requestConfigBuilder.setProxyPreferredAuthSchemes(Collections.singletonList(AuthSchemes.BASIC));
 
                 CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
                 credentialsProvider.setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(mc.getProxyUser(), mc.getProxyPassword()));
+                        new UsernamePasswordCredentials(merchantConfig.getProxyUser(), merchantConfig.getProxyPassword()));
 
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
