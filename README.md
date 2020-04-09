@@ -64,7 +64,11 @@ You do not need to download and build the source to use the SDK but if you want 
     - If `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - If `useHttpClient` parameter is set to true (default is false), then simple HttpClientConnection will be enabled
     - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled
+    - If`addShutDownHook` is true (default is true), enables JVM runtime shutdown hook and execute our shutdown api. This is applicable only when useHttpClientWithConnectionPool is true.
+     - Refer to the [PoolingHttpClient Shutdown](README.md#poolinghttpclientshutdown) section below.
     - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
+      Note : Below default values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
+      Before using these values in actual real time application, please consider all real time factors. Refer this link for more detailed explanation.
      - `maxConnections` set the maximum number of total open connections. default value is 200
      - `defaultMaxConnectionsPerRoute` Set the maximum number of concurrent connections per route. default value is 200
      - `maxConnectionsPerRoute` Set the total number of concurrent connections to a specific route. default value is 200
@@ -158,6 +162,18 @@ try {
 }catch (ClientException e){
     e.getInnerException().printStackTrace();
 }
+
+## PoolingHttpClientShutdown
+In case of PoolingHttpClient Connection, we need to close the connection manager, http client and idle connection cleaner thread when application got shutdown abruptly or gracefully.
+If `addShutDownHook` is true, then JVM runtime addShutdownHook method will be initialized.
+Shutdown Hooks are a special construct that allows developers to plug in a piece of code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean up operations in case the VM is shutting down.
+private void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
+    }
+createShutdownHookThread will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread.
+This method can be called from the tenant application's shutdown api as PoolingHttpClientConnection.onShutdown() and in that case, addShutDownHook can be set to false
+else twice shutdown api will be called, which is not required.
+       
   
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
