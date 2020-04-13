@@ -137,6 +137,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     public static void onShutdown() throws IOException {
+        System.out.println("Triggered sdk shut down");
         if (httpClient != null) {
             httpClient.close();
         }
