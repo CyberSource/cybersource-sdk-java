@@ -45,8 +45,8 @@ public class Utility {
      * Version number of this release.
      */
     public static final String VERSION = "6.2.9";
-    public static final String ORIGIN_TIMESTAMP = "v-c-origin-ia";
-    public static final String SDK_ELAPSED_TIMESTAMP = "v-c-sdk-elapsedtime";
+    public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
+    public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
