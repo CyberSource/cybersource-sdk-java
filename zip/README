@@ -74,11 +74,9 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
 
 
     l. If "useHttpClientWithConnectionPool" parameter is set to true (default is false), then poolingHttpClientConnection will be enabled.
-
-    m. If "addShutDownHook" is set to true (default is true), enables JVM runtime shutdown hook and execute our shutdown api. This is applicable only when useHttpClientWithConnectionPool is true.
          - Refer to the "PoolingHttpClientShutdown" section below.
 
-    n. Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
+    m. Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
          Note : Below default values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
          Before using these values in actual real time application, please consider all real time factors. Refer this link for more detailed explanation.
          - `maxConnections` set the maximum number of total open connections. default value is 200
@@ -90,9 +88,9 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
          - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 3000
          - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connaection can be idle before it is evicted from the pool. default value is 30000
 
-    o. If "merchantConfigCacheEnabled" is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
+    n. If "merchantConfigCacheEnabled" is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
 
-    p. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
+    o. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
 
 ##Testing the Client
 1.) Unzip the downloaded zip file into a directory of your choice.  It will create a directory called
@@ -148,14 +146,12 @@ try {
 
 ##PoolingHttpClientShutdown
 In case of PoolingHttpClient Connection, we need to close the connection manager, http client and idle connection cleaner thread when application got shutdown abruptly or gracefully.
-If `addShutDownHook` is true, then JVM runtime addshutdown hook method will be initialized.
+JVM runtime addshutdown hook method will be initialized.
 Shutdown Hooks are a special construct that allows developers to plug in a piece of code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean up operations in case the VM is shutting down.
 private void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
     }
 createShutdownHookThread will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread.
-This method can be called from the tenant application's shutdown api as PoolingHttpClientConnection.onShutdown() and in that case, addShutDownHook can be set to false
-else twice shtdown api will be called, which is not required.
 
 
 ##Message Level Encryption

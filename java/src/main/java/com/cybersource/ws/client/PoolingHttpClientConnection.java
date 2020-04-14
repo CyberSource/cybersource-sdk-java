@@ -62,9 +62,7 @@ public class PoolingHttpClientConnection extends Connection {
                         connectionManager.setMaxPerRoute(new HttpRoute(httpHost), merchantConfig.getMaxConnectionsPerRoute());
                         initHttpClient(merchantConfig, connectionManager);
                         startStaleConnectionMonitorThread(merchantConfig, connectionManager);
-                        if (merchantConfig.isAddShutDownHook()) {
-                            addShutdownHook();
-                        }
+                        addShutdownHook();
                     } catch (Exception e) {
                         logger.log(Logger.LT_FAULT, "invalid server url");
                         throw new ClientException(e, logger);

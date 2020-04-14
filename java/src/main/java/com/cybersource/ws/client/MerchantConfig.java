@@ -61,7 +61,6 @@ public class MerchantConfig {
     private int logMaximumSize;
     private boolean useHttpClient;
     private boolean useHttpClientWithConnectionPool;
-    private boolean addShutDownHook;
     private int maxConnections;
     private int defaultMaxConnectionsPerRoute;
     private int maxConnectionsPerRoute;
@@ -178,10 +177,6 @@ public class MerchantConfig {
 
     public boolean getUseHttpClientWithConnectionPool() {
         return useHttpClientWithConnectionPool;
-    }
-
-    public boolean isAddShutDownHook() {
-        return addShutDownHook;
     }
 
     public int getTimeout() {
@@ -384,8 +379,6 @@ public class MerchantConfig {
         }
 
         if(useHttpClientWithConnectionPool) {
-            addShutDownHook = getBooleanProperty(merchantID, "addShutDownHook", true);
-
             if(StringUtils.isEmpty(getProperty(merchantID, "maxConnections"))) {
                 throw new ConfigException("maxConnections property is empty");
             } else {
