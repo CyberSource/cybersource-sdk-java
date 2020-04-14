@@ -64,6 +64,7 @@ You do not need to download and build the source to use the SDK but if you want 
     - If `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - If `useHttpClient` parameter is set to true (default is false), then simple HttpClientConnection will be enabled
     - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled
+     - In case of poolingHttpConnection, we are initializing connection manager and httpclient once, If any change in value in between the application is running, it will not reflect. need to restart it. 
      - Refer to the [PoolingHttpClient Shutdown](README.md#poolinghttpclientshutdown) section below.
     - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
       Note : Below default values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
@@ -86,6 +87,7 @@ You do not need to download and build the source to use the SDK but if you want 
         example customHttpClass= <packagename.customHttpClass>
       - The custom HTTP Class must have a three argument constructor which accepts MerchantConfig, DocumentBuilder and LoggerWrapper as argument. Then it should call the constructor of the parent class.
     - `merchantConfigCacheEnabled` If this property is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
+     -If cache enabled is true, for single merchant id, if you change any properties after first initialization, it will not reflect.
 - Build this project using Maven.
   - `mvn clean` - Cleans the Project
   - `mvn install` - Builds the project and creates a jar file of client SDK. Includes running all unit tests and integration tests
