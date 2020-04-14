@@ -48,7 +48,7 @@ public class Utility {
     /**
      * Version number of this release.
      */
-    public static final String VERSION = "6.2.9";
+    public static final String VERSION = "6.2.10";
     public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
 
     /**
