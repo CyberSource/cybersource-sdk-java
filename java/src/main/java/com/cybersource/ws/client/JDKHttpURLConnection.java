@@ -45,7 +45,7 @@ class JDKHttpURLConnection extends Connection {
     JDKHttpURLConnection(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         super(mc, builder, logger);
-        logger.log(Logger.LT_INFO, "Using HttpURLConnection for connections.");
+        logger.log(Logger.LT_INFO, "Using JDKHttpURLConnection for connections.");
     }
 
     void postDocument(Document request, long requestSentTime)
