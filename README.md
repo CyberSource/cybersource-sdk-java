@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -10,7 +10,7 @@ To install the `cybersource-sdk-java` from central repository, add dependency to
 <dependency>
   <groupId>com.cybersource</groupId>
   <artifactId>cybersource-sdk-java</artifactId>
-  <version>6.2.8</version>
+  <version>6.2.9</version>
 </dependency> 
 ```
 Run `mvn install` to install dependency
@@ -19,7 +19,7 @@ Run `mvn install` to install dependency
 Add the dependency to your build.gradle
 ```java
 dependencies {
-  compile 'com.cybersource:cybersource-sdk-java:6.2.8'
+  compile 'com.cybersource:cybersource-sdk-java:6.2.9'
 }
 ```
 ## Requirements
@@ -220,14 +220,18 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.9 (APR,2020)
+Version Cybersource-sdk-java 6.2.10 (APR,2020)
 _______________________________
 
- Performance Improvement:
   1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
   2)Added PoolingHttpClientConnection implementation
   3)Changed retry interval from second to millisecond
+  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to cybersource
 
+Version Cybersource-sdk-java 6.2.9 (APR,2020)
+_______________________________
+  1)Corrected request header name
+  
 Version Cybersource-sdk-java 6.2.8 (FEB,2020)
 _______________________________
 
