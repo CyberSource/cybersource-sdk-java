@@ -1,23 +1,24 @@
 /*
-* Copyright 2003-2014 CyberSource Corporation
-*
-* THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
-* AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
-* DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
-* COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
-* EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
-* WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
-* DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-* SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
-* OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
-* ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
-* DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
-* DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
-* WITH ANY PARTICULAR OPERATING SYSTEM.
-*/
+ * Copyright 2003-2014 CyberSource Corporation
+ *
+ * THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
+ * AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
+ * DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
+ * COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
+ * EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
+ * WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
+ * DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ * SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
+ * OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
+ * ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
+ * DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
+ * DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
+ * WITH ANY PARTICULAR OPERATING SYSTEM.
+ */
 
 package com.cybersource.ws.client;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -30,6 +31,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+
+import static com.cybersource.ws.client.Utility.*;
 
 
 /**
@@ -50,19 +53,19 @@ class JDKHttpURLConnection extends Connection {
 
     void postDocument(Document request, long requestSentTime)
             throws IOException,
-            TransformerException{
+            TransformerException {
         //long startTime = System.nanoTime();
         String serverURL = mc.getEffectiveServerURL();
         URL url = new URL(serverURL);
         con = ConnectionHelper.openConnection(url, mc);
         con.setRequestProperty(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-        con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-requestSentTime));
+        con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - requestSentTime));
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         ConnectionHelper.setTimeout(con, mc.getTimeout());
         logRequestHeaders();
         OutputStream out = con.getOutputStream();
-         byte[] requestBytes = documentToByteArray(request);
+        byte[] requestBytes = documentToByteArray(request);
         logger.log(Logger.LT_INFO,
                 "Sending " + requestBytes.length + " bytes to " + serverURL);
         out.write(requestBytes);
@@ -110,6 +113,7 @@ class JDKHttpURLConnection extends Connection {
 
     /**
      * Converts Document to byte array stream
+     *
      * @param doc - Document document
      * @return - byte array stream.
      * @throws TransformerConfigurationException
@@ -129,21 +133,27 @@ class JDKHttpURLConnection extends Connection {
             }
         }
     }
-    
+
     @Override
     public void logResponseHeaders() {
-		if(con!=null) {
-	        logger.log(Logger.LT_INFO, "Response headers : "+con.getHeaderFields());			
-			}
-		}
-    
-    
+        if (mc.getEnableLog() && con != null) {
+            String responseTime = con.getHeaderField(RESPONSE_TIME_REPLY);
+            if (StringUtils.isNotBlank(responseTime)) {
+                long resIAT = getResponseIssuedAtTimeInSecs(responseTime);
+                if (resIAT > 0) {
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTimeSeconds(resIAT));
+                }
+            }
+            logger.log(Logger.LT_INFO, "Response headers : " + con.getHeaderFields());
+        }
+    }
+
     @Override
     public void logRequestHeaders() {
-		if(con!=null) {
-        	logger.log(Logger.LT_INFO, "Request Headers : "+con.getRequestProperties());
-        	}
-	      }
+        if (mc.getEnableLog() && con != null) {
+            logger.log(Logger.LT_INFO, "Request Headers : " + con.getRequestProperties());
+        }
+    }
 }
 
 /* Copyright 2006 CyberSource Corporation */

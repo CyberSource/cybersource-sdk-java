@@ -1,6 +1,7 @@
 package com.cybersource.ws.client;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NoHttpResponseException;
@@ -31,6 +32,8 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static com.cybersource.ws.client.Utility.*;
 
 public class PoolingHttpClientConnection extends Connection {
     private HttpPost httpPost = null;
@@ -176,14 +179,23 @@ public class PoolingHttpClientConnection extends Connection {
 
     @Override
     public void logRequestHeaders() {
-        List<Header> reqHeaders = Arrays.asList(httpPost.getAllHeaders());
-        logger.log(Logger.LT_INFO, "Request Headers: " + reqHeaders);
+        if(mc.getEnableLog() && httpPost != null) {
+            List<Header> reqHeaders = Arrays.asList(httpPost.getAllHeaders());
+            logger.log(Logger.LT_INFO, "Request Headers: " + reqHeaders);
+        }
 
     }
 
     @Override
     public void logResponseHeaders() {
-        if(httpResponse != null) {
+        if(mc.getEnableLog() && httpResponse != null) {
+            Header responseTimeHeader = httpResponse.getFirstHeader(RESPONSE_TIME_REPLY);
+            if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
+                long resIAT = getResponseIssuedAtTimeInSecs(responseTimeHeader.getValue());
+                if (resIAT > 0) {
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTimeSeconds(resIAT));
+                }
+            }
             List<Header> respHeaders = Arrays.asList(httpResponse.getAllHeaders());
             logger.log(Logger.LT_INFO, "Response Headers: " + respHeaders);
         }

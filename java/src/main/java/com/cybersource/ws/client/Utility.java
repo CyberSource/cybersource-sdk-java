@@ -47,7 +47,7 @@ public class Utility {
     public static final String VERSION = "6.2.10";
     public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
     public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
-
+    public static final String RESPONSE_TIME_REPLY = "v-c-response-time";
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
@@ -498,5 +498,27 @@ public class Utility {
         return (elem);
     }
 
+    public static long getResponseIssuedAtTimeInSecs(String responseTime) {
+        return parseLong(responseTime, 0L);
+    }
+
+    public static long getResponseTransitTimeSeconds(long issuedAtTimeSeconds) {
+        if (issuedAtTimeSeconds > 0) {
+            return (System.currentTimeMillis() / 1000) - issuedAtTimeSeconds;
+        }
+        return 0;
+    }
+
+    private static long parseLong(String val, long defaultValue) {
+        long result = defaultValue;
+        if (val != null) {
+            try {
+                result = Long.parseLong(val);
+            } catch (NumberFormatException e) {
+                //ignored
+            }
+        }
+        return result;
+    }
     
 }	

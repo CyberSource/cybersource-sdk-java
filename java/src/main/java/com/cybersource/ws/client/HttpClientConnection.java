@@ -25,6 +25,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,6 +37,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.cybersource.ws.client.Utility.*;
+
 /**
  * Class helps in posting the Request document for the Transaction using HttpClient.
  * Converts the document to String format and also helps in setting up the Proxy connections.
@@ -229,15 +233,26 @@ class HttpClientConnection extends Connection {
     }
     
     @Override
-	public void logRequestHeaders() {		
-		List<Header> reqheaders=Arrays.asList(postMethod.getRequestHeaders());
-        logger.log(Logger.LT_INFO, "Request Headers: " +reqheaders);
+	public void logRequestHeaders() {
+        if(mc.getEnableLog() && postMethod!=null) {
+            List<Header> reqheaders = Arrays.asList(postMethod.getRequestHeaders());
+            logger.log(Logger.LT_INFO, "Request Headers: " + reqheaders);
+        }
 	}
 	
 	@Override
 	public void logResponseHeaders() {
-		List<Header> respheaders=Arrays.asList(postMethod.getResponseHeaders());
-		 logger.log(Logger.LT_INFO, "Response Headers"+ respheaders);
+        if(mc.getEnableLog() && postMethod != null) {
+            Header responseTimeHeader = postMethod.getResponseHeader(RESPONSE_TIME_REPLY);
+            if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
+                long resIAT = getResponseIssuedAtTimeInSecs(responseTimeHeader.getValue());
+                if (resIAT > 0) {
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTimeSeconds(resIAT));
+                }
+            }
+            List<Header> respheaders = Arrays.asList(postMethod.getResponseHeaders());
+            logger.log(Logger.LT_INFO, "Response Headers" + respheaders);
+        }
 	}
 	
 }
