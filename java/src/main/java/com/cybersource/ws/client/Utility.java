@@ -231,6 +231,8 @@ public class Utility {
             throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
+        //to prevent XXE is always to disable DTDs (External Entities) completely
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         return (dbf.newDocumentBuilder());
     }
 
@@ -459,6 +461,8 @@ public class Utility {
             ByteArrayInputStream bais = new ByteArrayInputStream(xmlBytes);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
+            //to prevent XXE is always to disable DTDs (External Entities) completely
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder builder = dbf.newDocumentBuilder();
             doc = builder.parse(bais);
             bais.close();
