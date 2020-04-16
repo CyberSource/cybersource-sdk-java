@@ -22,6 +22,10 @@ import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Utility class for security related functions like loading p12 key, create signed doc,
+ * generate jdk certificate etc.
+ */
 
 public class SecurityUtil {
     

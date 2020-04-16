@@ -26,8 +26,7 @@ import java.io.PrintWriter;
  * you do not have to catch this exception as it would be the inner exception
  * of a ClientException.
  */
-class SignException
-        extends Exception {
+class SignException extends Exception {
     private Exception innerException;
 
     /**

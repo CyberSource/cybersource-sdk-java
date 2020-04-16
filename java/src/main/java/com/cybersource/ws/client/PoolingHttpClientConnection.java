@@ -34,7 +34,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.cybersource.ws.client.Utility.*;
-
+/**
+ * Class creates pooling http client connection flow. It maintains a pool of
+ * http client connections and is able to service connection requests
+ * from multiple execution threads.
+ */
 public class PoolingHttpClientConnection extends Connection {
     private HttpPost httpPost = null;
     private HttpClientContext httpContext = null;

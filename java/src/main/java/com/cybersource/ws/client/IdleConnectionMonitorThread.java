@@ -4,7 +4,10 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import java.util.concurrent.TimeUnit;
-
+/**
+ * Class creates daemon thread to monitor and kill the idle/stale/expired
+ * connections in the connection pool.
+ */
 public  class IdleConnectionMonitorThread extends Thread {
 
     private final HttpClientConnectionManager connMgr;

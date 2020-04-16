@@ -1,5 +1,8 @@
 package com.cybersource.ws.client;
 
+/**
+ * Class calculates time duration for internal method flows and total response time
+ */
 public class MyStopWatch {
 
 	  private long txStartTime = 0;

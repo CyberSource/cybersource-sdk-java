@@ -29,8 +29,6 @@ import java.nio.charset.Charset;
 
 /**
  * Helps in creating the Proxy and adding Proxy credentials to HttpURLConnection.
- *
- * @author sunagara
  */
 class ConnectionHelper {
 	

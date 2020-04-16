@@ -9,7 +9,7 @@ import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 /**
- * Created by jeaton on 3/11/2016.
+ * This class will add identity to keystore and it extends org.apache.ws.security.components.crypto.Merlin
  */
 public class MessageHandlerKeyStore extends Merlin {
 

@@ -24,8 +24,7 @@ package com.cybersource.ws.client;
  * catch this exception in your code as it would be the inner exception of a
  * ClientException.
  */
-class ConfigException
-        extends Exception {
+class ConfigException extends Exception {
     /**
      * Constructor.
      *
