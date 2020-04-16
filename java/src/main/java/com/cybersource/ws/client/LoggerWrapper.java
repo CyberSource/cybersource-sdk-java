@@ -18,8 +18,6 @@
 
 package com.cybersource.ws.client;
 
-import org.apache.commons.lang3.time.StopWatch;
-
 /**
  * An internal class used by the clients to encapsulate the logger, primarily
  * to avoid having to check if the Logger object is null before logging.  It

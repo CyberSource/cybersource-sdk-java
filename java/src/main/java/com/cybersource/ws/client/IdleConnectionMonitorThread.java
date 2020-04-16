@@ -15,6 +15,12 @@ public  class IdleConnectionMonitorThread extends Thread {
     private long sleepTime;
     private long idleTime;
 
+    /**
+     * Constructor.
+     * @param connMgr - HttpClientConnectionManager
+     * @param sleepTime - long
+     * @param idleTime - long
+     */
     public IdleConnectionMonitorThread(HttpClientConnectionManager connMgr, long sleepTime, long idleTime) {
         super();
         this.connMgr = connMgr;
@@ -22,6 +28,9 @@ public  class IdleConnectionMonitorThread extends Thread {
         this.idleTime = idleTime;
     }
 
+    /**
+     * Override run method
+     */
     @Override
     public void run() {
         try {
@@ -42,14 +51,25 @@ public  class IdleConnectionMonitorThread extends Thread {
         }
     }
 
+    /**
+     * get idle time of connection
+     * @return long
+     */
     public long getIdleTime() {
         return idleTime;
     }
 
+    /**
+     * get sleep time of connection
+     * @return long
+     */
     public long getSleepTime() {
         return sleepTime;
     }
 
+    /**
+     * shutdown the cleaner thread
+     */
     public void shutdown() {
         shutdown = true;
         synchronized (this) {

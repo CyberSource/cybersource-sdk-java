@@ -14,11 +14,22 @@ import java.util.Properties;
  */
 public class MessageHandlerKeyStore extends Merlin {
 
+    /**
+     * Constructor
+     * @throws CredentialException
+     * @throws IOException
+     */
 	public MessageHandlerKeyStore() throws CredentialException, IOException {
         super(null);
         properties = new Properties();
     }
 
+    /**
+     * Add Identity to KeyStore
+     * @param id Identity
+     * @param logger Logger
+     * @throws SignEncryptException
+     */
     public void addIdentityToKeyStore(Identity id, Logger logger) throws SignEncryptException {
         if (id == null)
             return;
