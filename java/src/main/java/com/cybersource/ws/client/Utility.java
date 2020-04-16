@@ -358,7 +358,7 @@ public class Utility {
      * @return resulting Map object; will be empty if the string was null or
      *         empty.
      */
-    public static HashMap stringToMap(String src) {
+    public static HashMap<String, String> stringToMap(String src) {
         HashMap<String, String> dest = new HashMap<String, String>();
 
         if (src == null) {
@@ -408,7 +408,7 @@ public class Utility {
      *         empty.
      */
     public static String mapToString(Map src, boolean mask, int type) {
-        StringBuffer dest = new StringBuffer();
+        StringBuilder dest = new StringBuilder();
 
         if (src != null && !src.isEmpty()) {
             Iterator iter = src.keySet().iterator();
@@ -417,7 +417,7 @@ public class Utility {
                 key = (String) iter.next();
                 val = mask ? PCI.maskIfNotSafe(type, key, (String) src.get(key))
                         : (String) src.get(key);
-                dest.append(key + "=" + val + "\n");
+                dest.append(key).append("=").append(val).append("\n");
             }
         } else {
             return dest.toString();

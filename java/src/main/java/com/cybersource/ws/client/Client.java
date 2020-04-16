@@ -84,7 +84,7 @@ public class Client {
      * @throws ClientException if any other exception occurs.
      */
     @SuppressWarnings("unchecked")
-	public static Map runTransaction(
+	public static Map<String, String> runTransaction(
             Map<String, String> request, Properties props,
             Logger _logger, boolean prepare, boolean logTranStart)
             throws FaultException, ClientException {
@@ -263,7 +263,7 @@ public class Client {
      * @param logger LoggerWrapper object to use for logging.
      * @return content of SOAP body as a Map object.
      */
-    private static HashMap soapUnwrap(
+    private static HashMap<String, String> soapUnwrap(
             Document doc, MerchantConfig mc, LoggerWrapper logger) {
 
     	// 3/8/2016 if the message was encrypted we need to decrypt it
@@ -285,7 +285,7 @@ public class Client {
 
         String replyString = nvpString.getNodeValue();
 
-        HashMap reply = Utility.stringToMap(replyString);
+        HashMap<String, String> reply = Utility.stringToMap(replyString);
 
         if (!logSignedData) {
             logger.log(
