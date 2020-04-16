@@ -19,7 +19,10 @@
 package com.cybersource.ws.client;
 
 /**
- * ConfigException will be thrown if any configuration / properties are invalid
+ * Exception thrown when something is missing or invalid in the configuration
+ * or when setting up of the log file fails.  Note that you do not have to
+ * catch this exception in your code as it would be the inner exception of a
+ * ClientException.
  */
 public class ConfigException extends Exception {
     /**
