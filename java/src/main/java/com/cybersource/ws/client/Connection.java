@@ -39,12 +39,12 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Connection class is a factory  class for creating an instance for HttpClientConnection or
- * JDKHttpURLConnection.
+ * Connection class is a factory class for creating an instance for HttpClientConnection or
+ * JDKHttpURLConnection or PoolingHttpClientConnection.
  *
  * @author sunagara
  */
-abstract class Connection {
+abstract public class Connection {
     final MerchantConfig mc;
     private final DocumentBuilder builder;
     final LoggerWrapper logger;

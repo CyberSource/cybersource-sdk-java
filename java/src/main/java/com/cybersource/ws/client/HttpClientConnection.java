@@ -46,7 +46,7 @@ import static com.cybersource.ws.client.Utility.*;
  *
  * @author sunagara
  */
-class HttpClientConnection extends Connection {
+public class HttpClientConnection extends Connection {
     private PostMethod postMethod = null;
 
     HttpClientConnection(

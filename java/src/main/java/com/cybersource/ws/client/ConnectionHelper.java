@@ -28,9 +28,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 /**
- * Helps in creating the Proxy and adding Proxy credentials to HttpURLConnection.
+ * Helps in creating the Proxy and adding Proxy credentials to JDKHttpURLConnection.
+ *
+ * @author sunagara
  */
-class ConnectionHelper {
+public class ConnectionHelper {
 	
 	
     /**

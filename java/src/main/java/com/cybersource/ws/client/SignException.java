@@ -21,12 +21,12 @@ package com.cybersource.ws.client;
 import java.io.PrintWriter;
 
 /**
- * Exception that is thrown by the Signature object.  Note that unless you are
+ * Exception that is thrown by the Signature object.Note that unless you are
  * calling Signature.initializeContext() or Signature.cacheIdentity() yourself,
  * you do not have to catch this exception as it would be the inner exception
  * of a ClientException.
  */
-class SignException extends Exception {
+public class SignException extends Exception {
     private Exception innerException;
 
     /**

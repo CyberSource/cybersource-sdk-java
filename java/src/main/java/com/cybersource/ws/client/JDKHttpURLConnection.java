@@ -41,7 +41,7 @@ import static com.cybersource.ws.client.Utility.*;
  *
  * @author sunagara
  */
-class JDKHttpURLConnection extends Connection {
+public class JDKHttpURLConnection extends Connection {
     private boolean _isRequestSent = false;
     private HttpURLConnection con = null;
 

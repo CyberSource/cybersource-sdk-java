@@ -25,7 +25,7 @@ import java.util.Hashtable;
  * @author sunagara
  *
  */
-class PCI {
+public class PCI {
     public static final int REQUEST = 0;
     public static final int REPLY = 1;
 
