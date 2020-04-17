@@ -513,10 +513,20 @@ public class Utility {
         return (elem);
     }
 
+    /**
+     * get response issued time in seconds
+     * @param responseTime
+     * @return long
+     */
     public static long getResponseIssuedAtTimeInSecs(String responseTime) {
         return parseLong(responseTime, 0L);
     }
 
+    /**
+     * get response transit time in seconds
+     * @param issuedAtTimeSeconds
+     * @return long
+     */
     public static long getResponseTransitTimeSeconds(long issuedAtTimeSeconds) {
         if (issuedAtTimeSeconds > 0) {
             return (System.currentTimeMillis() / 1000) - issuedAtTimeSeconds;

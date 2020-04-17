@@ -399,6 +399,15 @@ public class XMLClient {
         return resultDocument ;
     }
 
+    /**
+     * Wraps the given Map object in SOAP envelope
+     * @param doc
+     * @param mc
+     * @param builder
+     * @param logger
+     * @return Document
+     * @throws SignException
+     */
     private static Document soapWrap(Document doc, MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws SignException{
     	// look for the requestMessage element
         Element requestMessage
@@ -420,6 +429,14 @@ public class XMLClient {
         return wrappedDoc;
     }
 
+    /**
+     * Convert Document to String
+     * @param doc
+     * @return String
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     * @throws IOException
+     */
     private static String documentToString(Document doc)
             throws TransformerConfigurationException, TransformerException,
             IOException {
@@ -434,6 +451,13 @@ public class XMLClient {
         }
     }
 
+    /**
+     * Tranform document to byte array output stream
+     * @param doc
+     * @return ByteArrayOutputStream
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     */
     private static ByteArrayOutputStream makeStream(Document doc)
             throws TransformerConfigurationException, TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -489,7 +513,13 @@ public class XMLClient {
         return (unwrappedDoc);
     }
 
-
+    /**
+     * Get Merchant Config object based on request and properties
+     * @param request
+     * @param props
+     * @return MerchantConfig
+     * @throws ConfigException
+     */
     static private MerchantConfig getMerchantConfigObject(Document request, Properties props) throws ConfigException {
         MerchantConfig mc;
         String merchantID = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
@@ -506,7 +536,12 @@ public class XMLClient {
         System.out.println("merchant config object got created");
         return mc;
     }
-
+    /**
+     * Get Merchant Id from request, If merchantId is null, get it from properties
+     * @param request
+     * @param props
+     * @return String
+     */
     private static String getMerchantId(Document request, Properties props) {
         String merchantID = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
         if (merchantID == null) {
@@ -517,6 +552,12 @@ public class XMLClient {
         return merchantID;
     }
 
+    /**
+     * get KeyAlias from property, If keyAlias is null, return merchant Id
+     * @param request
+     * @param props
+     * @return String
+     */
     private static String getKeyForInstanceMap(Document request, Properties props) {
         String keyAlias = props.getProperty(KEY_ALIAS);
         if(keyAlias != null) {
@@ -525,7 +566,14 @@ public class XMLClient {
 
         return getMerchantId(request, props);
     }
-
+    /**
+     * Get Merchant config instance from concurrent hash map in memory cache .
+     * If it is empty, it will create new merchant config object and put it in map for reuse.
+     * @param request
+     * @param props
+     * @return MerchantConfig
+     * @throws ConfigException
+     */
     private static MerchantConfig getInstanceMap(Document request, Properties props) throws ConfigException {
         String midOrKeyAlias = getKeyForInstanceMap(request, props);
 
