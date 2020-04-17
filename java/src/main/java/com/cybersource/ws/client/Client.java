@@ -312,6 +312,13 @@ public class Client {
        return Utility.mapToString(src, mask, type);
     }
 
+    /**
+     * Get Merchant Config object based on request and properties
+     * @param request
+     * @param props
+     * @return MerchantConfig
+     * @throws ConfigException
+     */
     static private MerchantConfig getMerchantConfigObject(Map<String, String> request, Properties props) throws ConfigException {
         MerchantConfig mc;
         String merchantID = request.get(MERCHANT_ID);
@@ -328,6 +335,12 @@ public class Client {
         return mc;
     }
 
+    /**
+     * Get Merchant Id from request, If merchantId is null, get it from properties
+     * @param request
+     * @param props
+     * @return String
+     */
     private static String getMerchantId(Map<String, String> request, Properties props) {
         String merchantID = request.get(MERCHANT_ID);
         if (merchantID == null) {
@@ -338,6 +351,12 @@ public class Client {
         return merchantID;
     }
 
+    /**
+     * get KeyAlias from property, If keyAlias is null, return merchant Id
+     * @param request
+     * @param props
+     * @return String
+     */
     private static String getKeyForInstanceMap(Map<String, String> request, Properties props) {
         String keyAlias = props.getProperty(KEY_ALIAS);
         if(keyAlias != null) {
@@ -347,6 +366,14 @@ public class Client {
         return getMerchantId(request, props);
     }
 
+    /**
+     * Get Merchant config instance from concurrent hash map in memory cache .
+     * If it is empty, it will create new merchant config object and put it in map for reuse.
+     * @param request
+     * @param props
+     * @return MerchantConfig
+     * @throws ConfigException
+     */
     private static MerchantConfig getInstanceMap(Map<String, String> request, Properties props) throws ConfigException {
         String midOrKeyAlias = getKeyForInstanceMap(request, props);
 
