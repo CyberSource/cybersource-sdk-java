@@ -440,6 +440,17 @@ public class Utility {
      * @return Document Request from filename read as document
      */
     public static Document readRequest(Properties props, String filename) {
+        return readRequest(props,filename, null);
+    }
+
+    /**
+     * Read the request xml file
+     * @param props Properties object to lookup properties in
+     * @param filename Filename of file containing XML request
+     * @param merchantId merchantId
+     * @return Document Request from filename read as document
+     */
+    public static Document readRequest(Properties props, String filename, String merchantId) {
         Document doc = null;
 
         try {
@@ -453,7 +464,7 @@ public class Utility {
                 StringBuilder sb = new StringBuilder(xmlString);
                 sb.replace(
                         pos, pos + 7,
-                        XMLClient.getEffectiveNamespaceURI(props, null));
+                        XMLClient.getEffectiveNamespaceURI(props, merchantId));
                 xmlBytes = sb.toString().getBytes("UTF-8");
             }
 
@@ -478,7 +489,7 @@ public class Utility {
 
         return (doc);
     }
-    
+
     /**
      * Creates an Element object in the CyberSource namespace.
      *
