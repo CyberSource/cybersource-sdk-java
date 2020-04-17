@@ -79,6 +79,7 @@ public class MerchantConfig {
     private boolean customHttpClassEnabled;
     private boolean certificateCacheEnabled; 
     private boolean merchantConfigCacheEnabled;
+    private boolean shutdownHookEnabled;
     
     public String getcustomHttpClass() {
 		return customHttpClass;
@@ -238,6 +239,11 @@ public class MerchantConfig {
     public boolean isMerchantConfigCacheEnabled() {
         return merchantConfigCacheEnabled;
     }
+
+    public boolean isShutdownHookEnabled() {
+        return shutdownHookEnabled;
+    }
+
     /**
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
@@ -426,6 +432,8 @@ public class MerchantConfig {
             } else {
                 maxKeepAliveTimeMs = getIntegerProperty(merchantID, "maxKeepAliveTimeMs");
             }
+
+            shutdownHookEnabled =getBooleanProperty(merchantID, "enabledShutdownHook", true);
         }
         
         allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
@@ -599,12 +607,24 @@ public class MerchantConfig {
         appendPair(sb, "customHttpClass", customHttpClass);
         appendPair(sb, "customHttpClassEnabled", customHttpClassEnabled);
         appendPair(sb, "useHttpClient", useHttpClient);
+        appendPair(sb, "useHttpClientWithConnectionPool", useHttpClientWithConnectionPool);
         appendPair(sb, "enableJdkCert", enableJdkCert);
         appendPair(sb, "enableCacert", enableCacert);
         if(useHttpClient){
             appendPair(sb, "allowRetry", allowRetry);
             appendPair(sb, "RetryCount", numberOfRetries);
             appendPair(sb, "RetryInterval", retryInterval);
+        }
+        if(useHttpClientWithConnectionPool){
+            appendPair(sb, "maxConnections", maxConnections);
+            appendPair(sb, "defaultMaxConnectionsPerRoute", defaultMaxConnectionsPerRoute);
+            appendPair(sb, "maxConnectionsPerRoute", maxConnectionsPerRoute);
+            appendPair(sb, "connectionRequestTimeoutMs", connectionRequestTimeoutMs);
+            appendPair(sb, "connectionTimeoutMs", connectionTimeoutMs);
+            appendPair(sb, "socketTimeoutMs", socketTimeoutMs);
+            appendPair(sb, "evictThreadSleepTimeMs", evictThreadSleepTimeMs);
+            appendPair(sb, "maxKeepAliveTimeMs", maxKeepAliveTimeMs);
+            appendPair(sb, "enabledShutdownHook", shutdownHookEnabled);
         }
         appendPair(sb, "timeout", timeout);
         if (proxyHost != null) {
