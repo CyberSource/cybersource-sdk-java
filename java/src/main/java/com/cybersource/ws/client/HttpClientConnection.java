@@ -49,12 +49,25 @@ import static com.cybersource.ws.client.Utility.*;
 public class HttpClientConnection extends Connection {
     private PostMethod postMethod = null;
 
+    /**
+     * Constructor.
+     * @param mc
+     * @param builder
+     * @param logger
+     */
     HttpClientConnection(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         super(mc, builder, logger);
         logger.log(Logger.LT_INFO, "Using HttpClient for connections.");
     }
 
+    /**
+     * Post request by httpclient connection
+     * @param request
+     * @param requestSentTime
+     * @throws IOException
+     * @throws TransformerException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#postDocument(org.w3c.dom.Document)
      */
@@ -87,6 +100,10 @@ public class HttpClientConnection extends Connection {
         httpClient.executeMethod(postMethod);
     }
 
+    /**
+     * Method to check is request sent or not
+     * @return boolean
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#isRequestSent()
      */
@@ -94,6 +111,9 @@ public class HttpClientConnection extends Connection {
         return postMethod != null && postMethod.isRequestSent();
     }
 
+    /**
+     * Method to release the http connections
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#release()
      */
@@ -104,6 +124,10 @@ public class HttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * Method to get http response code
+     * @return int
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
@@ -111,6 +135,11 @@ public class HttpClientConnection extends Connection {
         return postMethod != null ? postMethod.getStatusCode() : -1;
     }
 
+    /**
+     * Method to get response stream
+     * @return InputStream
+     * @throws IOException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseStream()
      */
@@ -119,6 +148,11 @@ public class HttpClientConnection extends Connection {
         return postMethod != null ? postMethod.getResponseBodyAsStream() : null;
     }
 
+    /**
+     * Method to get response error stream
+     * @return InputStream
+     * @throws IOException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseErrorStream()
      */
@@ -128,7 +162,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Methos helps to set the timeout for HTTP request call.
+     * Method helps to set the timeout for HTTP request call.
      * cybs.properties can be used to configure the timeout details.
      * @param httpClient
      * @param timeoutInMs
@@ -231,7 +265,10 @@ public class HttpClientConnection extends Connection {
             return false;
         }
     }
-    
+
+    /**
+     * Log Request Headers
+     */
     @Override
 	public void logRequestHeaders() {
         if(mc.getEnableLog() && postMethod!=null) {
@@ -239,7 +276,10 @@ public class HttpClientConnection extends Connection {
             logger.log(Logger.LT_INFO, "Request Headers: " + reqheaders);
         }
 	}
-	
+
+    /**
+     * Log Response Headers
+     */
 	@Override
 	public void logResponseHeaders() {
         if(mc.getEnableLog() && postMethod != null) {
