@@ -98,148 +98,284 @@ public class MerchantConfig {
     private long retryInterval  = 0;
     private boolean allowRetry=true;
 
+    /**
+     * Getter method for useSignAndEncrypted
+     * @return boolean
+     */
     // getter methods
     public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
-    
 
+    /**
+     * Getter method for merchantID
+     * @return String
+     */
     public String getMerchantID() {
         return merchantID;
     }
-    
+    /**
+     * Getter method for keysDirectory
+     * @return String
+     */
     public String getKeysDirectory() {
         return keysDirectory;
     }
-    
+    /**
+     * If keyAlias not null, return keyAlias, else return merchantId
+     * @return String
+     */
     public String getKeyAlias() {
         if ( keyAlias != null )
             return keyAlias;
         else
             return getMerchantID();
     }
-    
+    /**
+     * If keyPassword not null, return keyPassword, else return merchantId
+     * @return String
+     */
     public String getKeyPassword() {
         if ( keyPassword != null )
             return keyPassword;
         else
             return getMerchantID();
     }
-    
+
+    /**
+     * Getter method for sendToProduction
+     * @return boolean
+     */
     public boolean getSendToProduction() {
         return sendToProduction;
     }
-    
+
+    /**
+     * Getter method for sendToAkamai
+     * @return boolean
+     */
     public boolean getSendToAkamai() {
         return sendToAkamai;
     }
-    
+
+    /**
+     * Getter method for targetAPIVersion
+     * @return String
+     */
     public String getTargetAPIVersion() {
         return targetAPIVersion;
     }
-    
+
+    /**
+     * Getter method for keyFilename
+     * @return String
+     */
     public String getKeyFilename() {
         return keyFilename;
     }
-    
+
+    /**
+     * Getter method for serverURL
+     * @return String
+     */
     public String getServerURL() {
         return serverURL;
     }
-    
+
+    /**
+     * Getter method for namespaceURI
+     * @return String
+     */
     public String getNamespaceURI() {
         return namespaceURI;
     }
-    
+
+    /**
+     * Getter method for password
+     * @return String
+     */
     public String getPassword() {
         return password;
     }
-    
+
+    /**
+     * Getter method for enableLog
+     * @return boolean
+     */
     public boolean getEnableLog() {
         return enableLog;
     }
-    
+
+    /**
+     * Getter method for logSignedData
+     * @return boolean
+     */
     public boolean getLogSignedData() {
         return logSignedData;
     }
-    
+
+    /**
+     * Getter method for logDirectory
+     * @return String
+     */
     public String getLogDirectory() {
         return logDirectory;
     }
-    
+
+    /**
+     * Getter method for logFilename
+     * @return String
+     */
     public String getLogFilename() {
         return logFilename;
     }
-    
+
+    /**
+     * Getter method for logMaximumSize
+     * @return int
+     */
     public int getLogMaximumSize() {
         return logMaximumSize;
     }
-    
+
+    /**
+     * Getter method for useHttpClient
+     * @return boolean
+     */
     public boolean getUseHttpClient() {
         return useHttpClient;
     }
 
+    /**
+     * Getter method for useHttpClientWithConnectionPool
+     * @return boolean
+     */
     public boolean getUseHttpClientWithConnectionPool() {
         return useHttpClientWithConnectionPool;
     }
 
+    /**
+     * Getter method for timeout
+     * @return int
+     */
     public int getTimeout() {
         return timeout;
     }
 
+    /**
+     * Getter method for maxConnections
+     * @return int
+     */
     public int getMaxConnections() {
         return maxConnections;
     }
 
+    /**
+     * Getter method for defaultMaxConnectionsPerRoute
+     * @return int
+     */
     public int getDefaultMaxConnectionsPerRoute() {
         return defaultMaxConnectionsPerRoute;
     }
 
+    /**
+     * Getter method for maxConnectionsPerRoute
+     * @return int
+     */
     public int getMaxConnectionsPerRoute() {
         return maxConnectionsPerRoute;
     }
 
+    /**
+     * Getter method for connectionRequestTimeoutMs
+     * @return int
+     */
     public int getConnectionRequestTimeoutMs() {
         return connectionRequestTimeoutMs;
     }
 
+    /**
+     * Getter method for connectionTimeoutMs
+     * @return int
+     */
     public int getConnectionTimeoutMs() {
         return connectionTimeoutMs;
     }
 
+    /**
+     * Getter method for socketTimeoutMs
+     * @return int
+     */
     public int getSocketTimeoutMs() {
         return socketTimeoutMs;
     }
 
+    /**
+     * Getter method for evictThreadSleepTimeMs
+     * @return int
+     */
     public int getEvictThreadSleepTimeMs() {
         return evictThreadSleepTimeMs;
     }
 
+    /**
+     * Getter method for maxKeepAliveTimeMs
+     * @return int
+     */
     public int getMaxKeepAliveTimeMs() {
         return maxKeepAliveTimeMs;
     }
 
+    /**
+     * Getter method for proxyHost
+     * @return String
+     */
     public String getProxyHost() {
         return proxyHost;
     }
-    
+
+    /**
+     * Getter method for proxyPort
+     * @return int
+     */
     public int getProxyPort() {
         return proxyPort;
     }
-    
+
+    /**
+     * Getter method for proxyUser
+     * @return String
+     */
     public String getProxyUser() {
         return proxyUser;
     }
-    
+
+    /**
+     * Getter method for proxyPassword
+     * @return String
+     */
     public String getProxyPassword() {
         return proxyPassword != null ? proxyPassword : "";
     }
-    
-    public boolean isCertificateCacheEnabled() {  
+
+    /**
+     * Getter method for certificateCacheEnabled
+     * @return boolean
+     */
+    public boolean isCertificateCacheEnabled() {
         return certificateCacheEnabled;  
-    }  
-    
+    }
+
+    /**
+     * Getter method for merchantConfigCacheEnabled
+     * @return boolean
+     */
     public boolean isMerchantConfigCacheEnabled() {
         return merchantConfigCacheEnabled;
     }
 
+    /**
+     * Getter method for shutdownHookEnabled
+     * @return boolean
+     */
     public boolean isShutdownHookEnabled() {
         return shutdownHookEnabled;
     }
@@ -586,6 +722,7 @@ public class MerchantConfig {
     
     /**
      * Returns a string representation of the properties for logging purposes.
+     * @return String
      */
     public String getLogString() {
         
@@ -705,34 +842,67 @@ public class MerchantConfig {
             throw new ConfigException(prop + " has an invalid value.");
         }
     }
-    
+
+    /**
+     * Getter method for uniqueKey
+     * @return UUID
+     */
     public UUID getUniqueKey() {
         return uniqueKey;
     }
-    
+
+    /**
+     * Getter method for numberOfRetries
+     * @return int
+     */
     public int getNumberOfRetries() {
         return numberOfRetries;
     }
-    
+
+    /**
+     * Getter method for retryInterval
+     * @return long
+     */
     public long getRetryInterval() {
         return retryInterval;
     }
-    
+
+    /**
+     * Getter method for allowRetry
+     * @return boolean
+     */
     public boolean isAllowRetry() {
         return allowRetry;
     }
-    
+
+    /**
+     * Setter method for allowRetry
+     * @param allowRetry
+     */
     public void setAllowRetry(boolean allowRetry) {
         this.allowRetry = allowRetry;
     }
-    
+
+    /**
+     * Getter method for enableCacert
+     * @return boolean
+     */
     public boolean isCacertEnabled() {
         return enableCacert;
     }
-    
+
+    /**
+     * Getter method for enableJdkCert
+     * @return boolean
+     */
     public boolean isJdkCertEnabled() {
         return enableJdkCert;
     }
+
+    /**
+     * Getter method for cacertPassword
+     * @return String
+     */
     public String getCacertPassword(){
         return cacertPassword;
     }
