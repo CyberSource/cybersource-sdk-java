@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 import static com.cybersource.ws.client.Utility.*;
 
@@ -45,12 +44,26 @@ public class JDKHttpURLConnection extends Connection {
     private boolean _isRequestSent = false;
     private HttpURLConnection con = null;
 
+
+    /**
+     * Constructor.
+     * @param mc
+     * @param builder
+     * @param logger
+     */
     JDKHttpURLConnection(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         super(mc, builder, logger);
         logger.log(Logger.LT_INFO, "Using JDKHttpURLConnection for connections.");
     }
 
+    /**
+     * Post request by jdkHttpURL connection
+     * @param request
+     * @param requestSentTime
+     * @throws IOException
+     * @throws TransformerException
+     */
     void postDocument(Document request, long requestSentTime)
             throws IOException,
             TransformerException {
@@ -74,6 +87,10 @@ public class JDKHttpURLConnection extends Connection {
         _isRequestSent = true;
     }
 
+    /**
+     * Method to check is request sent or not
+     * @return boolean
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#isRequestSent()
      */
@@ -81,6 +98,9 @@ public class JDKHttpURLConnection extends Connection {
         return _isRequestSent;
     }
 
+    /**
+     * Method to release the connections
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#release()
      */
@@ -88,6 +108,11 @@ public class JDKHttpURLConnection extends Connection {
         con = null;
     }
 
+    /**
+     * Method to get http response code
+     * @return int
+     * @throws IOException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
@@ -96,6 +121,11 @@ public class JDKHttpURLConnection extends Connection {
         return con != null ? con.getResponseCode() : -1;
     }
 
+    /**
+     * Method to get response error stream
+     * @return InputStram
+     * @throws IOException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseStream()
      */
@@ -104,6 +134,10 @@ public class JDKHttpURLConnection extends Connection {
         return con != null ? con.getInputStream() : null;
     }
 
+    /**
+     * Method to get response error stream
+     * @return InputStream
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseErrorStream()
      */
@@ -134,6 +168,9 @@ public class JDKHttpURLConnection extends Connection {
         }
     }
 
+    /**
+     * Log Response Headers
+     */
     @Override
     public void logResponseHeaders() {
         if (mc.getEnableLog() && con != null) {
@@ -148,6 +185,9 @@ public class JDKHttpURLConnection extends Connection {
         }
     }
 
+    /**
+     * Log Request Headers
+     */
     @Override
     public void logRequestHeaders() {
         if (mc.getEnableLog() && con != null) {

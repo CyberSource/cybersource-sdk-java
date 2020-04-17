@@ -48,12 +48,24 @@ public class PoolingHttpClientConnection extends Connection {
     private final static String STALE_CONNECTION_MONITOR_THREAD_NAME = "http-stale-connection-cleaner-thread";
     private static PoolingHttpClientConnectionManager connectionManager = null;
 
+    /**
+     * Constructor.
+     * @param mc
+     * @param builder
+     * @param logger
+     * @throws ClientException
+     */
     PoolingHttpClientConnection(MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws ClientException {
         super(mc, builder, logger);
         initializeConnectionManager(mc);
         logger.log(Logger.LT_INFO, "Using PoolingHttpClient for connections.");
     }
 
+    /**
+     * Initialize pooling connection manager with max connections based on properties
+     * @param merchantConfig
+     * @throws ClientException
+     */
     private void initializeConnectionManager(MerchantConfig merchantConfig) throws ClientException {
         if (connectionManager == null) {
             synchronized (PoolingHttpClientConnection.class) {
@@ -81,6 +93,11 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * Initialize Http Client
+     * @param merchantConfig
+     * @param poolingHttpClientConnManager
+     */
     protected void initHttpClient(MerchantConfig merchantConfig, PoolingHttpClientConnectionManager poolingHttpClientConnManager) {
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setSocketTimeout(merchantConfig.getSocketTimeoutMs())
@@ -99,6 +116,11 @@ public class PoolingHttpClientConnection extends Connection {
                 .build();
     }
 
+    /**
+     * Initialize thread to clean Idle/Stale/Expired connections
+     * @param merchantConfig
+     * @param poolingHttpClientConnManager
+     */
     private void startStaleConnectionMonitorThread(MerchantConfig merchantConfig, PoolingHttpClientConnectionManager poolingHttpClientConnManager) {
         staleMonitorThread = new IdleConnectionMonitorThread(poolingHttpClientConnManager, merchantConfig.getEvictThreadSleepTimeMs(), merchantConfig.getMaxKeepAliveTimeMs());
         staleMonitorThread.setName(STALE_CONNECTION_MONITOR_THREAD_NAME);
@@ -106,6 +128,13 @@ public class PoolingHttpClientConnection extends Connection {
         staleMonitorThread.start();
     }
 
+    /**
+     * Method to post the request using http pool connection
+     * @param request
+     * @param requestSentTime
+     * @throws IOException
+     * @throws TransformerException
+     */
     @Override
     void postDocument(Document request, long requestSentTime) throws IOException, TransformerException {
         String serverURL = mc.getEffectiveServerURL();
@@ -122,15 +151,26 @@ public class PoolingHttpClientConnection extends Connection {
         httpResponse = httpClient.execute(httpPost, httpContext);
     }
 
+    /**
+     * Method to check whether request sent or not
+     * @return boolean
+     */
     @Override
     public boolean isRequestSent() {
         return httpContext != null && httpContext.isRequestSent();
     }
 
+    /**
+     * Enable JVM runtime shutdown hook
+     */
     private void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
     }
 
+    /**
+     * Thread which calls shutdown method
+     * @return
+     */
     private Thread createShutdownHookThread() {
         return new Thread() {
             public void run() {
@@ -143,6 +183,11 @@ public class PoolingHttpClientConnection extends Connection {
         };
     }
 
+    /**
+     * Method to close the httpClient, connectionManager, staleMonitorThread
+     * when application got shutdown
+     * @throws IOException
+     */
     public static void onShutdown() throws IOException {
         System.out.println("Triggered sdk shut down");
         if (httpClient != null) {
@@ -156,6 +201,10 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * Method to close httpResponse
+     * @throws ClientException
+     */
     @Override
     public void release() throws ClientException {
         try {
@@ -168,21 +217,38 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * Method to get http response code
+     * @return int
+     */
     @Override
     int getHttpResponseCode() {
         return httpResponse != null ? httpResponse.getStatusLine().getStatusCode() : -1;
     }
 
+    /**
+     * Method to get response stream
+     * @return InputStream
+     * @throws IOException
+     */
     @Override
     InputStream getResponseStream() throws IOException {
         return httpResponse != null ? httpResponse.getEntity().getContent() : null;
     }
 
+    /**
+     * Method to get response error stream
+     * @return InputStream
+     * @throws IOException
+     */
     @Override
     InputStream getResponseErrorStream() throws IOException {
         return getResponseStream();
     }
 
+    /**
+     * Log Request Headers
+     */
     @Override
     public void logRequestHeaders() {
         if(mc.getEnableLog() && httpPost != null) {
@@ -192,6 +258,9 @@ public class PoolingHttpClientConnection extends Connection {
 
     }
 
+    /**
+     * Log Response Headers
+     */
     @Override
     public void logResponseHeaders() {
         if(mc.getEnableLog() && httpResponse != null) {
@@ -207,6 +276,13 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * Conver Document to String
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws TransformerException
+     */
     private String documentToString(Document request) throws IOException, TransformerException {
         ByteArrayOutputStream baos = null;
         try {
@@ -219,6 +295,9 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * Inner class for custom retry handling
+     */
     private class CustomRetryHandler implements HttpRequestRetryHandler {
         long retryWaitInterval = mc.getRetryInterval();
         int maxRetries = mc.getNumberOfRetries();
@@ -248,6 +327,12 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * Set proxy by using proxy credentials to create httpclient
+     * @param httpClientBuilder
+     * @param requestConfigBuilder
+     * @param merchantConfig
+     */
     private void setProxy(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder, MerchantConfig merchantConfig) {
         if (merchantConfig.getProxyHost() != null) {
             HttpHost proxy = new HttpHost(merchantConfig.getProxyHost(), merchantConfig.getProxyPort());
