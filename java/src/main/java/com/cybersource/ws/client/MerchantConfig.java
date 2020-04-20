@@ -69,6 +69,7 @@ public class MerchantConfig {
     private int socketTimeoutMs;
     private int evictThreadSleepTimeMs;
     private int maxKeepAliveTimeMs;
+    private int validateAfterInactivityMs;
     private int timeout;
     private String proxyHost;
     private int proxyPort;
@@ -325,6 +326,16 @@ public class MerchantConfig {
     }
 
     /**
+     * Defines period of inactivity in milliseconds after which persistent connections must be re-validated prior to being
+     * leased to the consumer. Non-positive value passed to this method disables connection validation.
+     * This check helps detect connections that have become stale (half-closed) while kept inactive in the pool.
+     * @return int
+     */
+    public int getValidateAfterInactivityMs() {
+        return validateAfterInactivityMs;
+    }
+
+    /**
      * Getter method for proxyHost
      * @return String
      */
@@ -569,6 +580,7 @@ public class MerchantConfig {
                 maxKeepAliveTimeMs = getIntegerProperty(merchantID, "maxKeepAliveTimeMs");
             }
 
+            validateAfterInactivityMs = getIntegerProperty(merchantID, "validateAfterInactivityMs", 2000);
             shutdownHookEnabled =getBooleanProperty(merchantID, "enabledShutdownHook", true);
         }
         
@@ -761,6 +773,7 @@ public class MerchantConfig {
             appendPair(sb, "socketTimeoutMs", socketTimeoutMs);
             appendPair(sb, "evictThreadSleepTimeMs", evictThreadSleepTimeMs);
             appendPair(sb, "maxKeepAliveTimeMs", maxKeepAliveTimeMs);
+            appendPair(sb, "validateAfterInactivityMs", validateAfterInactivityMs);
             appendPair(sb, "enabledShutdownHook", shutdownHookEnabled);
         }
         appendPair(sb, "timeout", timeout);
