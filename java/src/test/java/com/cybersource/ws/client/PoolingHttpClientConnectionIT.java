@@ -51,6 +51,8 @@ public class PoolingHttpClientConnectionIT {
         }
     }
 
+    private String message= "pooling httpclient is disabled";
+
     @Before
     public void start(){
         Properties merchantProperties = new Properties();
@@ -68,12 +70,15 @@ public class PoolingHttpClientConnectionIT {
             builder = Utility.newDocumentBuilder();
             request = Utility.readRequest(merchantProperties, requestFilename);
             mc = new MerchantConfig(merchantProperties, null);
-            String merchantID = mc.getMerchantID();
-            String nsURI = mc.getEffectiveNamespaceURI();
-            setMerchantID(request, merchantID, nsURI);
-            logger = new LoggerWrapper(null, true, true, mc);
-
-            con = new PoolingHttpClientConnection(mc, builder, logger);
+            if(mc.getUseHttpClientWithConnectionPool()) {
+                String merchantID = mc.getMerchantID();
+                String nsURI = mc.getEffectiveNamespaceURI();
+                setMerchantID(request, merchantID, nsURI);
+                logger = new LoggerWrapper(null, true, true, mc);
+                con = new PoolingHttpClientConnection(mc, builder, logger);
+            } else {
+                Assert.assertEquals("pooling httpclient is disabled", message);
+            }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (ConfigException e) {
@@ -88,7 +93,11 @@ public class PoolingHttpClientConnectionIT {
      */
     @Test
     public void testGetInstance(){
-        Assert.assertNotNull(con);
+        if(mc.getUseHttpClientWithConnectionPool()) {
+            Assert.assertNotNull(con);
+        } else {
+            Assert.assertNull(con);
+        }
     }
 
     /**
@@ -97,26 +106,30 @@ public class PoolingHttpClientConnectionIT {
     @Test
     public void testPostRequest(){
         try {
-            Element requestMessage
-                    = Utility.getElement(
-                    request, "requestMessage", mc.getEffectiveNamespaceURI());
-            Document wrappedDoc = builder.newDocument();
+            if(mc.getUseHttpClientWithConnectionPool()) {
+                Element requestMessage
+                        = Utility.getElement(
+                        request, "requestMessage", mc.getEffectiveNamespaceURI());
+                Document wrappedDoc = builder.newDocument();
 
-            wrappedDoc.appendChild(
-                    wrappedDoc.importNode(soapEnvelope.getFirstChild(), true));
+                wrappedDoc.appendChild(
+                        wrappedDoc.importNode(soapEnvelope.getFirstChild(), true));
 
-            if (requestMessage != null) {
-                wrappedDoc.getFirstChild().getFirstChild().appendChild(
-                        wrappedDoc.importNode(requestMessage, true));
+                if (requestMessage != null) {
+                    wrappedDoc.getFirstChild().getFirstChild().appendChild(
+                            wrappedDoc.importNode(requestMessage, true));
+                }
+                SecurityUtil.loadMerchantP12File(mc,logger);
+                signedDoc = SecurityUtil.createSignedDoc(wrappedDoc, mc.getKeyAlias(), mc.getKeyPassword(), logger);
+                Document wrappedReply = con.post(signedDoc, requestSentTime);
+                Assert.assertNotNull(wrappedReply);
+                //test the http response code
+                Assert.assertEquals(200, con.getHttpResponseCode());
+                //test the http request sent or not
+                Assert.assertEquals(true, con.isRequestSent());
+            } else {
+                Assert.assertEquals("pooling httpclient is disabled", message);
             }
-            SecurityUtil.loadMerchantP12File(mc,logger);
-            signedDoc = SecurityUtil.createSignedDoc(wrappedDoc, mc.getKeyAlias(), mc.getKeyPassword(), logger);
-            Document wrappedReply = con.post(signedDoc, requestSentTime);
-            Assert.assertNotNull(wrappedReply);
-            //test the http response code
-            Assert.assertEquals(200, con.getHttpResponseCode());
-            //test the http request sent or not
-            Assert.assertEquals(true, con.isRequestSent());
 
         } catch (ClientException e) {
             e.printStackTrace();

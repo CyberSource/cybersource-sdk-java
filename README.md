@@ -66,6 +66,7 @@ You do not need to download and build the source to use the SDK but if you want 
     - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled
      - In case of poolingHttpConnection, we are initializing connection manager and httpclient once, If any change in value in between the application is running, it will not reflect. need to restart it. 
      - Refer to the [PoolingHttpClient Shutdown](README.md#poolinghttpclientshutdown) section below.
+    - If`enabledShutdownHook` is true (default is true), enables JVM runtime shutdown hook and execute our shutdown api. This is applicable only when useHttpClientWithConnectionPool is true.
     - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
       Note : Below default values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
       Before using these values in actual real time application, please consider all real time factors. Refer this link for more detailed explanation.
@@ -166,7 +167,7 @@ try {
 
 ## PoolingHttpClientShutdown
 In case of PoolingHttpClient Connection, we need to close the connection manager, http client and idle connection cleaner thread when application got shutdown abruptly or gracefully.
-JVM runtime addShutdownHook method will be initialized.
+If `enabledShutdownHook` is true, then JVM runtime addShutdownHook method will be initialized.
 Shutdown Hooks are a special construct that allows developers to plug in a piece of code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean up operations in case the VM is shutting down.
 private void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
@@ -227,6 +228,7 @@ _______________________________
   2)Added PoolingHttpClientConnection implementation
   3)Changed retry interval from second to millisecond
   4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to cybersource
+  
 
 Version Cybersource-sdk-java 6.2.9 (APR,2020)
 _______________________________
