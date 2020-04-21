@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.cybersource.ws.client.Utility.*;
+
 /**
  * Class creates pooling http client connection flow. It maintains a pool of
  * http client connections and is able to service connection requests
@@ -50,6 +51,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Constructor.
+     *
      * @param mc
      * @param builder
      * @param logger
@@ -63,6 +65,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Initialize pooling connection manager with max connections based on properties
+     *
      * @param merchantConfig
      * @throws ClientException
      */
@@ -82,7 +85,7 @@ public class PoolingHttpClientConnection extends Connection {
                         connectionManager.setMaxPerRoute(new HttpRoute(httpHost), merchantConfig.getMaxConnectionsPerRoute());
                         initHttpClient(merchantConfig, connectionManager);
                         startStaleConnectionMonitorThread(merchantConfig, connectionManager);
-                        if(merchantConfig.isShutdownHookEnabled()) {
+                        if (merchantConfig.isShutdownHookEnabled()) {
                             addShutdownHook();
                         }
                     } catch (Exception e) {
@@ -96,6 +99,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Initialize Http Client
+     *
      * @param merchantConfig
      * @param poolingHttpClientConnManager
      */
@@ -119,6 +123,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Initialize thread to clean Idle/Stale/Expired connections
+     *
      * @param merchantConfig
      * @param poolingHttpClientConnManager
      */
@@ -131,6 +136,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Method to post the request using http pool connection
+     *
      * @param request
      * @param requestSentTime
      * @throws IOException
@@ -154,6 +160,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Method to check whether request sent or not
+     *
      * @return boolean
      */
     @Override
@@ -170,6 +177,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Thread which calls shutdown method
+     *
      * @return
      */
     private Thread createShutdownHookThread() {
@@ -187,6 +195,7 @@ public class PoolingHttpClientConnection extends Connection {
     /**
      * Method to close the httpClient, connectionManager, staleMonitorThread
      * when application got shutdown
+     *
      * @throws IOException
      */
     public static void onShutdown() throws IOException {
@@ -204,12 +213,13 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Method to close httpResponse
+     *
      * @throws ClientException
      */
     @Override
     public void release() throws ClientException {
         try {
-            if(httpResponse != null) {
+            if (httpResponse != null) {
                 EntityUtils.consume(httpResponse.getEntity());
                 httpResponse.close();
             }
@@ -220,6 +230,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Method to get http response code
+     *
      * @return int
      */
     @Override
@@ -229,6 +240,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Method to get response stream
+     *
      * @return InputStream
      * @throws IOException
      */
@@ -239,6 +251,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Method to get response error stream
+     *
      * @return InputStream
      * @throws IOException
      */
@@ -252,7 +265,7 @@ public class PoolingHttpClientConnection extends Connection {
      */
     @Override
     public void logRequestHeaders() {
-        if(mc.getEnableLog() && httpPost != null) {
+        if (mc.getEnableLog() && httpPost != null) {
             List<Header> reqHeaders = Arrays.asList(httpPost.getAllHeaders());
             logger.log(Logger.LT_INFO, "Request Headers: " + reqHeaders);
         }
@@ -264,7 +277,7 @@ public class PoolingHttpClientConnection extends Connection {
      */
     @Override
     public void logResponseHeaders() {
-        if(mc.getEnableLog() && httpResponse != null) {
+        if (mc.getEnableLog() && httpResponse != null) {
             Header responseTimeHeader = httpResponse.getFirstHeader(RESPONSE_TIME_REPLY);
             if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
                 long resIAT = getResponseIssuedAtTimeInSecs(responseTimeHeader.getValue());
@@ -279,6 +292,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Conver Document to String
+     *
      * @param request
      * @return
      * @throws IOException
@@ -309,11 +323,16 @@ public class PoolingHttpClientConnection extends Connection {
                 return false;
             }
 
-            if (exception instanceof NoHttpResponseException) {
-                return false;
+            HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
+            if (!httpClientContext.isRequestSent() && exception instanceof NoHttpResponseException) {
+                System.out.println("retrying as it NoHttpResponseException and request is not sent");
+                return true;
             }
 
-            HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
+            if (exception instanceof NoHttpResponseException) {
+                System.out.println("not retrying as it is NoHttpResponseException and request is sent");
+                return false;
+            }
 
             if (!httpClientContext.isRequestSent()) {
                 try {
@@ -330,6 +349,7 @@ public class PoolingHttpClientConnection extends Connection {
 
     /**
      * Set proxy by using proxy credentials to create httpclient
+     *
      * @param httpClientBuilder
      * @param requestConfigBuilder
      * @param merchantConfig
