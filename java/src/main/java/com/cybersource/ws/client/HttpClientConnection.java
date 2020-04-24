@@ -78,7 +78,7 @@ public class HttpClientConnection extends Connection {
     	 * SimpleHttpConnectionManager(boolean alwaysClose) : 
     	 * alwaysClose - if set true, the connection manager will always close connections upon release.
     	 */
-    	
+
         HttpClient httpClient = new HttpClient(new SimpleHttpConnectionManager(true));
         setTimeout(httpClient, mc.getTimeout() * 1000);
         setProxy(httpClient);
@@ -255,7 +255,7 @@ public class HttpClientConnection extends Connection {
                 // if it's OK to retry methods that have been sent
             	try {
          	        Thread.sleep(retryWaitInterval);
-         	        logger.log( Logger.LT_INFO+" Retrying Request -- ",mc.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
+         	        logger.log( Logger.LT_INFO, " Retrying Request -- "+logger.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
                  } catch (InterruptedException e) {
          	        e.printStackTrace();
                  }

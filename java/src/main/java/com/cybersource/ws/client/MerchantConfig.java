@@ -37,8 +37,6 @@ public class MerchantConfig {
     private final static int DEFAULT_TIMEOUT = 130;
     private final static int DEFAULT_PROXY_PORT = 8080;
 
-    private UUID uniqueKey=UUID.randomUUID();
-    
     private final Properties props;
     
     private final String merchantID;
@@ -854,14 +852,6 @@ public class MerchantConfig {
         } catch (NumberFormatException nfe) {
             throw new ConfigException(prop + " has an invalid value.");
         }
-    }
-
-    /**
-     * Getter method for uniqueKey
-     * @return UUID
-     */
-    public UUID getUniqueKey() {
-        return uniqueKey;
     }
 
     /**

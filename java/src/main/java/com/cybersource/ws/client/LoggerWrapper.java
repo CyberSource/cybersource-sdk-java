@@ -18,6 +18,8 @@
 
 package com.cybersource.ws.client;
 
+import java.util.UUID;
+
 /**
  * An internal class used by the clients to encapsulate the logger, primarily
  * to avoid having to check if the Logger object is null before logging.  It
@@ -27,6 +29,7 @@ package com.cybersource.ws.client;
 public class LoggerWrapper implements Logger {
     private Logger logger = null;
     private MyStopWatch stopWatch = new MyStopWatch();
+    private UUID uniqueKey=UUID.randomUUID();
   
     /**
      * Constructor.
@@ -70,6 +73,14 @@ public class LoggerWrapper implements Logger {
             logTransactionStart();
         }
         
+    }
+
+    /**
+     * Getter method for uniqueKey
+     * @return UUID
+     */
+    public UUID getUniqueKey() {
+        return uniqueKey;
     }
 
     /**

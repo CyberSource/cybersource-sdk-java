@@ -368,7 +368,7 @@ public class XMLClient {
 
     	if (!logSignedData) {
             logger.log(Logger.LT_REQUEST,
-            		"UUID   >  "+(mc.getUniqueKey()).toString() + "\n" +
+            		"UUID   >  "+(logger.getUniqueKey()).toString() + "\n" +
             		"Input request is" + "\n" +
             		"======================================= \n"
                     + Utility.nodeToString(doc, PCI.REQUEST));

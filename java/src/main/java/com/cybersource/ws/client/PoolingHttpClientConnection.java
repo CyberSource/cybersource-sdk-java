@@ -337,7 +337,7 @@ public class PoolingHttpClientConnection extends Connection {
             if (!httpClientContext.isRequestSent()) {
                 try {
                     Thread.sleep(retryWaitInterval);
-                    logger.log(Logger.LT_INFO, "Retrying Request -- " + mc.getUniqueKey() + " Retry Count -- " + executionCount);
+                    logger.log(Logger.LT_INFO, "Retrying Request -- " + logger.getUniqueKey() + " Retry Count -- " + executionCount);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
