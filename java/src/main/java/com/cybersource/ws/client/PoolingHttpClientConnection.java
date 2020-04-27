@@ -323,17 +323,23 @@ public class PoolingHttpClientConnection extends Connection {
                 return false;
             }
 
-            HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
-            if (!httpClientContext.isRequestSent() && exception instanceof NoHttpResponseException) {
-                System.out.println("retrying as it NoHttpResponseException and request is not sent");
-                return true;
-            }
-
             if (exception instanceof NoHttpResponseException) {
                 System.out.println("not retrying as it is NoHttpResponseException and request is sent");
                 return false;
             }
 
+//            if (exception instanceof NoHttpResponseException) {
+//                System.out.println("retrying as it NoHttpResponseException and request is not sent");
+//                return true;
+//            }
+//
+//            if (exception instanceof java.net.SocketException &&  (exception.getMessage().equalsIgnoreCase("Connection reset") ||
+//                    exception.getLocalizedMessage().equalsIgnoreCase("Connection reset"))) {
+//
+//                System.out.println("retrying for connection reset");
+//                return true;
+//            }
+            HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
             if (!httpClientContext.isRequestSent()) {
                 try {
                     Thread.sleep(retryWaitInterval);
