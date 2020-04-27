@@ -29,8 +29,8 @@ import java.util.UUID;
 public class LoggerWrapper implements Logger {
     private Logger logger = null;
     private MyStopWatch stopWatch = new MyStopWatch();
-    private UUID uniqueKey=UUID.randomUUID();
-  
+    private UUID uniqueKey;
+
     /**
      * Constructor.
      *
@@ -52,6 +52,7 @@ public class LoggerWrapper implements Logger {
         MerchantConfig mc = _mc;
         boolean prepare = false;
         boolean logTranStart = false;
+        uniqueKey = UUID.randomUUID();
 
         if (_logger != null) {
             logger = _logger;
@@ -79,8 +80,8 @@ public class LoggerWrapper implements Logger {
      * Getter method for uniqueKey
      * @return UUID
      */
-    public UUID getUniqueKey() {
-        return uniqueKey;
+    public String getUniqueKey() {
+        return uniqueKey!=null ? uniqueKey.toString():null;
     }
 
     /**

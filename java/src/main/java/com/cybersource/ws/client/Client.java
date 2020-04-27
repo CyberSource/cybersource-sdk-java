@@ -210,7 +210,7 @@ public class Client {
         if (!logSignedData) {
             logger.log(
             		Logger.LT_REQUEST,
-            		"UUID   >  "+(logger.getUniqueKey()).toString() + "\n" +
+            		"UUID   >  "+(logger.getUniqueKey()) + "\n" +
             		"Input request is" + "\n" +
             		"======================================= \n"
             		+ mapToString(request, true, PCI.REQUEST));

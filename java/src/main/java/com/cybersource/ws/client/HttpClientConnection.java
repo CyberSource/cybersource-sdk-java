@@ -255,7 +255,7 @@ public class HttpClientConnection extends Connection {
                 // if it's OK to retry methods that have been sent
             	try {
          	        Thread.sleep(retryWaitInterval);
-         	        logger.log( Logger.LT_INFO, " Retrying Request -- "+logger.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
+         	        logger.log( Logger.LT_INFO, " Retrying Request -- "+logger.getUniqueKey()+ " Retry Count -- "+executionCount);
                  } catch (InterruptedException e) {
          	        e.printStackTrace();
                  }
