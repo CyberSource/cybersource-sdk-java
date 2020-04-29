@@ -621,7 +621,7 @@ public class MerchantConfig {
                 numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 3);
                 if (numberOfRetries > 0)
                     retryInterval = getIntegerProperty(merchantID, "retryInterval", 1000);
-                if (numberOfRetries < 1 || numberOfRetries > 3 || retryInterval < 0) {
+                if (numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0) {
                     throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
                 }
             }
@@ -790,7 +790,7 @@ public class MerchantConfig {
         appendPair(sb, "useHttpClientWithConnectionPool", useHttpClientWithConnectionPool);
         appendPair(sb, "enableJdkCert", enableJdkCert);
         appendPair(sb, "enableCacert", enableCacert);
-        if(useHttpClient){
+        if(useHttpClient || useHttpClientWithConnectionPool){
             appendPair(sb, "allowRetry", allowRetry);
             appendPair(sb, "RetryCount", numberOfRetries);
             appendPair(sb, "RetryInterval", retryInterval);

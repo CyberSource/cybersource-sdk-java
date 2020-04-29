@@ -206,7 +206,7 @@ Retry Pattern Allows to retry sending a failed request and it will only work wit
 set the value of allowRetry parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant
 in the config parameter 'numberOfRetries'.
 
-numberOfRetries parameter value should be set between 0 to 3. By default the value for numberOfRetries will be 3. User can set a delay in between the retry attempts.
+numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 3. User can set a delay in between the retry attempts.
 Config parameter for this property is 'retryInterval' in cybs.property file. The default value for 'retryInterval' parameter is 1000 which means a delay of 1000 milliSeconds.
 
 ##Third Party jars

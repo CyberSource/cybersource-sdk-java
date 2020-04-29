@@ -80,7 +80,7 @@ You do not need to download and build the source to use the SDK but if you want 
      - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connection can be idle before it is evicted from the pool. default value is 30000
     - `allowRetry` config parameter will only work for HttpClient and PoolingHttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
     - Set integer values and long values for config parameter `numberOfRetries` *and* `retryInterval` respectively. Retry Interval is time delay for next retry in milliSeconds.
-      - Number of retry parameter should be set between 1 to 3. Any other value will throw an Error Message.
+      - Number of retry parameter should be set between 1 to 5. Any other value will throw an Error Message.
       - Refer to the [Retry Pattern](README.md#retry-pattern) section below.
     - Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
     - Set customHttpClassEnabled to true to make use of Custom Http Library. 
@@ -193,7 +193,7 @@ CyberSource supports Message Level Encryption (MLE) for Simple Order API. Messag
 
 Retry Pattern allows to retry sending a failed request and it will only work with `useHttpClient=true` or `useHttpClientWithConnectionPool. `allowRetry` flag enables the retry mechanism. 
   - Set the value of `allowRetry` parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant in the config parameter 'numberOfRetries'.
-  - numberOfRetries parameter value should be set between 0 to 3. By default the value for numberOfRetries will be 3. User can set a delay in between the retry attempts.
+  - numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 3. User can set a delay in between the retry attempts.
   - Config parameter for this property is 'retryInterval' in `cybs.property` file. The default value for 'retryInterval' parameter is 1000 which means a delay of 1000 milliSeconds.
 
 ## Third Party jars

@@ -115,8 +115,11 @@ public class PoolingHttpClientConnection extends Connection {
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-                .setRetryHandler(new CustomRetryHandler())
                 .setConnectionManager(poolingHttpClientConnManager);
+
+        if(merchantConfig.isAllowRetry()){
+            httpClientBuilder.setRetryHandler(new CustomRetryHandler());
+        }
 
         setProxy(httpClientBuilder, requestConfigBuilder, merchantConfig);
 
