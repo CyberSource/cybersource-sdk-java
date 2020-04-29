@@ -32,6 +32,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.cybersource.ws.client.Utility.*;
 
@@ -44,6 +45,7 @@ public class PoolingHttpClientConnection extends Connection {
     private HttpPost httpPost = null;
     private HttpClientContext httpContext = null;
     private CloseableHttpResponse httpResponse = null;
+
     private static CloseableHttpClient httpClient = null;
     private static IdleConnectionMonitorThread staleMonitorThread;
     private final static String STALE_CONNECTION_MONITOR_THREAD_NAME = "http-stale-connection-cleaner-thread";
@@ -107,6 +109,8 @@ public class PoolingHttpClientConnection extends Connection {
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setSocketTimeout(merchantConfig.getSocketTimeoutMs())
                 .setConnectionRequestTimeout(merchantConfig.getConnectionRequestTimeoutMs())
+                //This we added to check every connection before leasing.
+                .setStaleConnectionCheckEnabled(merchantConfig.isStaleConnectionCheckEnabled())
                 .setConnectTimeout(merchantConfig.getConnectionTimeoutMs());
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
@@ -208,6 +212,12 @@ public class PoolingHttpClientConnection extends Connection {
         }
         if (staleMonitorThread != null && staleMonitorThread.isAlive()) {
             staleMonitorThread.shutdown();
+        }
+        //wait before shutdown.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException var4) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -323,22 +333,6 @@ public class PoolingHttpClientConnection extends Connection {
                 return false;
             }
 
-            if (exception instanceof NoHttpResponseException) {
-                System.out.println("not retrying as it is NoHttpResponseException and request is sent");
-                return false;
-            }
-
-//            if (exception instanceof NoHttpResponseException) {
-//                System.out.println("retrying as it NoHttpResponseException and request is not sent");
-//                return true;
-//            }
-//
-//            if (exception instanceof java.net.SocketException &&  (exception.getMessage().equalsIgnoreCase("Connection reset") ||
-//                    exception.getLocalizedMessage().equalsIgnoreCase("Connection reset"))) {
-//
-//                System.out.println("retrying for connection reset");
-//                return true;
-//            }
             HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
             if (!httpClientContext.isRequestSent()) {
                 try {
@@ -349,6 +343,12 @@ public class PoolingHttpClientConnection extends Connection {
                 }
                 return true;
             }
+
+            if (exception instanceof NoHttpResponseException) {
+                System.out.println("not retrying as it is NoHttpResponseException and request is sent");
+                return false;
+            }
+
             return false;
         }
     }

@@ -315,6 +315,24 @@ Version Cybersource-sdk-java 6.1.0 (Feb 24,2016)
 _______________________________
   1) SHA256 changes which are required to signed the request with SHA256.
 
+##Troubleshooting
+- If you get an exception **java.lang.SecurityException: JCE cannot authenticate the provider BC**. This could be because of
+  many reasons. bcprov*.jar is a signed jar if java fails to validate the signature, it throws this exception. Make sure
+  you run below java command to verify this signature.
+    jarsigner -verify bcprov-jdk15on-1.61.jar
+  when above command fails it says "jar is unsigned. (signatures missing or not parsable)", this could be because of many
+  reasons. e.g
+        1) When we unpack it and include in our own jar file. Including bcprov*.jar separately in the CLASSPATH should solve this issue.
+        2) May be changes in Oracle jar signer. If using Java SDK 1.6 or 1.7 with cybersource-sdk-java:6.2.7 and higher
+           (ships with org.bouncycastle:bcprov-jdk15on:1.61). Upgrading version to bcprov-jdk15to18-1.63.jar should solve this issue.
+        3) If you are using some old version of JBOSS and have copied bcprov*.jar under $JBOSS_HOME/server/default/lib/.
+            copying bcprov*.jar in $JBOSS_HOME/server/default/lib/ instead of $JBOSS_HOME/server/servername/lib/ should solve this issue.
+
+- If you get an exception  **exception decrypting data - java.security.InvalidKeyException: Illegal key size**.
+  It is recommended to download Unlimited Strength Jurisdiction Policy files from Oracle (US_export_policy.jar and local_policy.jar)
+  for appropriate JAVA version. I meant if merchant are using java 6 then download these policy file only for java6.
+  You need to copy security jars (US_export_policy.jar, local_policy.jar) in the $JAVA_HOME/jre/lib/security directory not in $JAVA_HOME/jre/lib/ext/).
+
 ##Documentation
 
 For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>

@@ -78,8 +78,8 @@ public class MerchantConfig {
     private boolean customHttpClassEnabled;
     private boolean certificateCacheEnabled; 
     private boolean merchantConfigCacheEnabled;
+    private boolean staleConnectionCheckEnabled;
     private boolean shutdownHookEnabled;
-    
     public String getcustomHttpClass() {
 		return customHttpClass;
 	}
@@ -382,6 +382,14 @@ public class MerchantConfig {
     }
 
     /**
+     * Getter method for staleConnectionCheckEnabled
+     * @return boolean
+     */
+    public boolean isStaleConnectionCheckEnabled() {
+        return staleConnectionCheckEnabled;
+    }
+
+    /**
      * Getter method for shutdownHookEnabled
      * @return boolean
      */
@@ -534,52 +542,77 @@ public class MerchantConfig {
                 throw new ConfigException("maxConnections property is empty");
             } else {
                 maxConnections = getIntegerProperty(merchantID, "maxConnections");
+                if(maxConnections <= 0){
+                    throw new ConfigException("maxConnections property can't be 0 or negative");
+                }
             }
 
             if(StringUtils.isEmpty(getProperty(merchantID, "defaultMaxConnectionsPerRoute"))) {
                 throw new ConfigException("defaultMaxConnectionsPerRoute property is empty");
             } else {
                 defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute");
+                if(defaultMaxConnectionsPerRoute <= 0){
+                    throw new ConfigException("defaultMaxConnectionsPerRoute property can't be 0 or negative");
+                }
             }
 
             if(StringUtils.isEmpty(getProperty(merchantID, "maxConnectionsPerRoute"))) {
                 throw new ConfigException("maxConnectionsPerRoute property is empty");
             } else {
                 maxConnectionsPerRoute = getIntegerProperty(merchantID, "maxConnectionsPerRoute");
+                if(maxConnectionsPerRoute <= 0){
+                    throw new ConfigException("maxConnectionsPerRoute property can't be 0 or negative");
+                }
             }
 
             if(StringUtils.isEmpty(getProperty(merchantID, "connectionRequestTimeoutMs"))) {
                 throw new ConfigException("connectionRequestTimeoutMs property is empty");
             } else {
                 connectionRequestTimeoutMs = getIntegerProperty(merchantID, "connectionRequestTimeoutMs");
+                if(connectionRequestTimeoutMs <= 0){
+                    throw new ConfigException("connectionRequestTimeoutMs property can't be 0 or negative");
+                }
             }
 
             if(StringUtils.isEmpty(getProperty(merchantID, "connectionTimeoutMs"))) {
                 throw new ConfigException("connectionTimeoutMs property is empty");
             } else {
                 connectionTimeoutMs = getIntegerProperty(merchantID, "connectionTimeoutMs");
+                if(connectionTimeoutMs <= 0){
+                    throw new ConfigException("connectionTimeoutMs property can't be 0 or negative");
+                }
             }
 
             if(StringUtils.isEmpty(getProperty(merchantID, "socketTimeoutMs"))) {
                 throw new ConfigException("socketTimeoutMs property is empty");
             } else {
                 socketTimeoutMs = getIntegerProperty(merchantID, "socketTimeoutMs");
+                if(socketTimeoutMs <= 0){
+                    throw new ConfigException("socketTimeoutMs property can't be 0 or negative");
+                }
             }
 
             if(StringUtils.isEmpty(getProperty(merchantID, "evictThreadSleepTimeMs"))) {
                 throw new ConfigException("evictThreadSleepTimeMs property is empty");
             } else {
                 evictThreadSleepTimeMs = getIntegerProperty(merchantID, "evictThreadSleepTimeMs");
+                if(evictThreadSleepTimeMs <= 0){
+                    throw new ConfigException("evictThreadSleepTimeMs property can't be 0 or negative");
+                }
             }
 
             if(StringUtils.isEmpty(getProperty(merchantID, "maxKeepAliveTimeMs"))) {
                 throw new ConfigException("maxKeepAliveTimeMs property is empty");
             } else {
                 maxKeepAliveTimeMs = getIntegerProperty(merchantID, "maxKeepAliveTimeMs");
+                if(maxKeepAliveTimeMs <= 0){
+                    throw new ConfigException("maxKeepAliveTimeMs property can't be 0 or negative");
+                }
             }
 
-            validateAfterInactivityMs = getIntegerProperty(merchantID, "validateAfterInactivityMs", 2000);
-            shutdownHookEnabled =getBooleanProperty(merchantID, "enabledShutdownHook", true);
+            validateAfterInactivityMs = getIntegerProperty(merchantID, "validateAfterInactivityMs", 0);
+            staleConnectionCheckEnabled = getBooleanProperty(merchantID, "staleConnectionCheckEnabled", true);
+            shutdownHookEnabled = getBooleanProperty(merchantID, "enabledShutdownHook", true);
         }
         
         allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
@@ -772,6 +805,7 @@ public class MerchantConfig {
             appendPair(sb, "evictThreadSleepTimeMs", evictThreadSleepTimeMs);
             appendPair(sb, "maxKeepAliveTimeMs", maxKeepAliveTimeMs);
             appendPair(sb, "validateAfterInactivityMs", validateAfterInactivityMs);
+            appendPair(sb, "staleConnectionCheckEnabled", staleConnectionCheckEnabled);
             appendPair(sb, "enabledShutdownHook", shutdownHookEnabled);
         }
         appendPair(sb, "timeout", timeout);
