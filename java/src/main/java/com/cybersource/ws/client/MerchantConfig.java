@@ -621,8 +621,8 @@ public class MerchantConfig {
                 numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 3);
                 if (numberOfRetries > 0)
                     retryInterval = getIntegerProperty(merchantID, "retryInterval", 1000);
-                if (numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0) {
-                    throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
+                if (numberOfRetries < 1 || numberOfRetries > 5 || retryInterval <= 1) {
+                    throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval(in ms)");
                 }
             }
         }
