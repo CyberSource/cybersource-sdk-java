@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -156,24 +156,9 @@ keytool -list -v -keystore <Your_keystore_name>`
   - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
   
-##Troubleshooting
-put below block of code to handle the ClientException to print the complete stacktrace.
-
-try {
-    Client.runTransaction(requestMap, merchantProperties);
-}catch (ClientException e){
-    e.getInnerException().printStackTrace();
-}
-
-## PoolingHttpClientShutdown
-In case of PoolingHttpClient Connection, we need to close the connection manager, http client and idle connection cleaner thread when application got shutdown abruptly or gracefully.
-If `enabledShutdownHook` is true, then JVM runtime addShutdownHook method will be initialized.
-Shutdown Hooks are a special construct that allows developers to plug in a piece of code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean up operations in case the VM is shutting down.
-private void addShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
-    }
-createShutdownHookThread will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread.
-  
+## PoolingHttpClient
+   To get more information please refer wiki.
+   
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
 
@@ -225,10 +210,12 @@ Version Cybersource-sdk-java 6.2.10 (APR,2020)
 _______________________________
 
   1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
-  2)Added PoolingHttpClientConnection implementation
-  3)Changed retry interval from second to millisecond
-  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to cybersource
   
+  2)Added PoolingHttpClientConnection implementation
+  
+  3)Changed retry interval from second to millisecond
+  
+  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to cybersource
 
 Version Cybersource-sdk-java 6.2.9 (APR,2020)
 _______________________________
@@ -297,23 +284,34 @@ _______________________________
   1) SHA256 changes which are required to signed the request with SHA256.
 
 ## Troubleshooting
-- If you get an exception **java.lang.SecurityException: JCE cannot authenticate the provider BC**. This could be because of
+- If you get an exception **`java.lang.SecurityException: JCE cannot authenticate the provider BC`**. This could be because of
   many reasons. bcprov*.jar is a signed jar if java fails to validate the signature, it throws this exception. Make sure
   you run below java command to verify this signature.
-    jarsigner -verify bcprov-jdk15on-1.61.jar   
+   
+    `jarsigner -verify bcprov-jdk15on-1.61.jar` 
+    
   when above command fails it says "jar is unsigned. (signatures missing or not parsable)", this could be because of many
   reasons. e.g 
+  
         1) When we unpack it and include in our own jar file. Including bcprov*.jar separately in the CLASSPATH should solve this issue.
         2) May be changes in Oracle jar signer. If using Java SDK 1.6 or 1.7 with cybersource-sdk-java:6.2.7 and higher 
            (ships with org.bouncycastle:bcprov-jdk15on:1.61). Upgrading version to bcprov-jdk15to18-1.63.jar should solve this issue.
         3) If you are using some old version of JBOSS and have copied bcprov*.jar under $JBOSS_HOME/server/default/lib/. 
             copying bcprov*.jar in $JBOSS_HOME/server/default/lib/ instead of $JBOSS_HOME/server/servername/lib/ should solve this issue.
             
-- If you get an exception  **exception decrypting data - java.security.InvalidKeyException: Illegal key size**. 
+- If you get an exception  **`exception decrypting data - java.security.InvalidKeyException: Illegal key size`**. 
   It is recommended to download Unlimited Strength Jurisdiction Policy files from Oracle (US_export_policy.jar and local_policy.jar) 
   for appropriate JAVA version. I meant if merchant are using java 6 then download these policy file only for java6. 
   You need to copy security jars (US_export_policy.jar, local_policy.jar) in the $JAVA_HOME/jre/lib/security directory not in $JAVA_HOME/jre/lib/ext/).
 
+- Put below block of code to handle the ClientException to print the complete stacktrace.
+
+        try{
+            Client.runTransaction(requestMap, merchantProperties);
+        }catch (ClientException e){
+            e.getInnerException().printStackTrace();
+        }
+  
 ## Documentation
 - For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>.
 - For all other support needs, see <http://www.cybersource.com/support>.
