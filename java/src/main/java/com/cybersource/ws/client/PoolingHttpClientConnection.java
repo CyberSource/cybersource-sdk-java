@@ -206,7 +206,6 @@ public class PoolingHttpClientConnection extends Connection {
      * @throws IOException
      */
     public static void onShutdown() throws IOException {
-        System.out.println("Triggered sdk shut down");
         if (httpClient != null) {
             httpClient.close();
         }
@@ -348,7 +347,6 @@ public class PoolingHttpClientConnection extends Connection {
             }
 
             if (exception instanceof NoHttpResponseException) {
-                System.out.println("not retrying as it is NoHttpResponseException and request is sent");
                 return false;
             }
 

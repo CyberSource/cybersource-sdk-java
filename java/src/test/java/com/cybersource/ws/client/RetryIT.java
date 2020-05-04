@@ -37,7 +37,7 @@ public class RetryIT{
 	@Test 
 	public void checkRetryConfigValuesForHttpClient() throws Exception
 	{
-		String errMsg="Invalid value of numberOfRetries and/or retryInterval";
+		String expectedErrMsg="Invalid value of numberOfRetries and/or retryInterval(in ms)";
 		// request  fails as number of retry value is incorrect
 		props.setProperty("useHttpClient", "true");
 		props.setProperty("useHttpClientWithConnectionPool", "false");
@@ -50,7 +50,7 @@ public class RetryIT{
 			Client.runTransaction(new HashMap(), props);
 		}
 		catch(ClientException e){
-			assertEquals(errMsg, e.getMessage());
+			assertEquals(expectedErrMsg, e.getMessage());
 		}
 
 	}  
@@ -79,7 +79,7 @@ public class RetryIT{
 	@Test 
 	public void checkNegativeForHttp() throws Exception
 	{
-		String errMsg="Invalid value of numberOfRetries and/or retryInterval";
+		String expectedErrMsg="Invalid value of numberOfRetries and/or retryInterval(in ms)";
 		// request  fails as number of retry and retry interval values are in negative
 		props.setProperty("useHttpClient", "true");
 		props.setProperty("useHttpClientWithConnectionPool", "false");
@@ -92,7 +92,7 @@ public class RetryIT{
 		}
 		catch (ClientException e)
 		{
-			assertEquals(errMsg, e.getMessage());
+			assertEquals(expectedErrMsg, e.getMessage());
 		}
 	}
 	

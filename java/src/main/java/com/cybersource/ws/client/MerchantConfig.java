@@ -534,7 +534,7 @@ public class MerchantConfig {
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
 
         if(useHttpClient && useHttpClientWithConnectionPool) {
-            throw new ConfigException("both variables useHttpClient and useHttpClientWithConnectionPool cannot be true at same time");
+            throw new ConfigException("both useHttpClient and useHttpClientWithConnectionPool cannot be true at same time");
         }
 
         if(useHttpClientWithConnectionPool) {
