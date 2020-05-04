@@ -252,7 +252,8 @@ public class MerchantConfig {
     }
 
     /**
-     * Getter method for timeout
+     * Getter method for timeout, it is set in seconds
+     * default is 130seconds
      * @return int
      */
     public int getTimeout() {
