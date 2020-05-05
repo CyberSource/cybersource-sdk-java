@@ -18,7 +18,7 @@
 
 package com.cybersource.ws.client;
 
-import org.apache.commons.lang3.time.StopWatch;
+import java.util.UUID;
 
 /**
  * An internal class used by the clients to encapsulate the logger, primarily
@@ -29,7 +29,8 @@ import org.apache.commons.lang3.time.StopWatch;
 public class LoggerWrapper implements Logger {
     private Logger logger = null;
     private MyStopWatch stopWatch = new MyStopWatch();
-  
+    private UUID uniqueKey;
+
     /**
      * Constructor.
      *
@@ -51,6 +52,7 @@ public class LoggerWrapper implements Logger {
         MerchantConfig mc = _mc;
         boolean prepare = false;
         boolean logTranStart = false;
+        uniqueKey = UUID.randomUUID();
 
         if (_logger != null) {
             logger = _logger;
@@ -72,6 +74,14 @@ public class LoggerWrapper implements Logger {
             logTransactionStart();
         }
         
+    }
+
+    /**
+     * Getter method for uniqueKey
+     * @return UUID
+     */
+    public String getUniqueKey() {
+        return uniqueKey!=null ? uniqueKey.toString():null;
     }
 
     /**

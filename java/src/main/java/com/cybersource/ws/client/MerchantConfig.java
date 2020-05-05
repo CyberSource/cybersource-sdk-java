@@ -18,11 +18,12 @@
 
 package com.cybersource.ws.client;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.UUID;
-import org.apache.commons.lang3.StringUtils;
 /**
  * An internal class used by the clients to hold and derive the properties
  * applicable to the current transaction.
@@ -35,8 +36,7 @@ public class MerchantConfig {
     
     private final static int DEFAULT_TIMEOUT = 130;
     private final static int DEFAULT_PROXY_PORT = 8080;
-    private UUID uniqueKey=UUID.randomUUID();
-    
+
     private final Properties props;
     
     private final String merchantID;
@@ -58,6 +58,16 @@ public class MerchantConfig {
     private String logFilename;
     private int logMaximumSize;
     private boolean useHttpClient;
+    private boolean useHttpClientWithConnectionPool;
+    private int maxConnections;
+    private int defaultMaxConnectionsPerRoute;
+    private int maxConnectionsPerRoute;
+    private int connectionRequestTimeoutMs;
+    private int connectionTimeoutMs;
+    private int socketTimeoutMs;
+    private int evictThreadSleepTimeMs;
+    private int maxKeepAliveTimeMs;
+    private int validateAfterInactivityMs;
     private int timeout;
     private String proxyHost;
     private int proxyPort;
@@ -67,7 +77,9 @@ public class MerchantConfig {
     private String customHttpClass;
     private boolean customHttpClassEnabled;
     private boolean certificateCacheEnabled; 
-    
+    private boolean merchantConfigCacheEnabled;
+    private boolean staleConnectionCheckEnabled;
+    private boolean shutdownHookEnabled;
     public String getcustomHttpClass() {
 		return customHttpClass;
 	}
@@ -85,108 +97,307 @@ public class MerchantConfig {
     private long retryInterval  = 0;
     private boolean allowRetry=true;
 
+    /**
+     * Getter method for useSignAndEncrypted
+     * @return boolean
+     */
     // getter methods
     public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
-    
 
+    /**
+     * Getter method for merchantID
+     * @return String
+     */
     public String getMerchantID() {
         return merchantID;
     }
-    
+    /**
+     * Getter method for keysDirectory
+     * @return String
+     */
     public String getKeysDirectory() {
         return keysDirectory;
     }
-    
+    /**
+     * If keyAlias not null, return keyAlias, else return merchantId
+     * @return String
+     */
     public String getKeyAlias() {
         if ( keyAlias != null )
             return keyAlias;
         else
             return getMerchantID();
     }
-    
+    /**
+     * If keyPassword not null, return keyPassword, else return merchantId
+     * @return String
+     */
     public String getKeyPassword() {
         if ( keyPassword != null )
             return keyPassword;
         else
             return getMerchantID();
     }
-    
+
+    /**
+     * Getter method for sendToProduction
+     * @return boolean
+     */
     public boolean getSendToProduction() {
         return sendToProduction;
     }
-    
+
+    /**
+     * Getter method for sendToAkamai
+     * @return boolean
+     */
     public boolean getSendToAkamai() {
         return sendToAkamai;
     }
-    
+
+    /**
+     * Getter method for targetAPIVersion
+     * @return String
+     */
     public String getTargetAPIVersion() {
         return targetAPIVersion;
     }
-    
+
+    /**
+     * Getter method for keyFilename
+     * @return String
+     */
     public String getKeyFilename() {
         return keyFilename;
     }
-    
+
+    /**
+     * Getter method for serverURL
+     * @return String
+     */
     public String getServerURL() {
         return serverURL;
     }
-    
+
+    /**
+     * Getter method for namespaceURI
+     * @return String
+     */
     public String getNamespaceURI() {
         return namespaceURI;
     }
-    
+
+    /**
+     * Getter method for password
+     * @return String
+     */
     public String getPassword() {
         return password;
     }
-    
+
+    /**
+     * Getter method for enableLog
+     * @return boolean
+     */
     public boolean getEnableLog() {
         return enableLog;
     }
-    
+
+    /**
+     * Getter method for logSignedData
+     * @return boolean
+     */
     public boolean getLogSignedData() {
         return logSignedData;
     }
-    
+
+    /**
+     * Getter method for logDirectory
+     * @return String
+     */
     public String getLogDirectory() {
         return logDirectory;
     }
-    
+
+    /**
+     * Getter method for logFilename
+     * @return String
+     */
     public String getLogFilename() {
         return logFilename;
     }
-    
+
+    /**
+     * Getter method for logMaximumSize
+     * @return int
+     */
     public int getLogMaximumSize() {
         return logMaximumSize;
     }
-    
+
+    /**
+     * Getter method for useHttpClient
+     * @return boolean
+     */
     public boolean getUseHttpClient() {
         return useHttpClient;
     }
-    
+
+    /**
+     * Getter method for useHttpClientWithConnectionPool
+     * @return boolean
+     */
+    public boolean getUseHttpClientWithConnectionPool() {
+        return useHttpClientWithConnectionPool;
+    }
+
+    /**
+     * Getter method for timeout, it is set in seconds
+     * default is 130seconds
+     * @return int
+     */
     public int getTimeout() {
         return timeout;
     }
-    
+
+    /**
+     * Getter method for maxConnections
+     * @return int
+     */
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    /**
+     * Getter method for defaultMaxConnectionsPerRoute
+     * @return int
+     */
+    public int getDefaultMaxConnectionsPerRoute() {
+        return defaultMaxConnectionsPerRoute;
+    }
+
+    /**
+     * Getter method for maxConnectionsPerRoute
+     * @return int
+     */
+    public int getMaxConnectionsPerRoute() {
+        return maxConnectionsPerRoute;
+    }
+
+    /**
+     * Getter method for connectionRequestTimeoutMs
+     * @return int
+     */
+    public int getConnectionRequestTimeoutMs() {
+        return connectionRequestTimeoutMs;
+    }
+
+    /**
+     * Getter method for connectionTimeoutMs
+     * @return int
+     */
+    public int getConnectionTimeoutMs() {
+        return connectionTimeoutMs;
+    }
+
+    /**
+     * Getter method for socketTimeoutMs
+     * @return int
+     */
+    public int getSocketTimeoutMs() {
+        return socketTimeoutMs;
+    }
+
+    /**
+     * Getter method for evictThreadSleepTimeMs
+     * @return int
+     */
+    public int getEvictThreadSleepTimeMs() {
+        return evictThreadSleepTimeMs;
+    }
+
+    /**
+     * Getter method for maxKeepAliveTimeMs
+     * @return int
+     */
+    public int getMaxKeepAliveTimeMs() {
+        return maxKeepAliveTimeMs;
+    }
+
+    /**
+     * Defines period of inactivity in milliseconds after which persistent connections must be re-validated prior to being
+     * leased to the consumer. Non-positive value passed to this method disables connection validation.
+     * This check helps detect connections that have become stale (half-closed) while kept inactive in the pool.
+     * @return int
+     */
+    public int getValidateAfterInactivityMs() {
+        return validateAfterInactivityMs;
+    }
+
+    /**
+     * Getter method for proxyHost
+     * @return String
+     */
     public String getProxyHost() {
         return proxyHost;
     }
-    
+
+    /**
+     * Getter method for proxyPort
+     * @return int
+     */
     public int getProxyPort() {
         return proxyPort;
     }
-    
+
+    /**
+     * Getter method for proxyUser
+     * @return String
+     */
     public String getProxyUser() {
         return proxyUser;
     }
-    
+
+    /**
+     * Getter method for proxyPassword
+     * @return String
+     */
     public String getProxyPassword() {
         return proxyPassword != null ? proxyPassword : "";
     }
-    
-    public boolean isCertificateCacheEnabled() {  
+
+    /**
+     * Getter method for certificateCacheEnabled
+     * @return boolean
+     */
+    public boolean isCertificateCacheEnabled() {
         return certificateCacheEnabled;  
-    }  
-    
+    }
+
+    /**
+     * Getter method for merchantConfigCacheEnabled
+     * @return boolean
+     */
+    public boolean isMerchantConfigCacheEnabled() {
+        return merchantConfigCacheEnabled;
+    }
+
+    /**
+     * Getter method for staleConnectionCheckEnabled
+     * @return boolean
+     */
+    public boolean isStaleConnectionCheckEnabled() {
+        return staleConnectionCheckEnabled;
+    }
+
+    /**
+     * Getter method for shutdownHookEnabled
+     * @return boolean
+     */
+    public boolean isShutdownHookEnabled() {
+        return shutdownHookEnabled;
+    }
+
     /**
      * Returns the effective server URL to which the request will be sent.
      * If a serverURL is specified, then that is what is returned.
@@ -265,8 +476,10 @@ public class MerchantConfig {
         logFilename = getProperty(merchantID, "logFilename");
         logMaximumSize = getIntegerProperty(merchantID, "logMaximumSize", 10);
         useHttpClient = getBooleanProperty(merchantID, "useHttpClient", ConnectionHelper.getDefaultUseHttpClient());
+        useHttpClientWithConnectionPool = getBooleanProperty(merchantID, "useHttpClientWithConnectionPool", false);
         customHttpClass = getProperty(merchantID, "customHttpClass");
         timeout = getIntegerProperty(merchantID, "timeout", DEFAULT_TIMEOUT);
+
         proxyHost = getProperty(merchantID, "proxyHost");
         proxyPort = getIntegerProperty(merchantID, "proxyPort", DEFAULT_PROXY_PORT);
         proxyUser = getProperty(merchantID, "proxyUser");
@@ -276,6 +489,7 @@ public class MerchantConfig {
         cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
         customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
         certificateCacheEnabled=getBooleanProperty(merchantID,"certificateCacheEnabled",true); 
+        merchantConfigCacheEnabled=getBooleanProperty(merchantID, "merchantConfigCacheEnabled", false);
         // compute and store effective namespace URI
         
         if (namespaceURI == null && targetAPIVersion == null) {
@@ -319,14 +533,99 @@ public class MerchantConfig {
         effectivePassword = password != null ? password : merchantID;
         
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
+
+        if(useHttpClient && useHttpClientWithConnectionPool) {
+            throw new ConfigException("both useHttpClient and useHttpClientWithConnectionPool cannot be true at same time");
+        }
+
+        if(useHttpClientWithConnectionPool) {
+            if(StringUtils.isEmpty(getProperty(merchantID, "maxConnections"))) {
+                throw new ConfigException("maxConnections property is empty");
+            } else {
+                maxConnections = getIntegerProperty(merchantID, "maxConnections");
+                if(maxConnections <= 0){
+                    throw new ConfigException("maxConnections property can't be 0 or negative");
+                }
+            }
+
+            if(StringUtils.isEmpty(getProperty(merchantID, "defaultMaxConnectionsPerRoute"))) {
+                throw new ConfigException("defaultMaxConnectionsPerRoute property is empty");
+            } else {
+                defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute");
+                if(defaultMaxConnectionsPerRoute <= 0){
+                    throw new ConfigException("defaultMaxConnectionsPerRoute property can't be 0 or negative");
+                }
+            }
+
+            if(StringUtils.isEmpty(getProperty(merchantID, "maxConnectionsPerRoute"))) {
+                throw new ConfigException("maxConnectionsPerRoute property is empty");
+            } else {
+                maxConnectionsPerRoute = getIntegerProperty(merchantID, "maxConnectionsPerRoute");
+                if(maxConnectionsPerRoute <= 0){
+                    throw new ConfigException("maxConnectionsPerRoute property can't be 0 or negative");
+                }
+            }
+
+            if(StringUtils.isEmpty(getProperty(merchantID, "connectionRequestTimeoutMs"))) {
+                throw new ConfigException("connectionRequestTimeoutMs property is empty");
+            } else {
+                connectionRequestTimeoutMs = getIntegerProperty(merchantID, "connectionRequestTimeoutMs");
+                if(connectionRequestTimeoutMs <= 0){
+                    throw new ConfigException("connectionRequestTimeoutMs property can't be 0 or negative");
+                }
+            }
+
+            if(StringUtils.isEmpty(getProperty(merchantID, "connectionTimeoutMs"))) {
+                throw new ConfigException("connectionTimeoutMs property is empty");
+            } else {
+                connectionTimeoutMs = getIntegerProperty(merchantID, "connectionTimeoutMs");
+                if(connectionTimeoutMs <= 0){
+                    throw new ConfigException("connectionTimeoutMs property can't be 0 or negative");
+                }
+            }
+
+            if(StringUtils.isEmpty(getProperty(merchantID, "socketTimeoutMs"))) {
+                throw new ConfigException("socketTimeoutMs property is empty");
+            } else {
+                socketTimeoutMs = getIntegerProperty(merchantID, "socketTimeoutMs");
+                if(socketTimeoutMs <= 0){
+                    throw new ConfigException("socketTimeoutMs property can't be 0 or negative");
+                }
+            }
+
+            if(StringUtils.isEmpty(getProperty(merchantID, "evictThreadSleepTimeMs"))) {
+                throw new ConfigException("evictThreadSleepTimeMs property is empty");
+            } else {
+                evictThreadSleepTimeMs = getIntegerProperty(merchantID, "evictThreadSleepTimeMs");
+                if(evictThreadSleepTimeMs <= 0){
+                    throw new ConfigException("evictThreadSleepTimeMs property can't be 0 or negative");
+                }
+            }
+
+            if(StringUtils.isEmpty(getProperty(merchantID, "maxKeepAliveTimeMs"))) {
+                throw new ConfigException("maxKeepAliveTimeMs property is empty");
+            } else {
+                maxKeepAliveTimeMs = getIntegerProperty(merchantID, "maxKeepAliveTimeMs");
+                if(maxKeepAliveTimeMs <= 0){
+                    throw new ConfigException("maxKeepAliveTimeMs property can't be 0 or negative");
+                }
+            }
+
+            validateAfterInactivityMs = getIntegerProperty(merchantID, "validateAfterInactivityMs", 0);
+            staleConnectionCheckEnabled = getBooleanProperty(merchantID, "staleConnectionCheckEnabled", true);
+            shutdownHookEnabled = getBooleanProperty(merchantID, "enabledShutdownHook", true);
+        }
         
         allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
-        if (useHttpClient && allowRetry) {
-            numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 5);
-            if(numberOfRetries>0)
-                retryInterval = getIntegerProperty(merchantID, "retryInterval", 5) *1000;
-            if( numberOfRetries < 1 || numberOfRetries > 5 || retryInterval < 0){
-                throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval");
+        if (useHttpClient || useHttpClientWithConnectionPool) {
+            if(allowRetry) {
+                numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 3);
+                if (numberOfRetries > 0)
+                    retryInterval = getIntegerProperty(merchantID, "retryInterval", 1000);
+                    //added <=1 as in previous release it was set in seconds. User should change retryInterval value to keep it in ms.
+                if (numberOfRetries < 1 || numberOfRetries > 5 || retryInterval <= 1) {
+                    throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval(in ms)");
+                }
             }
         }
 		if(isCacertEnabled()){
@@ -468,6 +767,7 @@ public class MerchantConfig {
     
     /**
      * Returns a string representation of the properties for logging purposes.
+     * @return String
      */
     public String getLogString() {
         
@@ -489,12 +789,26 @@ public class MerchantConfig {
         appendPair(sb, "customHttpClass", customHttpClass);
         appendPair(sb, "customHttpClassEnabled", customHttpClassEnabled);
         appendPair(sb, "useHttpClient", useHttpClient);
+        appendPair(sb, "useHttpClientWithConnectionPool", useHttpClientWithConnectionPool);
         appendPair(sb, "enableJdkCert", enableJdkCert);
         appendPair(sb, "enableCacert", enableCacert);
-        if(useHttpClient){
+        if(useHttpClient || useHttpClientWithConnectionPool){
             appendPair(sb, "allowRetry", allowRetry);
             appendPair(sb, "RetryCount", numberOfRetries);
             appendPair(sb, "RetryInterval", retryInterval);
+        }
+        if(useHttpClientWithConnectionPool){
+            appendPair(sb, "maxConnections", maxConnections);
+            appendPair(sb, "defaultMaxConnectionsPerRoute", defaultMaxConnectionsPerRoute);
+            appendPair(sb, "maxConnectionsPerRoute", maxConnectionsPerRoute);
+            appendPair(sb, "connectionRequestTimeoutMs", connectionRequestTimeoutMs);
+            appendPair(sb, "connectionTimeoutMs", connectionTimeoutMs);
+            appendPair(sb, "socketTimeoutMs", socketTimeoutMs);
+            appendPair(sb, "evictThreadSleepTimeMs", evictThreadSleepTimeMs);
+            appendPair(sb, "maxKeepAliveTimeMs", maxKeepAliveTimeMs);
+            appendPair(sb, "validateAfterInactivityMs", validateAfterInactivityMs);
+            appendPair(sb, "staleConnectionCheckEnabled", staleConnectionCheckEnabled);
+            appendPair(sb, "enabledShutdownHook", shutdownHookEnabled);
         }
         appendPair(sb, "timeout", timeout);
         if (proxyHost != null) {
@@ -509,6 +823,7 @@ public class MerchantConfig {
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
         appendPair(sb, "certificateCacheEnabled", certificateCacheEnabled);
+        appendPair(sb, "merchantConfigCacheEnabled", merchantConfigCacheEnabled);
         return (sb.toString());
     }
     
@@ -563,34 +878,71 @@ public class MerchantConfig {
             throw new ConfigException(prop + " has an invalid value.");
         }
     }
-    
-    public UUID getUniqueKey() {
-        return uniqueKey;
+
+    private int getIntegerProperty(
+            String merchantID, String prop)
+            throws ConfigException {
+        String strValue = getProperty(merchantID, prop);
+        try {
+            return (Integer.parseInt(strValue));
+        } catch (NumberFormatException nfe) {
+            throw new ConfigException(prop + " has an invalid value.");
+        }
     }
-    
+
+    /**
+     * Getter method for numberOfRetries
+     * @return int
+     */
     public int getNumberOfRetries() {
         return numberOfRetries;
     }
-    
+
+    /**
+     * Getter method for retryInterval
+     * added <=1 check as in previous release(6.2.9 or lower) it was set in seconds. User should change retryInterval value to keep it in ms
+     * @return long
+     */
     public long getRetryInterval() {
         return retryInterval;
     }
-    
+
+    /**
+     * Getter method for allowRetry
+     * @return boolean
+     */
     public boolean isAllowRetry() {
         return allowRetry;
     }
-    
+
+    /**
+     * Setter method for allowRetry
+     * @param allowRetry
+     */
     public void setAllowRetry(boolean allowRetry) {
         this.allowRetry = allowRetry;
     }
-    
+
+    /**
+     * Getter method for enableCacert
+     * @return boolean
+     */
     public boolean isCacertEnabled() {
         return enableCacert;
     }
-    
+
+    /**
+     * Getter method for enableJdkCert
+     * @return boolean
+     */
     public boolean isJdkCertEnabled() {
         return enableJdkCert;
     }
+
+    /**
+     * Getter method for cacertPassword
+     * @return String
+     */
     public String getCacertPassword(){
         return cacertPassword;
     }

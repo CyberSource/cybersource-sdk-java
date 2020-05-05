@@ -19,11 +19,7 @@
 package com.cybersource.ws.client;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -50,6 +46,8 @@ public class Utility {
      */
     public static final String VERSION = "6.2.10";
     public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
+    public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
+    public static final String RESPONSE_TIME_REPLY = "v-c-response-time";
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
@@ -233,6 +231,8 @@ public class Utility {
             throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
+        //to prevent XXE is always to disable DTDs (External Entities) completely
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         return (dbf.newDocumentBuilder());
     }
 
@@ -358,7 +358,7 @@ public class Utility {
      * @return resulting Map object; will be empty if the string was null or
      *         empty.
      */
-    public static HashMap stringToMap(String src) {
+    public static HashMap<String, String> stringToMap(String src) {
         HashMap<String, String> dest = new HashMap<String, String>();
 
         if (src == null) {
@@ -408,7 +408,7 @@ public class Utility {
      *         empty.
      */
     public static String mapToString(Map src, boolean mask, int type) {
-        StringBuffer dest = new StringBuffer();
+        StringBuilder dest = new StringBuilder();
 
         if (src != null && !src.isEmpty()) {
             Iterator iter = src.keySet().iterator();
@@ -417,7 +417,7 @@ public class Utility {
                 key = (String) iter.next();
                 val = mask ? PCI.maskIfNotSafe(type, key, (String) src.get(key))
                         : (String) src.get(key);
-                dest.append(key + "=" + val + "\n");
+                dest.append(key).append("=").append(val).append("\n");
             }
         } else {
             return dest.toString();
@@ -440,6 +440,17 @@ public class Utility {
      * @return Document Request from filename read as document
      */
     public static Document readRequest(Properties props, String filename) {
+        return readRequest(props,filename, null);
+    }
+
+    /**
+     * Read the request xml file
+     * @param props Properties object to lookup properties in
+     * @param filename Filename of file containing XML request
+     * @param merchantId merchantId
+     * @return Document Request from filename read as document
+     */
+    public static Document readRequest(Properties props, String filename, String merchantId) {
         Document doc = null;
 
         try {
@@ -453,7 +464,7 @@ public class Utility {
                 StringBuilder sb = new StringBuilder(xmlString);
                 sb.replace(
                         pos, pos + 7,
-                        XMLClient.getEffectiveNamespaceURI(props, null));
+                        XMLClient.getEffectiveNamespaceURI(props, merchantId));
                 xmlBytes = sb.toString().getBytes("UTF-8");
             }
 
@@ -461,6 +472,8 @@ public class Utility {
             ByteArrayInputStream bais = new ByteArrayInputStream(xmlBytes);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
+            //to prevent XXE is always to disable DTDs (External Entities) completely
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder builder = dbf.newDocumentBuilder();
             doc = builder.parse(bais);
             bais.close();
@@ -476,7 +489,7 @@ public class Utility {
 
         return (doc);
     }
-    
+
     /**
      * Creates an Element object in the CyberSource namespace.
      *
@@ -500,5 +513,37 @@ public class Utility {
         return (elem);
     }
 
+    /**
+     * get response issued time in seconds
+     * @param responseTime
+     * @return long
+     */
+    public static long getResponseIssuedAtTimeInSecs(String responseTime) {
+        return parseLong(responseTime, 0L);
+    }
+
+    /**
+     * get response transit time in seconds
+     * @param issuedAtTimeSeconds
+     * @return long
+     */
+    public static long getResponseTransitTimeSeconds(long issuedAtTimeSeconds) {
+        if (issuedAtTimeSeconds > 0) {
+            return (System.currentTimeMillis() / 1000) - issuedAtTimeSeconds;
+        }
+        return 0;
+    }
+
+    private static long parseLong(String val, long defaultValue) {
+        long result = defaultValue;
+        if (val != null) {
+            try {
+                result = Long.parseLong(val);
+            } catch (NumberFormatException e) {
+                //ignored
+            }
+        }
+        return result;
+    }
     
 }	

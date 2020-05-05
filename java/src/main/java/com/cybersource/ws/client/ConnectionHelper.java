@@ -28,16 +28,16 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 /**
- * Helps in creating the Proxy and adding Proxy credentials to HttpURLConnection.
+ * Helps in creating the Proxy and adding Proxy credentials to JDKHttpURLConnection.
  *
  * @author sunagara
  */
-class ConnectionHelper {
+public class ConnectionHelper {
 	
 	
     /**
      * Default HTTP Client 
-     * @return
+     * @return boolean
      */
     public static boolean getDefaultUseHttpClient() {
         return false;
@@ -45,8 +45,8 @@ class ConnectionHelper {
 
     /**
      * Sets the timeout for HTTP Request
-     * @param con
-     * @param timeout
+     * @param con - HttpURLConnection
+     * @param timeout - timeout integer value
      */
     public static void setTimeout(HttpURLConnection con, int timeout) {
         int timeoutInMS = timeout * 1000;
@@ -56,9 +56,9 @@ class ConnectionHelper {
 
     /**
      * Open the HTTPURLConnection for given credentials.
-     * @param url - URL strinf
+     * @param url - URL string
      * @param mc - Merchant Config
-     * @return returns intance of the connection to server.
+     * @return returns instance of the connection to server.
      * @throws IOException
      */
     public static HttpURLConnection openConnection(
@@ -78,7 +78,7 @@ class ConnectionHelper {
     /**
      * Creates a HTTP Proxy request
      * @param mc
-     * @return
+     * @return Proxy
      */
     private static Proxy createProxy(MerchantConfig mc) {
         if (mc.getProxyHost() == null) {

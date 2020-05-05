@@ -18,6 +18,7 @@
 
 package com.cybersource.ws.client;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class containing runTransaction() methods that accept the requests in the
@@ -52,6 +54,7 @@ public class XMLClient {
     private static final String ELEM_REQUEST_MESSAGE = "requestMessage";
     private static final String ELEM_REPLY_MESSAGE = "replyMessage";
     private static final String ELEM_MERCHANT_ID = "merchantID";
+    private static final String KEY_ALIAS = "keyAlias";
     private static final String ELEM_MERCHANT_REFERENCE_CODE
             = "merchantReferenceCode";
     private static final String ELEM_CLIENT_LIBRARY = "clientLibrary";
@@ -66,6 +69,8 @@ public class XMLClient {
 
     private static Document soapEnvelope;
     private static Exception initException = null;
+
+    private static ConcurrentHashMap<String, MerchantConfig> mcObjects = new ConcurrentHashMap<String, MerchantConfig>();
 
 
     static {
@@ -155,23 +160,20 @@ public class XMLClient {
         Connection con = null;
 
         try {
+            long requestSentTime = System.currentTimeMillis();
             // At this point, we do not know what namespace to use yet so
             // we locate the first merchantID element with any namespace
             // (actually, there should be just one.  Otherwise, there's
             // something wrong with their XML request).
-            String merchantID
-                    = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
-            if (merchantID == null) {
-                // if no merchantID is present in the request, get its
-                // value from the properties and add it to the request.
-                mc = new MerchantConfig(props, null);
-                merchantID = mc.getMerchantID();
-                nsURI = mc.getEffectiveNamespaceURI();
-                setMerchantID(request, merchantID, nsURI);
+
+            boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
+            if(isMerchantConfigCacheEnabled) {
+                mc = getInstanceMap(request, props);
             } else {
-                mc = new MerchantConfig(props, merchantID);
-                nsURI = mc.getEffectiveNamespaceURI();
+                mc = getMerchantConfigObject(request, props);
             }
+
+            nsURI = mc.getEffectiveNamespaceURI();
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
@@ -185,7 +187,7 @@ public class XMLClient {
 				Class<Connection> customConnectionClass;
 				try {
 					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
-					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class}; 
+					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class};
 					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
 				} catch (InstantiationException e) {
@@ -209,16 +211,16 @@ public class XMLClient {
 				} catch (NoSuchMethodException e) {
 					logger.log(Logger.LT_INFO, "Method not found ");
 					throw new ClientException(e, false, null);
-				}    	
+				}
             }
             else{
             	con = Connection.getInstance(mc, builder, logger);
             }
-            Document wrappedReply = con.post(signedDoc);
+            Document wrappedReply = con.post(signedDoc, requestSentTime);
 
             Document doc = soapUnwrap(wrappedReply, mc, builder, logger);
             logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ", false);
-            
+
             return doc;
         } catch (ParserConfigurationException e) {
             throw new ClientException(
@@ -355,38 +357,38 @@ public class XMLClient {
      * @param logger LoggerWrapper object to use for logging.
      * @return signed document.
      * @throws SignException if signing fails.
-     * @throws SignEncryptException 
-     * @throws ConfigException 
+     * @throws SignEncryptException
+     * @throws ConfigException
      */
     private static Document soapWrapAndSign(
             Document doc, MerchantConfig mc, DocumentBuilder builder,
             LoggerWrapper logger)
             throws SignException, SignEncryptException, ConfigException {
     	boolean logSignedData = mc.getLogSignedData();
-        
+
     	if (!logSignedData) {
             logger.log(Logger.LT_REQUEST,
-            		"UUID   >  "+(mc.getUniqueKey()).toString() + "\n" +
+            		"UUID   >  "+(logger.getUniqueKey()) + "\n" +
             		"Input request is" + "\n" +
             		"======================================= \n"
                     + Utility.nodeToString(doc, PCI.REQUEST));
         }
 
         Document wrappedDoc = soapWrap(doc, mc, builder, logger);
-        logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true); 
-        
+        logger.log(Logger.LT_INFO, "Client, End of soapWrap   ",true);
+
         Document resultDocument;
-        
+
         SecurityUtil.loadMerchantP12File(mc,logger);
-        logger.log(Logger.LT_INFO, "Client, End of loading Merchant Certificate   ", true);       
-        
+        logger.log(Logger.LT_INFO, "Client, End of loading Merchant Certificate   ", true);
+
         // sign Document object
         resultDocument = SecurityUtil.createSignedDoc(wrappedDoc,mc.getKeyAlias(),mc.getKeyPassword(),logger);
         logger.log(Logger.LT_INFO, "Client, End of createSignedDoc   ", true);
 
         if ( mc.getUseSignAndEncrypted() ) {
         	// Encrypt signed Document
-            resultDocument = SecurityUtil.handleMessageCreation(resultDocument , mc.getMerchantID() , logger);
+            resultDocument = SecurityUtil.handleMessageCreation(resultDocument , Utility.getElementText(doc, ELEM_MERCHANT_ID, "*") , logger);
             logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
         }
         if (logSignedData) {
@@ -397,6 +399,15 @@ public class XMLClient {
         return resultDocument ;
     }
 
+    /**
+     * Wraps the given Map object in SOAP envelope
+     * @param doc
+     * @param mc
+     * @param builder
+     * @param logger
+     * @return Document
+     * @throws SignException
+     */
     private static Document soapWrap(Document doc, MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws SignException{
     	// look for the requestMessage element
         Element requestMessage
@@ -414,10 +425,18 @@ public class XMLClient {
             wrappedDoc.getFirstChild().getFirstChild().appendChild(
                     wrappedDoc.importNode(requestMessage, true));
         }
-        
+
         return wrappedDoc;
     }
 
+    /**
+     * Convert Document to String
+     * @param doc
+     * @return String
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     * @throws IOException
+     */
     private static String documentToString(Document doc)
             throws TransformerConfigurationException, TransformerException,
             IOException {
@@ -432,6 +451,13 @@ public class XMLClient {
         }
     }
 
+    /**
+     * Tranform document to byte array output stream
+     * @param doc
+     * @return ByteArrayOutputStream
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     */
     private static ByteArrayOutputStream makeStream(Document doc)
             throws TransformerConfigurationException, TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -477,7 +503,7 @@ public class XMLClient {
             unwrappedDoc.appendChild(
                     unwrappedDoc.importNode(replyMessage, true));
         }
-       
+
         if (!logSignedData) {
             logger.log(
                     Logger.LT_REPLY,
@@ -486,6 +512,91 @@ public class XMLClient {
 
         return (unwrappedDoc);
     }
-} 
+
+    /**
+     * Get Merchant Config object based on request and properties
+     * @param request
+     * @param props
+     * @return MerchantConfig
+     * @throws ConfigException
+     */
+    static private MerchantConfig getMerchantConfigObject(Document request, Properties props) throws ConfigException {
+        MerchantConfig mc;
+        String merchantID = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
+        if (merchantID == null) {
+            // if no merchantID is present in the request, get its
+            // value from the properties and add it to the request.
+            mc = new MerchantConfig(props, null);
+            merchantID = mc.getMerchantID();
+            String nsURI = mc.getEffectiveNamespaceURI();
+            setMerchantID(request, merchantID, nsURI);
+        } else {
+            mc = new MerchantConfig(props, merchantID);
+        }
+        //System.out.println("merchant config object got created");
+        return mc;
+    }
+    /**
+     * Get Merchant Id from request, If merchantId is null, get it from properties
+     * @param request
+     * @param props
+     * @return String
+     */
+    private static String getMerchantId(Document request, Properties props) {
+        String merchantID = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
+        if (merchantID == null) {
+            // if no merchantID is present in the request, get its
+            // value from the properties
+            merchantID = props.getProperty(ELEM_MERCHANT_ID);
+        }
+        return merchantID;
+    }
+
+    /**
+     * get KeyAlias from property, If keyAlias is null, return merchant Id
+     * @param request
+     * @param props
+     * @return String
+     */
+    private static String getKeyForInstanceMap(Document request, Properties props) {
+        String keyAlias = props.getProperty(KEY_ALIAS);
+        if(keyAlias != null) {
+            return keyAlias;
+        }
+
+        return getMerchantId(request, props);
+    }
+    /**
+     * Get Merchant config instance from concurrent hash map in memory cache .
+     * If it is empty, it will create new merchant config object and put it in map for reuse.
+     * @param request
+     * @param props
+     * @return MerchantConfig
+     * @throws ConfigException
+     */
+    private static MerchantConfig getInstanceMap(Document request, Properties props) throws ConfigException {
+        String midOrKeyAlias = getKeyForInstanceMap(request, props);
+
+        if(!mcObjects.containsKey(midOrKeyAlias)) {
+            synchronized (Client.class) {
+                if (!mcObjects.containsKey(midOrKeyAlias)) {
+                    mcObjects.put(midOrKeyAlias, getMerchantConfigObject(request, props));
+                }
+            }
+        }
+        MerchantConfig mc = mcObjects.get(midOrKeyAlias);
+        String merchantID = Utility.getElementText(request, ELEM_MERCHANT_ID, "*");
+        // if no merchantID is present in the request, get its
+        // value from the properties and add it to the request.
+        if(StringUtils.isEmpty(merchantID)) {
+            merchantID = mc.getMerchantID();
+            String nsURI = mc.getEffectiveNamespaceURI();
+            setMerchantID(request, merchantID, nsURI);
+        }
+        return mc;
+    }
+
+
+}
 
 

@@ -35,21 +35,21 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.util.concurrent.TimeUnit;
 
 
 /**
- * Connection class is a factory  class for creating an instance for HttpClientConnection or
- * JDKHttpURLConnection.
+ * Connection class is a factory class for creating an instance for HttpClientConnection or
+ * JDKHttpURLConnection or PoolingHttpClientConnection.
  *
  * @author sunagara
  */
-abstract class Connection {
+abstract public class Connection {
     final MerchantConfig mc;
     private final DocumentBuilder builder;
     final LoggerWrapper logger;
     
    /**
+    * Constructor.
     * It initializes three arguments MerchantConfig, DocumentBuilder and Logger
     * Any class extending this class must implement three argument constructor
     * @param mc
@@ -63,30 +63,74 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
         this.logger = logger;
     }
 
+    /**
+     * Get connection instance based on properties
+     * @param mc
+     * @param builder
+     * @param logger
+     * @return Connection
+     * @throws ClientException
+     */
     public static Connection getInstance(
-            MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
+            MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws ClientException {
         if (mc.getUseHttpClient()) {
             return new HttpClientConnection(mc, builder, logger);
+        } else if (mc.getUseHttpClientWithConnectionPool()) {
+            return new PoolingHttpClientConnection(mc, builder, logger);
+        } else {
+            // HttpClient is not set in properties file then JDKHttpURLConnection class instance.
+            return new JDKHttpURLConnection(mc, builder, logger);
         }
-        // HttpClient is not set in properties file then JDKHttpURLConnection class instance.
-        return new JDKHttpURLConnection(mc, builder, logger);
     }
 
+    /**
+     * Abstract method to check is request sent or not
+     * @return boolean
+     */
     abstract public boolean isRequestSent();
 
-    abstract public void release();
+    /**
+     * Abstract method to release the connection related objects
+     * @throws ClientException
+     */
+    abstract public void release() throws ClientException;
 
-    abstract void postDocument(Document request)
+    /**
+     * Abstract method to post request
+     * @param request
+     * @param requestSentTime
+     * @throws IOException
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     * @throws MalformedURLException
+     * @throws ProtocolException
+     */
+    abstract void postDocument(Document request, long requestSentTime)
             throws IOException, TransformerConfigurationException,
             TransformerException, MalformedURLException,
             ProtocolException;
 
+    /**
+     * Abstract method to get http response code
+     * @return int
+     * @throws IOException
+     */
     abstract int getHttpResponseCode()
             throws IOException;
 
+    /**
+     * Abstract method to get response stream
+     * @return InputStream
+     * @throws IOException
+     */
     abstract InputStream getResponseStream()
             throws IOException;
 
+    /**
+     * Abstract method to get response error stream
+     * @return InputStram
+     * @throws IOException
+     */
     abstract InputStream getResponseErrorStream()
             throws IOException;
 
@@ -97,10 +141,10 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
      * @throws ClientException
      * @throws FaultException
      */
-    public Document post(Document request)
+    public Document post(Document request, long requestSentTime)
             throws ClientException, FaultException {
         try {
-            postDocument(request);
+            postDocument(request, requestSentTime);
             checkForFault();
             return (parseReceivedDocument());
         } catch (IOException e) {
@@ -111,8 +155,9 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
             throw new ClientException(e, isRequestSent(), logger);
         } catch (SAXException e) {
             throw new ClientException(e, isRequestSent(), logger);
+        } catch (RuntimeException e) {
+            throw new ClientException(e, isRequestSent(), logger);
         }
-
     }
 
 
@@ -217,12 +262,15 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
         return baos;
     }
-    /*
-     * Log Request and Response Headers
-     * 
-     */
 
+    /**
+     * Log Request Headers
+     */
     	abstract public void logRequestHeaders();
+
+    /**
+     * Log Response Headers
+     */
     	abstract public void logResponseHeaders();
 }
 

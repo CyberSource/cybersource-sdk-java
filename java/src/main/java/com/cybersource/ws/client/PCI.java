@@ -25,7 +25,7 @@ import java.util.Hashtable;
  * @author sunagara
  *
  */
-class PCI {
+public class PCI {
     public static final int REQUEST = 0;
     public static final int REPLY = 1;
 
@@ -238,7 +238,12 @@ class PCI {
         return isSafe(type, field) ? val : mask(field, val);
     }
 
-    // the masking rules in this method were per Jason Hengels.
+    /**
+     * Mask the data.The masking rules in this method were per Jason Hengels.
+     * @param field
+     * @param val
+     * @return
+     */
     public static String mask(String field, String val) {
         int len = val != null ? val.length() : 0;
         if (len == 0) return "";
