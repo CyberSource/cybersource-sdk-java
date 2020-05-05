@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Properties;
-import java.util.UUID;
+
 /**
  * An internal class used by the clients to hold and derive the properties
  * applicable to the current transaction.
@@ -33,12 +33,12 @@ public class MerchantConfig {
      * Prefix used when looking up properties in the System properties.
      */
     private final String SYSPROP_PREFIX = "cybs.";
-    
+
     private final static int DEFAULT_TIMEOUT = 130;
     private final static int DEFAULT_PROXY_PORT = 8080;
 
     private final Properties props;
-    
+
     private final String merchantID;
     private String keysDirectory;
     private String keyAlias;
@@ -76,64 +76,69 @@ public class MerchantConfig {
     private String cacertPassword;
     private String customHttpClass;
     private boolean customHttpClassEnabled;
-    private boolean certificateCacheEnabled; 
+    private boolean certificateCacheEnabled;
     private boolean merchantConfigCacheEnabled;
     private boolean staleConnectionCheckEnabled;
     private boolean shutdownHookEnabled;
-    public String getcustomHttpClass() {
-		return customHttpClass;
-	}
-    public boolean isCustomHttpClassEnabled() {
-		return customHttpClassEnabled;
-	}
-	// computed values
+    private boolean retryIfMTIFieldExist;
+    // computed values
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
     private String effectivePassword;
-    private  boolean useSignAndEncrypted;
-    
+    private boolean useSignAndEncrypted;
+
     //Retry Pattern
     private int numberOfRetries = 0;
-    private long retryInterval  = 0;
-    private boolean allowRetry=true;
+    private long retryInterval = 0;
+    private boolean allowRetry;
 
     /**
      * Getter method for useSignAndEncrypted
+     *
      * @return boolean
      */
     // getter methods
-    public boolean getUseSignAndEncrypted() { return useSignAndEncrypted; }
+    public boolean getUseSignAndEncrypted() {
+        return useSignAndEncrypted;
+    }
 
     /**
      * Getter method for merchantID
+     *
      * @return String
      */
     public String getMerchantID() {
         return merchantID;
     }
+
     /**
      * Getter method for keysDirectory
+     *
      * @return String
      */
     public String getKeysDirectory() {
         return keysDirectory;
     }
+
     /**
      * If keyAlias not null, return keyAlias, else return merchantId
+     *
      * @return String
      */
     public String getKeyAlias() {
-        if ( keyAlias != null )
+        if (keyAlias != null)
             return keyAlias;
         else
             return getMerchantID();
     }
+
     /**
      * If keyPassword not null, return keyPassword, else return merchantId
+     *
      * @return String
      */
     public String getKeyPassword() {
-        if ( keyPassword != null )
+        if (keyPassword != null)
             return keyPassword;
         else
             return getMerchantID();
@@ -141,6 +146,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for sendToProduction
+     *
      * @return boolean
      */
     public boolean getSendToProduction() {
@@ -149,6 +155,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for sendToAkamai
+     *
      * @return boolean
      */
     public boolean getSendToAkamai() {
@@ -157,6 +164,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for targetAPIVersion
+     *
      * @return String
      */
     public String getTargetAPIVersion() {
@@ -165,6 +173,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for keyFilename
+     *
      * @return String
      */
     public String getKeyFilename() {
@@ -173,6 +182,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for serverURL
+     *
      * @return String
      */
     public String getServerURL() {
@@ -181,6 +191,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for namespaceURI
+     *
      * @return String
      */
     public String getNamespaceURI() {
@@ -189,6 +200,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for password
+     *
      * @return String
      */
     public String getPassword() {
@@ -197,6 +209,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for enableLog
+     *
      * @return boolean
      */
     public boolean getEnableLog() {
@@ -205,6 +218,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for logSignedData
+     *
      * @return boolean
      */
     public boolean getLogSignedData() {
@@ -213,6 +227,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for logDirectory
+     *
      * @return String
      */
     public String getLogDirectory() {
@@ -221,6 +236,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for logFilename
+     *
      * @return String
      */
     public String getLogFilename() {
@@ -229,6 +245,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for logMaximumSize
+     *
      * @return int
      */
     public int getLogMaximumSize() {
@@ -236,7 +253,21 @@ public class MerchantConfig {
     }
 
     /**
+     * retryIfMTIFieldExist If enabled then SDK will include the merchantTransactionIdentifier field in the original
+     * request if not passed already in payload for authorization, capture, sale, follow-on credit, or stand-alone credit, etc).
+     * The value of the merchantTransactionIdentifier field must be unique
+     *
+     * If not enabled, a transaction may fail(retry wont occur in some cases) if while sending transaction SDK receives an I/O error/exception, when executing
+     * a request over a connection that has been closed at the server side.
+     * @return boolean
+     */
+    public boolean retryIfMTIFieldExistEnabled() {
+        return retryIfMTIFieldExist;
+    }
+
+    /**
      * Getter method for useHttpClient
+     *
      * @return boolean
      */
     public boolean getUseHttpClient() {
@@ -245,6 +276,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for useHttpClientWithConnectionPool
+     *
      * @return boolean
      */
     public boolean getUseHttpClientWithConnectionPool() {
@@ -254,6 +286,7 @@ public class MerchantConfig {
     /**
      * Getter method for timeout, it is set in seconds
      * default is 130seconds
+     *
      * @return int
      */
     public int getTimeout() {
@@ -262,6 +295,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for maxConnections
+     *
      * @return int
      */
     public int getMaxConnections() {
@@ -270,6 +304,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for defaultMaxConnectionsPerRoute
+     *
      * @return int
      */
     public int getDefaultMaxConnectionsPerRoute() {
@@ -278,6 +313,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for maxConnectionsPerRoute
+     *
      * @return int
      */
     public int getMaxConnectionsPerRoute() {
@@ -286,6 +322,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for connectionRequestTimeoutMs
+     *
      * @return int
      */
     public int getConnectionRequestTimeoutMs() {
@@ -294,6 +331,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for connectionTimeoutMs
+     *
      * @return int
      */
     public int getConnectionTimeoutMs() {
@@ -302,6 +340,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for socketTimeoutMs
+     *
      * @return int
      */
     public int getSocketTimeoutMs() {
@@ -310,6 +349,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for evictThreadSleepTimeMs
+     *
      * @return int
      */
     public int getEvictThreadSleepTimeMs() {
@@ -318,6 +358,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for maxKeepAliveTimeMs
+     *
      * @return int
      */
     public int getMaxKeepAliveTimeMs() {
@@ -328,6 +369,7 @@ public class MerchantConfig {
      * Defines period of inactivity in milliseconds after which persistent connections must be re-validated prior to being
      * leased to the consumer. Non-positive value passed to this method disables connection validation.
      * This check helps detect connections that have become stale (half-closed) while kept inactive in the pool.
+     *
      * @return int
      */
     public int getValidateAfterInactivityMs() {
@@ -336,6 +378,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for proxyHost
+     *
      * @return String
      */
     public String getProxyHost() {
@@ -344,6 +387,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for proxyPort
+     *
      * @return int
      */
     public int getProxyPort() {
@@ -352,6 +396,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for proxyUser
+     *
      * @return String
      */
     public String getProxyUser() {
@@ -360,6 +405,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for proxyPassword
+     *
      * @return String
      */
     public String getProxyPassword() {
@@ -368,14 +414,16 @@ public class MerchantConfig {
 
     /**
      * Getter method for certificateCacheEnabled
+     *
      * @return boolean
      */
     public boolean isCertificateCacheEnabled() {
-        return certificateCacheEnabled;  
+        return certificateCacheEnabled;
     }
 
     /**
      * Getter method for merchantConfigCacheEnabled
+     *
      * @return boolean
      */
     public boolean isMerchantConfigCacheEnabled() {
@@ -384,6 +432,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for staleConnectionCheckEnabled
+     *
      * @return boolean
      */
     public boolean isStaleConnectionCheckEnabled() {
@@ -392,11 +441,14 @@ public class MerchantConfig {
 
     /**
      * Getter method for shutdownHookEnabled
+     *
      * @return boolean
      */
     public boolean isShutdownHookEnabled() {
         return shutdownHookEnabled;
     }
+
+
 
     /**
      * Returns the effective server URL to which the request will be sent.
@@ -409,8 +461,8 @@ public class MerchantConfig {
     public String getEffectiveServerURL() {
         return effectiveServerURL;
     }
-    
-    
+
+
     /**
      * Returns the effective namespace URI to be used to parse the request and
      * reply documents.  If a namespaceURI is specified, then that is
@@ -422,7 +474,7 @@ public class MerchantConfig {
     public String getEffectiveNamespaceURI() {
         return effectiveNamespaceURI;
     }
-    
+
     /**
      * Returns the effective key password.  If a password is specified, then
      * that is what is returned.  Otherwise, the effective password is
@@ -433,8 +485,8 @@ public class MerchantConfig {
     public String getEffectivePassword() {
         return effectivePassword;
     }
-    
-    
+
+
     /**
      * Constructor.
      *
@@ -449,17 +501,17 @@ public class MerchantConfig {
      *                         configuration.
      */
     public MerchantConfig(Properties _props, String _merchantID)
-    throws ConfigException {
+            throws ConfigException {
         props = _props;
-        
+
         merchantID = _merchantID != null
-        ? _merchantID
-        : getProperty(null, "merchantID");
-        
+                ? _merchantID
+                : getProperty(null, "merchantID");
+
         if (merchantID == null) {
             throw new ConfigException("merchantID is required.");
         }
-        
+
         keysDirectory = getProperty(merchantID, "keysDirectory");
         keyAlias = getProperty(merchantID, "keyAlias");
         keyPassword = getProperty(merchantID, "keyPassword");
@@ -485,128 +537,128 @@ public class MerchantConfig {
         proxyUser = getProperty(merchantID, "proxyUser");
         proxyPassword = getProperty(merchantID, "proxyPassword");
         enableJdkCert = getBooleanProperty(merchantID, "enableJdkCert", false);
-        enableCacert=getBooleanProperty(merchantID, "enableCacert", false);
-        cacertPassword=getProperty(merchantID,"cacertPassword","changeit");
-        customHttpClassEnabled=getBooleanProperty(merchantID,"customHttpClassEnabled",false);
-        certificateCacheEnabled=getBooleanProperty(merchantID,"certificateCacheEnabled",true); 
-        merchantConfigCacheEnabled=getBooleanProperty(merchantID, "merchantConfigCacheEnabled", false);
+        enableCacert = getBooleanProperty(merchantID, "enableCacert", false);
+        cacertPassword = getProperty(merchantID, "cacertPassword", "changeit");
+        customHttpClassEnabled = getBooleanProperty(merchantID, "customHttpClassEnabled", false);
+        certificateCacheEnabled = getBooleanProperty(merchantID, "certificateCacheEnabled", true);
+        merchantConfigCacheEnabled = getBooleanProperty(merchantID, "merchantConfigCacheEnabled", false);
         // compute and store effective namespace URI
-        
+
         if (namespaceURI == null && targetAPIVersion == null) {
             throw new ConfigException("namespaceURI or targetAPIVersion must be supplied.");
         }
-        
+
         effectiveNamespaceURI =
-        namespaceURI != null
-        ? namespaceURI
-        : "urn:schemas-cybersource-com:transaction-data-" +
-        targetAPIVersion;
-        
+                namespaceURI != null
+                        ? namespaceURI
+                        : "urn:schemas-cybersource-com:transaction-data-" +
+                        targetAPIVersion;
+
         // compute and store effective Server URL
-        
+
         if (serverURL == null && targetAPIVersion == null) {
             throw new ConfigException("serverURL or targetAPIVersion must be supplied.");
         }
-        
+
         if (serverURL != null) {
             effectiveServerURL = serverURL;
         } else {
             int dotPos = targetAPIVersion.indexOf('.');
             String majorVersion
-            = dotPos >= 0
-            ? targetAPIVersion.substring(0, dotPos)
-            : targetAPIVersion;
-            
+                    = dotPos >= 0
+                    ? targetAPIVersion.substring(0, dotPos)
+                    : targetAPIVersion;
+
             Object[] arguments = {majorVersion};
             effectiveServerURL = MessageFormat.format(
-                                                      sendToAkamai
-                                                      ?sendToProduction
-                                                      ?"https://ics2wsa.ic3.com/commerce/{0}.x/transactionProcessor"
-                                                      :"https://ics2wstesta.ic3.com/commerce/{0}.x/transactionProcessor"
-                                                      :sendToProduction
-                                                      ?"https://ics2ws.ic3.com/commerce/{0}.x/transactionProcessor"
-                                                      :"https://ics2wstest.ic3.com/commerce/{0}.x/transactionProcessor",
-                                                      arguments);
+                    sendToAkamai
+                            ? sendToProduction
+                            ? "https://ics2wsa.ic3.com/commerce/{0}.x/transactionProcessor"
+                            : "https://ics2wstesta.ic3.com/commerce/{0}.x/transactionProcessor"
+                            : sendToProduction
+                            ? "https://ics2ws.ic3.com/commerce/{0}.x/transactionProcessor"
+                            : "https://ics2wstest.ic3.com/commerce/{0}.x/transactionProcessor",
+                    arguments);
         }
-        
+
         // compute and store effective password
         effectivePassword = password != null ? password : merchantID;
-        
+
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
 
-        if(useHttpClient && useHttpClientWithConnectionPool) {
+        if (useHttpClient && useHttpClientWithConnectionPool) {
             throw new ConfigException("both useHttpClient and useHttpClientWithConnectionPool cannot be true at same time");
         }
 
-        if(useHttpClientWithConnectionPool) {
-            if(StringUtils.isEmpty(getProperty(merchantID, "maxConnections"))) {
+        if (useHttpClientWithConnectionPool) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "maxConnections"))) {
                 throw new ConfigException("maxConnections property is empty");
             } else {
                 maxConnections = getIntegerProperty(merchantID, "maxConnections");
-                if(maxConnections <= 0){
+                if (maxConnections <= 0) {
                     throw new ConfigException("maxConnections property can't be 0 or negative");
                 }
             }
 
-            if(StringUtils.isEmpty(getProperty(merchantID, "defaultMaxConnectionsPerRoute"))) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "defaultMaxConnectionsPerRoute"))) {
                 throw new ConfigException("defaultMaxConnectionsPerRoute property is empty");
             } else {
                 defaultMaxConnectionsPerRoute = getIntegerProperty(merchantID, "defaultMaxConnectionsPerRoute");
-                if(defaultMaxConnectionsPerRoute <= 0){
+                if (defaultMaxConnectionsPerRoute <= 0) {
                     throw new ConfigException("defaultMaxConnectionsPerRoute property can't be 0 or negative");
                 }
             }
 
-            if(StringUtils.isEmpty(getProperty(merchantID, "maxConnectionsPerRoute"))) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "maxConnectionsPerRoute"))) {
                 throw new ConfigException("maxConnectionsPerRoute property is empty");
             } else {
                 maxConnectionsPerRoute = getIntegerProperty(merchantID, "maxConnectionsPerRoute");
-                if(maxConnectionsPerRoute <= 0){
+                if (maxConnectionsPerRoute <= 0) {
                     throw new ConfigException("maxConnectionsPerRoute property can't be 0 or negative");
                 }
             }
 
-            if(StringUtils.isEmpty(getProperty(merchantID, "connectionRequestTimeoutMs"))) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "connectionRequestTimeoutMs"))) {
                 throw new ConfigException("connectionRequestTimeoutMs property is empty");
             } else {
                 connectionRequestTimeoutMs = getIntegerProperty(merchantID, "connectionRequestTimeoutMs");
-                if(connectionRequestTimeoutMs <= 0){
+                if (connectionRequestTimeoutMs <= 0) {
                     throw new ConfigException("connectionRequestTimeoutMs property can't be 0 or negative");
                 }
             }
 
-            if(StringUtils.isEmpty(getProperty(merchantID, "connectionTimeoutMs"))) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "connectionTimeoutMs"))) {
                 throw new ConfigException("connectionTimeoutMs property is empty");
             } else {
                 connectionTimeoutMs = getIntegerProperty(merchantID, "connectionTimeoutMs");
-                if(connectionTimeoutMs <= 0){
+                if (connectionTimeoutMs <= 0) {
                     throw new ConfigException("connectionTimeoutMs property can't be 0 or negative");
                 }
             }
 
-            if(StringUtils.isEmpty(getProperty(merchantID, "socketTimeoutMs"))) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "socketTimeoutMs"))) {
                 throw new ConfigException("socketTimeoutMs property is empty");
             } else {
                 socketTimeoutMs = getIntegerProperty(merchantID, "socketTimeoutMs");
-                if(socketTimeoutMs <= 0){
+                if (socketTimeoutMs <= 0) {
                     throw new ConfigException("socketTimeoutMs property can't be 0 or negative");
                 }
             }
 
-            if(StringUtils.isEmpty(getProperty(merchantID, "evictThreadSleepTimeMs"))) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "evictThreadSleepTimeMs"))) {
                 throw new ConfigException("evictThreadSleepTimeMs property is empty");
             } else {
                 evictThreadSleepTimeMs = getIntegerProperty(merchantID, "evictThreadSleepTimeMs");
-                if(evictThreadSleepTimeMs <= 0){
+                if (evictThreadSleepTimeMs <= 0) {
                     throw new ConfigException("evictThreadSleepTimeMs property can't be 0 or negative");
                 }
             }
 
-            if(StringUtils.isEmpty(getProperty(merchantID, "maxKeepAliveTimeMs"))) {
+            if (StringUtils.isEmpty(getProperty(merchantID, "maxKeepAliveTimeMs"))) {
                 throw new ConfigException("maxKeepAliveTimeMs property is empty");
             } else {
                 maxKeepAliveTimeMs = getIntegerProperty(merchantID, "maxKeepAliveTimeMs");
-                if(maxKeepAliveTimeMs <= 0){
+                if (maxKeepAliveTimeMs <= 0) {
                     throw new ConfigException("maxKeepAliveTimeMs property can't be 0 or negative");
                 }
             }
@@ -614,30 +666,31 @@ public class MerchantConfig {
             validateAfterInactivityMs = getIntegerProperty(merchantID, "validateAfterInactivityMs", 0);
             staleConnectionCheckEnabled = getBooleanProperty(merchantID, "staleConnectionCheckEnabled", true);
             shutdownHookEnabled = getBooleanProperty(merchantID, "enabledShutdownHook", true);
+            retryIfMTIFieldExist = getBooleanProperty(merchantID, "retryIfMTIFieldExist", false);
         }
-        
-        allowRetry  = getBooleanProperty(merchantID, "allowRetry", true);
+
+        allowRetry = getBooleanProperty(merchantID, "allowRetry", true);
         if (useHttpClient || useHttpClientWithConnectionPool) {
-            if(allowRetry) {
+            if (allowRetry) {
                 numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 3);
                 if (numberOfRetries > 0)
                     retryInterval = getIntegerProperty(merchantID, "retryInterval", 1000);
-                    //added <=1 as in previous release it was set in seconds. User should change retryInterval value to keep it in ms.
+                //added <=1 as in previous release it was set in seconds. User should change retryInterval value to keep it in ms.
                 if (numberOfRetries < 1 || numberOfRetries > 5 || retryInterval <= 1) {
                     throw new ConfigException("Invalid value of numberOfRetries and/or retryInterval(in ms)");
                 }
             }
         }
-		if(isCacertEnabled()){
-        	if(StringUtils.isBlank(keysDirectory)){
-        		keysDirectory = System.getProperty("java.home") + "/lib/security".replace('/', File.separatorChar);
-        	}
-        	if(StringUtils.isBlank(keyFilename)){
-        		keyFilename = "cacerts";
-        	}
-      }
+        if (isCacertEnabled()) {
+            if (StringUtils.isBlank(keysDirectory)) {
+                keysDirectory = System.getProperty("java.home") + "/lib/security".replace('/', File.separatorChar);
+            }
+            if (StringUtils.isBlank(keyFilename)) {
+                keyFilename = "cacerts";
+            }
+        }
     }
-    
+
     /**
      * Returns a File object representing the key file.  If a
      * keyFilename is specified, that will be the one used.
@@ -647,29 +700,28 @@ public class MerchantConfig {
      *                         not readable.
      */
     public File getKeyFile()
-    throws ConfigException {
+            throws ConfigException {
         File file;
-    	if (StringUtils.isBlank(keyFilename)) {
-    		 file = new File(keysDirectory,merchantID + ".p12");
-    	}
-    	else {
-    		file = new File(keysDirectory,keyFilename);
-    	}
+        if (StringUtils.isBlank(keyFilename)) {
+            file = new File(keysDirectory, merchantID + ".p12");
+        } else {
+            file = new File(keysDirectory, keyFilename);
+        }
         String fullPath = file.getAbsolutePath();
         if (!file.isFile()) {
-             throw new ConfigException(
-                     "The file \"" + fullPath + "\" is missing or is not a file.");
-         } 
+            throw new ConfigException(
+                    "The file \"" + fullPath + "\" is missing or is not a file.");
+        }
         if (!file.canRead()) {
             throw new ConfigException(
-                                      "This application does not have permission to read the file \""
-                                      + fullPath + "\".");
+                    "This application does not have permission to read the file \""
+                            + fullPath + "\".");
         }
-        
+
         return (file);
     }
-    
-    
+
+
     /**
      * Returns a File object representing the log file.
      *
@@ -677,21 +729,21 @@ public class MerchantConfig {
      *                         missing or is not a directory.
      */
     public File getLogFile()
-    throws ConfigException {
+            throws ConfigException {
         File dir = new File(logDirectory);
         String fullPath = dir.getAbsolutePath();
         if (!dir.isDirectory()) {
             throw new ConfigException(
-                                      "The log directory \"" + fullPath +
-                                      "\" is missing or is not a directory.");
+                    "The log directory \"" + fullPath +
+                            "\" is missing or is not a directory.");
         }
-        
+
         return (new File(logDirectory,
-                         logFilename != null ? logFilename : "cybs.log"));
-        
+                logFilename != null ? logFilename : "cybs.log"));
+
     }
-    
-    
+
+
     /**
      * Returns the value of the specified property.  See the other version
      * of this method for the complete behavior.
@@ -699,12 +751,12 @@ public class MerchantConfig {
      * @param merchantID merchant id.
      * @param prop       property to search for.
      * @return the value of the specified property or <code>null</code> if none
-     *         is found.
+     * is found.
      */
     public String getProperty(String merchantID, String prop) {
         return (getProperty(merchantID, prop, null));
     }
-    
+
     /**
      * Returns the value of the specified property.  The search behavior is
      * as follows:
@@ -726,51 +778,52 @@ public class MerchantConfig {
      * @param defaultVal default value to return if property is not found
      *                   (may be null).
      * @return the value of the specified property or the default value
-     *         specified if none is found.
+     * specified if none is found.
      */
     public String getProperty(
-                              String merchantID, String prop, String defaultVal) {
+            String merchantID, String prop, String defaultVal) {
         String val = null;
-        
+
         String merchantSpecificProp =
-        (merchantID != null) ? merchantID + "." + prop : null;
-        
+                (merchantID != null) ? merchantID + "." + prop : null;
+
         // look-up the merchant-specific property in the supplied
         // Properties object.
         if (props != null && merchantSpecificProp != null) {
             val = props.getProperty(merchantSpecificProp);
         }
-        
+
         // if none, look up the generic property.
         if (props != null && val == null) {
             val = props.getProperty(prop);
         }
-        
+
         // if none, look up the merchant-specific property in the System
         // properties.
         if (val == null && merchantSpecificProp != null) {
             val = System.getProperty(SYSPROP_PREFIX + merchantSpecificProp);
         }
-        
+
         // if none, look up the generic property in the System properties.
         if (val == null) {
             val = System.getProperty(SYSPROP_PREFIX + prop);
         }
-        
+
         // if none, return default value
         if (val == null) {
             val = defaultVal;
         }
-        
+
         return (val);
     }
-    
+
     /**
      * Returns a string representation of the properties for logging purposes.
+     *
      * @return String
      */
     public String getLogString() {
-        
+
         StringBuffer sb = new StringBuffer();
         appendPair(sb, "merchantID", merchantID);
         appendPair(sb, "keysDirectory", keysDirectory);
@@ -792,12 +845,12 @@ public class MerchantConfig {
         appendPair(sb, "useHttpClientWithConnectionPool", useHttpClientWithConnectionPool);
         appendPair(sb, "enableJdkCert", enableJdkCert);
         appendPair(sb, "enableCacert", enableCacert);
-        if(useHttpClient || useHttpClientWithConnectionPool){
+        if (useHttpClient || useHttpClientWithConnectionPool) {
             appendPair(sb, "allowRetry", allowRetry);
             appendPair(sb, "RetryCount", numberOfRetries);
             appendPair(sb, "RetryInterval", retryInterval);
         }
-        if(useHttpClientWithConnectionPool){
+        if (useHttpClientWithConnectionPool) {
             appendPair(sb, "maxConnections", maxConnections);
             appendPair(sb, "defaultMaxConnectionsPerRoute", defaultMaxConnectionsPerRoute);
             appendPair(sb, "maxConnectionsPerRoute", maxConnectionsPerRoute);
@@ -809,6 +862,7 @@ public class MerchantConfig {
             appendPair(sb, "validateAfterInactivityMs", validateAfterInactivityMs);
             appendPair(sb, "staleConnectionCheckEnabled", staleConnectionCheckEnabled);
             appendPair(sb, "enabledShutdownHook", shutdownHookEnabled);
+            appendPair(sb, "retryIfMTIFieldExist", retryIfMTIFieldExist);
         }
         appendPair(sb, "timeout", timeout);
         if (proxyHost != null) {
@@ -817,8 +871,8 @@ public class MerchantConfig {
             if (proxyUser != null) {
                 appendPair(sb, "proxyUser", proxyUser);
                 appendPair(sb, "proxyPassword",
-                           proxyPassword != null
-                           ? "(masked)" : null);
+                        proxyPassword != null
+                                ? "(masked)" : null);
             }
         }
         appendPair(sb, "useSignAndEncrypted", useSignAndEncrypted);
@@ -826,52 +880,52 @@ public class MerchantConfig {
         appendPair(sb, "merchantConfigCacheEnabled", merchantConfigCacheEnabled);
         return (sb.toString());
     }
-    
+
     private void appendPair(StringBuffer sb, String key, long retryInterval2) {
         appendPair(sb, key, String.valueOf(retryInterval2));
-        
+
     }
-    
+
     private static void appendPair(StringBuffer sb, String key, boolean value) {
         appendPair(sb, key, String.valueOf(value));
     }
-    
+
     private static void appendPair(StringBuffer sb, String key, int value) {
         appendPair(sb, key, String.valueOf(value));
     }
-    
+
     private static void appendPair(StringBuffer sb, String key, String value) {
         if (sb.length() > 0) {
             sb.append(", ");
         }
-        
+
         sb.append(key + "=");
         sb.append(value != null ? value : "(null)");
     }
-    
+
     private boolean getBooleanProperty(
-                                       String merchantID, String prop, boolean defaultVal)
-    throws ConfigException {
+            String merchantID, String prop, boolean defaultVal)
+            throws ConfigException {
         String strValue = getProperty(merchantID, prop);
         if (strValue == null) return defaultVal;
-        
+
         if ("1".equals(strValue) || "true".equalsIgnoreCase(strValue)) {
             return (true);
         }
-        
+
         if ("0".equals(strValue) || "false".equalsIgnoreCase(strValue)) {
             return (false);
         }
-        
+
         throw new ConfigException(prop + " has an invalid value.");
     }
-    
+
     private int getIntegerProperty(
-                                   String merchantID, String prop, int defaultVal)
-    throws ConfigException {
+            String merchantID, String prop, int defaultVal)
+            throws ConfigException {
         String strValue = getProperty(merchantID, prop);
         if (strValue == null) return defaultVal;
-        
+
         try {
             return (Integer.parseInt(strValue));
         } catch (NumberFormatException nfe) {
@@ -892,6 +946,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for numberOfRetries
+     *
      * @return int
      */
     public int getNumberOfRetries() {
@@ -901,6 +956,7 @@ public class MerchantConfig {
     /**
      * Getter method for retryInterval
      * added <=1 check as in previous release(6.2.9 or lower) it was set in seconds. User should change retryInterval value to keep it in ms
+     *
      * @return long
      */
     public long getRetryInterval() {
@@ -909,6 +965,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for allowRetry
+     *
      * @return boolean
      */
     public boolean isAllowRetry() {
@@ -917,6 +974,7 @@ public class MerchantConfig {
 
     /**
      * Setter method for allowRetry
+     *
      * @param allowRetry
      */
     public void setAllowRetry(boolean allowRetry) {
@@ -925,6 +983,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for enableCacert
+     *
      * @return boolean
      */
     public boolean isCacertEnabled() {
@@ -933,6 +992,7 @@ public class MerchantConfig {
 
     /**
      * Getter method for enableJdkCert
+     *
      * @return boolean
      */
     public boolean isJdkCertEnabled() {
@@ -941,10 +1001,19 @@ public class MerchantConfig {
 
     /**
      * Getter method for cacertPassword
+     *
      * @return String
      */
-    public String getCacertPassword(){
+    public String getCacertPassword() {
         return cacertPassword;
     }
-	
+
+    public String getCustomHttpClass() {
+        return customHttpClass;
+    }
+
+    public boolean isCustomHttpClassEnabled() {
+        return customHttpClassEnabled;
+    }
+
 }

@@ -32,7 +32,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.cybersource.ws.client.Utility.*;
 
@@ -337,19 +336,26 @@ public class PoolingHttpClientConnection extends Connection {
 
             HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
             if (!httpClientContext.isRequestSent()) {
-                try {
-                    Thread.sleep(retryWaitInterval);
-                    logger.log(Logger.LT_INFO, "Retrying Request -- " + logger.getUniqueKey() + " Retry Count -- " + executionCount);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
+                retryAfter(retryWaitInterval, executionCount, logger);
                 return true;
             }
 
-            if (exception instanceof NoHttpResponseException) {
-                return false;
+            if(mc.retryIfMTIFieldExistEnabled()){
+                if (exception instanceof NoHttpResponseException) {
+                    retryAfter(retryWaitInterval, executionCount, logger);
+                    return true;
+                }
+                if(exception instanceof java.net.SocketException) {
+                    String errMessage = exception.getMessage();
+                    if (StringUtils.isBlank(errMessage)) {
+                        errMessage = exception.getLocalizedMessage();
+                    }
+                    if (StringUtils.isNotBlank(errMessage) && "Connection reset".equalsIgnoreCase(errMessage)) {
+                        retryAfter(retryWaitInterval, executionCount, logger);
+                        return true;
+                    }
+                }
             }
-
             return false;
         }
     }
@@ -377,6 +383,15 @@ public class PoolingHttpClientConnection extends Connection {
 
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
+        }
+    }
+
+    private void retryAfter(long millis, int executionCount, LoggerWrapper logger) {
+        try {
+            Thread.sleep(millis);
+            logger.log(Logger.LT_INFO, "Retrying Request -- " + logger.getUniqueKey() + " Retry Count -- " + executionCount);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
     }
 }

@@ -41,6 +41,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.cybersource.ws.client.Utility.*;
+
 /**
  * Class containing runTransaction() methods that accept the requests in the
  * form of a Document object.
@@ -53,14 +55,6 @@ public class XMLClient {
 
     private static final String ELEM_REQUEST_MESSAGE = "requestMessage";
     private static final String ELEM_REPLY_MESSAGE = "replyMessage";
-    private static final String ELEM_MERCHANT_ID = "merchantID";
-    private static final String KEY_ALIAS = "keyAlias";
-    private static final String ELEM_MERCHANT_REFERENCE_CODE
-            = "merchantReferenceCode";
-    private static final String ELEM_CLIENT_LIBRARY = "clientLibrary";
-    private static final String ELEM_CLIENT_LIBRARY_VERSION
-            = "clientLibraryVersion";
-    private static final String ELEM_CLIENT_ENVIRONMENT = "clientEnvironment";
 
     private static final String[] VERSION_FIELDS
             = {ELEM_CLIENT_LIBRARY,
@@ -177,7 +171,7 @@ public class XMLClient {
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
-            setVersionInformation(request, nsURI);
+            setVersionInformation(request, nsURI, mc.retryIfMTIFieldExistEnabled());
 
             DocumentBuilder builder = Utility.newDocumentBuilder();
 
@@ -186,7 +180,7 @@ public class XMLClient {
             if(mc.isCustomHttpClassEnabled()){
 				Class<Connection> customConnectionClass;
 				try {
-					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getCustomHttpClass());
 					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class};
 					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
@@ -242,8 +236,6 @@ public class XMLClient {
     }
 
 
-
-
     /**
      * Sets the merchantID in the request.
      *
@@ -271,7 +263,7 @@ public class XMLClient {
      * @param request request to set the version information in.
      * @param nsURI   namespaceURI to use.
      */
-    private static void setVersionInformation(Document request, String nsURI) {
+    private static void setVersionInformation(Document request, String nsURI, boolean isAddingMTIEnabled) {
         //
         // First, delete the version fields currently in the request document,
         // if any.
@@ -331,11 +323,17 @@ public class XMLClient {
         // create DocumentFragment for the version-related fields
         DocumentFragment versionsFragment = request.createDocumentFragment();
         versionsFragment.appendChild(Utility.createElement(
-                request, nsURI, ELEM_CLIENT_LIBRARY, "Java XML"));
+                request, nsURI, ELEM_CLIENT_LIBRARY, Utility.XML_LIBRARY));
         versionsFragment.appendChild(Utility.createElement(
                 request, nsURI, ELEM_CLIENT_LIBRARY_VERSION, Utility.VERSION));
         versionsFragment.appendChild(Utility.createElement(
                 request, nsURI, ELEM_CLIENT_ENVIRONMENT, Utility.ENVIRONMENT));
+
+        if(isAddingMTIEnabled && Utility.getElement(
+                request, MERCHANT_TRANSACTION_IDENTIFIER, nsURI)==null) {
+            versionsFragment.appendChild(Utility.createElement(
+                    request, nsURI, MERCHANT_TRANSACTION_IDENTIFIER, generateMTI()));
+        }
 
         // if the current element is not null, it will be the sibling right
         // next to the version fields.

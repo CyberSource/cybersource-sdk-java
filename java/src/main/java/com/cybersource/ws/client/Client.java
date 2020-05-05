@@ -37,6 +37,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.cybersource.ws.client.Utility.setMTIFieldIfNotExist;
+import static com.cybersource.ws.client.Utility.setVersionInformation;
+
 /**
  * Class containing runTransaction() methods that accept the requests in the
  * form of a Map object.
@@ -93,13 +96,16 @@ public class Client {
         Connection con = null;
         try {
             long requestSentTime = System.currentTimeMillis();
-            setVersionInformation(request);
-
             boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
             if(isMerchantConfigCacheEnabled) {
                 mc = getInstanceMap(request, props);
             } else {
                 mc = getMerchantConfigObject(request, props);
+            }
+
+            setVersionInformation(request);
+            if(mc.retryIfMTIFieldExistEnabled()) {
+                setMTIFieldIfNotExist(request);
             }
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
@@ -109,13 +115,13 @@ public class Client {
             Document signedDoc
                     = soapWrapAndSign(request, mc, builder,logger);
 
-//          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
+//          FileWriter writer = new FileWriter(new File("nvp_signedDoc.xml"));
 //          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
 //          writer.close();
             if(mc.isCustomHttpClassEnabled()){
 				Class<Connection> customConnectionClass;
 				try {
-					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getCustomHttpClass());
 					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class};
 					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
@@ -174,18 +180,6 @@ public class Client {
             }
         }
     }
-
-    /**
-     * Sets the version information in the request.
-     *
-     * @param request request to set the version information in.
-     */
-    private static void setVersionInformation(Map<String, String> request) {
-        request.put("clientLibrary", "Java Basic");
-        request.put("clientLibraryVersion", Utility.VERSION);
-        request.put("clientEnvironment", Utility.ENVIRONMENT);
-    }
-
 
     /**
      * Wraps the given Map object in SOAP envelope and signs it.

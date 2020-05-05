@@ -1,24 +1,25 @@
 /*
-* Copyright 2003-2014 CyberSource Corporation
-*
-* THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
-* AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
-* DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
-* COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
-* EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
-* WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
-* DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-* SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
-* OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
-* ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
-* DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
-* DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
-* WITH ANY PARTICULAR OPERATING SYSTEM.
-*/
+ * Copyright 2003-2014 CyberSource Corporation
+ *
+ * THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
+ * AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
+ * DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
+ * COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
+ * EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
+ * WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
+ * DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ * SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
+ * OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
+ * ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
+ * DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
+ * DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
+ * WITH ANY PARTICULAR OPERATING SYSTEM.
+ */
 
 package com.cybersource.ws.client;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -29,10 +30,12 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.*;
 
 /**
  * Class containing useful constants and methods.
@@ -48,6 +51,15 @@ public class Utility {
     public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
     public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
     public static final String RESPONSE_TIME_REPLY = "v-c-response-time";
+    public static final String MERCHANT_TRANSACTION_IDENTIFIER = "merchantTransactionIdentifier";
+    public static final String ELEM_MERCHANT_ID = "merchantID";
+    public static final String KEY_ALIAS = "keyAlias";
+    public static final String ELEM_MERCHANT_REFERENCE_CODE = "merchantReferenceCode";
+    public static final String ELEM_CLIENT_LIBRARY = "clientLibrary";
+    public static final String ELEM_CLIENT_LIBRARY_VERSION = "clientLibraryVersion";
+    public static final String ELEM_CLIENT_ENVIRONMENT = "clientEnvironment";
+    private static long lastTick = System.currentTimeMillis();
+    private static final Object lastTickLock = new Object();
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
@@ -56,15 +68,28 @@ public class Utility {
      * This might prove useful for more advanced users of the Basic client.
      */
     private static final String HAS_ESCAPES = "_has_escapes";
-    
+
+    /**
+     * NVP library information.
+     */
+    public static final String NVP_LIBRARY = new StringBuilder().append("Java NVP").append("/")
+            .append(VERSION).toString();
+
+    /**
+     * XML library information.
+     */
+    public static final String XML_LIBRARY = new StringBuilder().append("Java XML").append("/")
+            .append(VERSION).toString();
+
     /**
      * Environment information.
      */
     public static final String ENVIRONMENT
-            = System.getProperty("os.name") + "/" +
-            System.getProperty("os.version") + "/" +
-            System.getProperty("java.vendor") + "/" +
-            System.getProperty("java.version");
+            = new StringBuilder().append(System.getProperty("os.name")).append("/")
+            .append(System.getProperty("os.version"))
+            .append("/").append(System.getProperty("java.vendor"))
+            .append("/").append(System.getProperty("java.version"))
+            .toString();
 
 
     /**
@@ -123,7 +148,7 @@ public class Utility {
      *
      * @param commandLineArgs the command-line arguments.
      * @return Properties object containing the run-time properties required by
-     *         the clients.
+     * the clients.
      */
     public static Properties readProperties(String[] commandLineArgs) {
         Properties props = new Properties();
@@ -243,7 +268,7 @@ public class Utility {
      * @param elementName local name to search for.
      * @param nsURI       namespaceURI to used (may be null).
      * @return the Element object corresponding to the given element name or
-     *         <code>null</code> if none is found.
+     * <code>null</code> if none is found.
      */
     public static Element getElement(
             Document owner, String elementName, String nsURI) {
@@ -267,7 +292,7 @@ public class Utility {
      * @param elementName local name to search for.
      * @param nsURI       namespaceURI to used (may be null).
      * @return the text value of the given element name in the CyberSource
-     *         namespace or <code>null</code> if none is found.
+     * namespace or <code>null</code> if none is found.
      */
     public static String getElementText(
             Document owner, String elementName, String nsURI) {
@@ -350,13 +375,13 @@ public class Utility {
             }
         }
     }
-    
+
     /**
      * Converts a name-value pair string into a Map object.
      *
      * @param src String containing name-value pairs.
      * @return resulting Map object; will be empty if the string was null or
-     *         empty.
+     * empty.
      */
     public static HashMap<String, String> stringToMap(String src) {
         HashMap<String, String> dest = new HashMap<String, String>();
@@ -394,7 +419,7 @@ public class Utility {
 
         return (dest);
     }
-    
+
     /**
      * Converts the contents of a Map object into a string, one name-value pair
      * to a line and the name and value are separated by an equal sign.
@@ -405,7 +430,7 @@ public class Utility {
      *             is the request or the reply map.  Pass either
      *             PCI.REQUEST or PCI.REPLY.
      * @return resulting string; will be empty if the Map object was null or
-     *         empty.
+     * empty.
      */
     public static String mapToString(Map src, boolean mask, int type) {
         StringBuilder dest = new StringBuilder();
@@ -432,21 +457,23 @@ public class Utility {
                 ? dest.toString() : StringEscapeUtils.escapeXml11((dest.toString())));
     }
 
-    
+
     /**
      * Read the request xml file
-     * @param props Properties object to lookup properties in
+     *
+     * @param props    Properties object to lookup properties in
      * @param filename Filename of file containing XML request
      * @return Document Request from filename read as document
      */
     public static Document readRequest(Properties props, String filename) {
-        return readRequest(props,filename, null);
+        return readRequest(props, filename, null);
     }
 
     /**
      * Read the request xml file
-     * @param props Properties object to lookup properties in
-     * @param filename Filename of file containing XML request
+     *
+     * @param props      Properties object to lookup properties in
+     * @param filename   Filename of file containing XML request
      * @param merchantId merchantId
      * @return Document Request from filename read as document
      */
@@ -494,7 +521,7 @@ public class Utility {
      * Creates an Element object in the CyberSource namespace.
      *
      * @param owner       Document object to own the Element object.
-     * @param nsURI		  Namespace URI to use.
+     * @param nsURI       Namespace URI to use.
      * @param elementName local name of Element object to create.
      * @param textValue   text value of the new Element object.
      * @return the newly created Element object.
@@ -515,6 +542,7 @@ public class Utility {
 
     /**
      * get response issued time in seconds
+     *
      * @param responseTime
      * @return long
      */
@@ -524,12 +552,13 @@ public class Utility {
 
     /**
      * get response transit time in seconds
-     * @param issuedAtTimeSeconds
+     *
+     * @param resIssuedAtTimeSeconds
      * @return long
      */
-    public static long getResponseTransitTimeSeconds(long issuedAtTimeSeconds) {
-        if (issuedAtTimeSeconds > 0) {
-            return (System.currentTimeMillis() / 1000) - issuedAtTimeSeconds;
+    public static long getResponseTransitTimeSeconds(long resIssuedAtTimeSeconds) {
+        if (resIssuedAtTimeSeconds > 0) {
+            return (System.currentTimeMillis() / 1000) - resIssuedAtTimeSeconds;
         }
         return 0;
     }
@@ -545,5 +574,98 @@ public class Utility {
         }
         return result;
     }
-    
+
+    /**
+     * Sets the version information in the request.
+     *
+     * @param request request to set the version information in.
+     */
+    public static void setVersionInformation(Map<String, String> request) {
+        request.put(ELEM_CLIENT_LIBRARY, Utility.NVP_LIBRARY);
+        request.put(ELEM_CLIENT_LIBRARY_VERSION, Utility.VERSION);
+        request.put(ELEM_CLIENT_ENVIRONMENT, Utility.ENVIRONMENT);
+    }
+
+    /**
+     * Use this to pre-set a merchantTransactionIdentifier before sending the request.
+     * This is a unique value for each ICSRequest. The format for the
+     * request id is as follows:
+     * 0916351920802167904518
+     * Where the first 12 digits of the of the number is the
+     * number of milliseconds since the epoch (Jan 1, 1970, 00:00 UTC).
+     * The next 10 digits is the ip address of the hostname, represented
+     * as a 32 bit integer in decimal format.
+     *
+     */
+    public static void setMTIFieldIfNotExist(Map<String, String> request) {
+        String mti = request.get(MERCHANT_TRANSACTION_IDENTIFIER);
+        if (StringUtils.isBlank(mti)) {
+            request.put(MERCHANT_TRANSACTION_IDENTIFIER, generateMTI());
+        }
+    }
+
+    public static String generateMTI() {
+        InetAddress addr;
+        try {
+            addr = InetAddress.getLocalHost();
+
+            validateIPAddress(addr);
+
+            BigInteger ip = new BigInteger(1, addr.getAddress());
+
+            // pad the ip address string to 10 characters
+            String ipString = ip.toString();
+            if (ipString.length() < 10) {
+                ipString = "0000000000".substring(ipString.length()) + ipString;
+            }
+
+            // trim leading characters in case it's > 10 digits long
+            if (ipString.length() > 10) {
+                ipString = ipString.substring(ipString.length() - 10);
+            }
+
+            // pad the time string to 12 characters
+            String timeString;
+            timeString = String.valueOf(newTick());
+            if (timeString.length() < 12) {
+                timeString = "000000000000".substring(timeString.length()) + timeString;
+            }
+
+            // tim leading characters if time > 12 digits.
+            if (timeString.length() > 12) {
+                timeString = timeString.substring(timeString.length() - 12);
+            }
+            return (timeString + ipString);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    private static long newTick() {
+        return newTick(System.currentTimeMillis());
+    }
+
+    private static long newTick(long currentTimeMillis) {
+        synchronized (lastTickLock) {
+            if (currentTimeMillis <= lastTick) {
+                currentTimeMillis = lastTick + 1;
+            }
+            lastTick = currentTimeMillis;
+        }
+        return lastTick;
+    }
+
+    /**
+     * Validates the IP address.  The only validation currenly
+     * being made is the check against 127.0.0.1.
+     **/
+    private static void validateIPAddress(InetAddress addr)
+            throws UnknownHostException {
+        if (addr.equals(InetAddress.getByName("127.0.0.1"))) {
+            throw new UnknownHostException(
+                    "127.0.0.1 is not allowed.  Use a different IP address or set host_id.");
+        }
+    }
 }	
