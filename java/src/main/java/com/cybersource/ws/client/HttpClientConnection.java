@@ -287,7 +287,7 @@ public class HttpClientConnection extends Connection {
             if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
                 long resIAT = getResponseIssuedAtTimeInSecs(responseTimeHeader.getValue());
                 if (resIAT > 0) {
-                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTimeSeconds(resIAT));
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
                 }
             }
             List<Header> respheaders = Arrays.asList(postMethod.getResponseHeaders());

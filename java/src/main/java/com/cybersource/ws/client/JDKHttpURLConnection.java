@@ -178,7 +178,7 @@ public class JDKHttpURLConnection extends Connection {
             if (StringUtils.isNotBlank(responseTime)) {
                 long resIAT = getResponseIssuedAtTimeInSecs(responseTime);
                 if (resIAT > 0) {
-                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTimeSeconds(resIAT));
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
                 }
             }
             logger.log(Logger.LT_INFO, "Response headers : " + con.getHeaderFields());

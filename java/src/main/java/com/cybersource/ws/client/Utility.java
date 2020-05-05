@@ -60,6 +60,18 @@ public class Utility {
     public static final String ELEM_CLIENT_ENVIRONMENT = "clientEnvironment";
     private static long lastTick = System.currentTimeMillis();
     private static final Object lastTickLock = new Object();
+    private static InetAddress addr;
+
+    static {
+        try {
+            addr = InetAddress.getLocalHost();
+            validateIPAddress(addr);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
@@ -553,14 +565,25 @@ public class Utility {
     /**
      * get response transit time in seconds
      *
-     * @param resIssuedAtTimeSeconds
+     * @param resIssuedAtTime
      * @return long
      */
-    public static long getResponseTransitTimeSeconds(long resIssuedAtTimeSeconds) {
-        if (resIssuedAtTimeSeconds > 0) {
-            return (System.currentTimeMillis() / 1000) - resIssuedAtTimeSeconds;
+    public static long getResponseTransitTime(long resIssuedAtTime) {
+        if (resIssuedAtTime > 0) {
+            if(checkIfEpochTimeInSecs(resIssuedAtTime)) {
+                return (System.currentTimeMillis() / 1000) - resIssuedAtTime;
+            }else{
+                return System.currentTimeMillis() - resIssuedAtTime;
+            }
         }
         return 0;
+    }
+
+    private static boolean checkIfEpochTimeInSecs(long resIssuedAtTime) {
+        if(String.valueOf(resIssuedAtTime).length() == 10) {
+            return true;
+        }
+        return false;
     }
 
     private static long parseLong(String val, long defaultValue) {
@@ -576,17 +599,6 @@ public class Utility {
     }
 
     /**
-     * Sets the version information in the request.
-     *
-     * @param request request to set the version information in.
-     */
-    public static void setVersionInformation(Map<String, String> request) {
-        request.put(ELEM_CLIENT_LIBRARY, Utility.NVP_LIBRARY);
-        request.put(ELEM_CLIENT_LIBRARY_VERSION, Utility.VERSION);
-        request.put(ELEM_CLIENT_ENVIRONMENT, Utility.ENVIRONMENT);
-    }
-
-    /**
      * Use this to pre-set a merchantTransactionIdentifier before sending the request.
      * This is a unique value for each ICSRequest. The format for the
      * request id is as follows:
@@ -595,7 +607,6 @@ public class Utility {
      * number of milliseconds since the epoch (Jan 1, 1970, 00:00 UTC).
      * The next 10 digits is the ip address of the hostname, represented
      * as a 32 bit integer in decimal format.
-     *
      */
     public static void setMTIFieldIfNotExist(Map<String, String> request) {
         String mti = request.get(MERCHANT_TRANSACTION_IDENTIFIER);
@@ -605,42 +616,34 @@ public class Utility {
     }
 
     public static String generateMTI() {
-        InetAddress addr;
-        try {
-            addr = InetAddress.getLocalHost();
-
-            validateIPAddress(addr);
-
-            BigInteger ip = new BigInteger(1, addr.getAddress());
-
-            // pad the ip address string to 10 characters
-            String ipString = ip.toString();
-            if (ipString.length() < 10) {
-                ipString = "0000000000".substring(ipString.length()) + ipString;
-            }
-
-            // trim leading characters in case it's > 10 digits long
-            if (ipString.length() > 10) {
-                ipString = ipString.substring(ipString.length() - 10);
-            }
-
-            // pad the time string to 12 characters
-            String timeString;
-            timeString = String.valueOf(newTick());
-            if (timeString.length() < 12) {
-                timeString = "000000000000".substring(timeString.length()) + timeString;
-            }
-
-            // tim leading characters if time > 12 digits.
-            if (timeString.length() > 12) {
-                timeString = timeString.substring(timeString.length() - 12);
-            }
-            return (timeString + ipString);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        if(addr == null){
+            return null;
         }
-        return null;
+        BigInteger ip = new BigInteger(1, addr.getAddress());
 
+        // pad the ip address string to 10 characters
+        String ipString = ip.toString();
+        if (ipString.length() < 10) {
+            ipString = "0000000000".substring(ipString.length()) + ipString;
+        }
+
+        // trim leading characters in case it's > 10 digits long
+        if (ipString.length() > 10) {
+            ipString = ipString.substring(ipString.length() - 10);
+        }
+
+        // pad the time string to 12 characters
+        String timeString;
+        timeString = String.valueOf(newTick());
+        if (timeString.length() < 12) {
+            timeString = "000000000000".substring(timeString.length()) + timeString;
+        }
+
+        // tim leading characters if time > 12 digits.
+        if (timeString.length() > 12) {
+            timeString = timeString.substring(timeString.length() - 12);
+        }
+        return (timeString + ipString);
     }
 
     private static long newTick() {
@@ -665,7 +668,7 @@ public class Utility {
             throws UnknownHostException {
         if (addr.equals(InetAddress.getByName("127.0.0.1"))) {
             throw new UnknownHostException(
-                    "127.0.0.1 is not allowed.  Use a different IP address or set host_id.");
+                    "127.0.0.1 is not allowed.  Use a different IP address.");
         }
     }
 }	

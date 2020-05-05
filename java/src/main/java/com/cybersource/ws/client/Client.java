@@ -37,8 +37,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.cybersource.ws.client.Utility.setMTIFieldIfNotExist;
-import static com.cybersource.ws.client.Utility.setVersionInformation;
+import static com.cybersource.ws.client.Utility.*;
 
 /**
  * Class containing runTransaction() methods that accept the requests in the
@@ -179,6 +178,17 @@ public class Client {
                 con.release();
             }
         }
+    }
+
+    /**
+     * Sets the version information in the request.
+     *
+     * @param request request to set the version information in.
+     */
+    private static void setVersionInformation(Map<String, String> request) {
+        request.put(ELEM_CLIENT_LIBRARY, Utility.NVP_LIBRARY);
+        request.put(ELEM_CLIENT_LIBRARY_VERSION, Utility.VERSION);
+        request.put(ELEM_CLIENT_ENVIRONMENT, Utility.ENVIRONMENT);
     }
 
     /**
