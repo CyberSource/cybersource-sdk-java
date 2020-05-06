@@ -14,6 +14,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.*;
@@ -80,6 +81,7 @@ public class PoolingHttpClientConnection extends Connection {
                         String hostname = uri.getHost();
                         connectionManager = new PoolingHttpClientConnectionManager();
                         connectionManager.setDefaultMaxPerRoute(merchantConfig.getDefaultMaxConnectionsPerRoute());
+                        connectionManager.setDefaultSocketConfig(SocketConfig.custom().setSoKeepAlive(true).setSoTimeout(mc.getSocketTimeoutMs()).build());
                         connectionManager.setMaxTotal(merchantConfig.getMaxConnections());
                         connectionManager.setValidateAfterInactivity(mc.getValidateAfterInactivityMs());
                         final HttpHost httpHost = new HttpHost(hostname);
@@ -350,7 +352,7 @@ public class PoolingHttpClientConnection extends Connection {
                     if (StringUtils.isBlank(errMessage)) {
                         errMessage = exception.getLocalizedMessage();
                     }
-                    if (StringUtils.isNotBlank(errMessage) && "Connection reset".equalsIgnoreCase(errMessage)) {
+                    if (StringUtils.isNotBlank(errMessage) && ( errMessage.equalsIgnoreCase("Connection reset") || errMessage.contains("Connection reset"))) {
                         retryAfter(retryWaitInterval, executionCount, logger);
                         return true;
                     }
