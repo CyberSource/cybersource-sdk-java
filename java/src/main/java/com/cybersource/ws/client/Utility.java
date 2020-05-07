@@ -587,19 +587,11 @@ public class Utility {
     }
 
     public static String checkIfMTIFiledExist(Document request, String nsURI) {
-        Element element = Utility.getElement(request, MERCHANT_TRANSACTION_IDENTIFIER, nsURI);
-        String mtiFieldValue = checkIfMTIFiledExist(element);
+        String mtiFieldValue = Utility.getElementText(request, MERCHANT_TRANSACTION_IDENTIFIER, nsURI);
         if(StringUtils.isBlank(mtiFieldValue)){
-            element = Utility.getElement(request, MERCHANT_TRANSACTION_IDENTIFIER, null);
-            mtiFieldValue = checkIfMTIFiledExist(element);
+            mtiFieldValue = Utility.getElementText(request, MERCHANT_TRANSACTION_IDENTIFIER, null);
         }
         return mtiFieldValue;
     }
 
-    public static String checkIfMTIFiledExist(Element element) {
-        if(element != null){
-            return element.getAttribute(MERCHANT_TRANSACTION_IDENTIFIER);
-        }
-        return null;
-    }
 }	
