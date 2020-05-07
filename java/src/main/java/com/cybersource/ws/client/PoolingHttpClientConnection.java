@@ -338,13 +338,13 @@ public class PoolingHttpClientConnection extends Connection {
 
             HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
             if (!httpClientContext.isRequestSent()) {
-                retryAfter(retryWaitInterval, executionCount, logger);
+                retryAfter(retryWaitInterval, executionCount, "request_not_sent");
                 return true;
             }
 
             if(mc.retryIfMTIFieldExistEnabled()){
                 if (exception instanceof NoHttpResponseException) {
-                    retryAfter(retryWaitInterval, executionCount, logger);
+                    retryAfter(retryWaitInterval, executionCount, "NoHttpResponseException");
                     return true;
                 }
                 if(exception instanceof java.net.SocketException) {
@@ -353,7 +353,7 @@ public class PoolingHttpClientConnection extends Connection {
                         errMessage = exception.getLocalizedMessage();
                     }
                     if (StringUtils.isNotBlank(errMessage) && ( errMessage.equalsIgnoreCase("Connection reset") || errMessage.contains("Connection reset"))) {
-                        retryAfter(retryWaitInterval, executionCount, logger);
+                        retryAfter(retryWaitInterval, executionCount, "SocketException:Connection reset");
                         return true;
                     }
                 }
@@ -388,10 +388,10 @@ public class PoolingHttpClientConnection extends Connection {
         }
     }
 
-    private void retryAfter(long millis, int executionCount, LoggerWrapper logger) {
+    private void retryAfter(long millis, int executionCount, String reason) {
         try {
             Thread.sleep(millis);
-            logger.log(Logger.LT_INFO, "Retrying Request -- " + logger.getUniqueKey() + " Retry Count -- " + executionCount);
+            logger.log(Logger.LT_INFO, "Retrying Request due to " + reason +"-- Retry Count -- " + executionCount);
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
