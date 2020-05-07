@@ -178,7 +178,7 @@ public class XMLClient {
                 }
             }
 
-            setVersionInformation(request, nsURI, mc.retryIfMTIFieldExistEnabled());
+            setVersionInformation(request, nsURI);
 
             DocumentBuilder builder = Utility.newDocumentBuilder();
 
@@ -269,7 +269,7 @@ public class XMLClient {
      * @param request request to set the version information in.
      * @param nsURI   namespaceURI to use.
      */
-    private static void setVersionInformation(Document request, String nsURI, boolean isAddingMTIEnabled) {
+    private static void setVersionInformation(Document request, String nsURI) {
         //
         // First, delete the version fields currently in the request document,
         // if any.

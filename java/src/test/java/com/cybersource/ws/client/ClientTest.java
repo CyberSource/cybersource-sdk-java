@@ -1,9 +1,6 @@
 package com.cybersource.ws.client;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +14,17 @@ import static org.junit.Assert.assertEquals;
 public class ClientTest extends BaseTest {
 
     Map<String, String> request = getSampleRequest();
+    Properties orgMerchantProps = new Properties();
+    @Before
+    public void setup(){
+        orgMerchantProps.putAll(merchantProperties);
+    }
 
+    @After
+    public void tearDown(){
+        merchantProperties.clear();
+        merchantProperties.putAll(orgMerchantProps);
+    }
     @Test
     public void testSetVersionInformation() throws InvocationTargetException {
         Class[] argClasses = {Map.class};
