@@ -253,9 +253,11 @@ public class MerchantConfig {
     }
 
     /**
-     * retryIfMTIFieldExist If enabled then SDK will include the merchantTransactionIdentifier field in the original
-     * request if not passed already in payload for authorization, capture, sale, follow-on credit, or stand-alone credit, etc).
-     * The value of the merchantTransactionIdentifier field must be unique
+     * retryIfMTIFieldExist If enabled and merchantTransactionIdentifier field is passed in payload then SDK will
+     * retry the transaction in case when connection pooling http client is used and if SDK receives an I/O error/exception, when executing
+     * a request over a connection that has been closed at the server side.
+     *
+     * The value of the merchantTransactionIdentifier[MTI] field must be unique
      *
      * If not enabled, a transaction may fail(retry wont occur in some cases) if while sending transaction SDK receives an I/O error/exception, when executing
      * a request over a connection that has been closed at the server side.
@@ -666,7 +668,7 @@ public class MerchantConfig {
             validateAfterInactivityMs = getIntegerProperty(merchantID, "validateAfterInactivityMs", 0);
             staleConnectionCheckEnabled = getBooleanProperty(merchantID, "staleConnectionCheckEnabled", true);
             shutdownHookEnabled = getBooleanProperty(merchantID, "enabledShutdownHook", true);
-            retryIfMTIFieldExist = getBooleanProperty(merchantID, "retryIfMTIFieldExist", false);
+            retryIfMTIFieldExist = getBooleanProperty(merchantID, "retryIfMTIFieldExist", true);
         }
 
         allowRetry = getBooleanProperty(merchantID, "allowRetry", true);

@@ -169,6 +169,13 @@ public class XMLClient {
 
             nsURI = mc.getEffectiveNamespaceURI();
 
+            if (mc.getUseHttpClientWithConnectionPool()){
+                String mtiField = checkIfMTIFiledExist(request, nsURI);
+                if(StringUtils.isBlank(mtiField)) {
+                    throw new ClientException(HTTP_BAD_REQUEST, MTI_FIELD_ERR_MSG, false, logger);
+                }
+            }
+
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
             setVersionInformation(request, nsURI, mc.retryIfMTIFieldExistEnabled());
@@ -234,7 +241,6 @@ public class XMLClient {
             }
        }
     }
-
 
     /**
      * Sets the merchantID in the request.
@@ -328,12 +334,6 @@ public class XMLClient {
                 request, nsURI, ELEM_CLIENT_LIBRARY_VERSION, Utility.VERSION));
         versionsFragment.appendChild(Utility.createElement(
                 request, nsURI, ELEM_CLIENT_ENVIRONMENT, Utility.ENVIRONMENT));
-
-        if(isAddingMTIEnabled && Utility.getElement(
-                request, MERCHANT_TRANSACTION_IDENTIFIER, nsURI)==null) {
-            versionsFragment.appendChild(Utility.createElement(
-                    request, nsURI, MERCHANT_TRANSACTION_IDENTIFIER, generateMTI()));
-        }
 
         // if the current element is not null, it will be the sibling right
         // next to the version fields.
@@ -593,8 +593,6 @@ public class XMLClient {
         }
         return mc;
     }
-
-
 }
 
 

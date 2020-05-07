@@ -30,12 +30,12 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Class containing useful constants and methods.
@@ -58,20 +58,11 @@ public class Utility {
     public static final String ELEM_CLIENT_LIBRARY = "clientLibrary";
     public static final String ELEM_CLIENT_LIBRARY_VERSION = "clientLibraryVersion";
     public static final String ELEM_CLIENT_ENVIRONMENT = "clientEnvironment";
-    private static long lastTick = System.currentTimeMillis();
-    private static final Object lastTickLock = new Object();
-    private static InetAddress addr;
-
-    static {
-        try {
-            addr = InetAddress.getLocalHost();
-            validateIPAddress(addr);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-    }
-
+    /**
+     * HTTP Status-Code 400: Bad Request.
+     */
+    public static final int HTTP_BAD_REQUEST = 400;
+    public static final String MTI_FIELD_ERR_MSG = "merchantTransactionIdentifier field is mandatory if useHttpClientWithConnectionPool is set to true";
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
@@ -580,10 +571,7 @@ public class Utility {
     }
 
     private static boolean checkIfEpochTimeInSecs(long resIssuedAtTime) {
-        if(String.valueOf(resIssuedAtTime).length() == 10) {
-            return true;
-        }
-        return false;
+        return String.valueOf(resIssuedAtTime).length() == 10;
     }
 
     private static long parseLong(String val, long defaultValue) {
@@ -598,77 +586,20 @@ public class Utility {
         return result;
     }
 
-    /**
-     * Use this to pre-set a merchantTransactionIdentifier before sending the request.
-     * This is a unique value for each ICSRequest. The format for the
-     * request id is as follows:
-     * 0916351920802167904518
-     * Where the first 12 digits of the of the number is the
-     * number of milliseconds since the epoch (Jan 1, 1970, 00:00 UTC).
-     * The next 10 digits is the ip address of the hostname, represented
-     * as a 32 bit integer in decimal format.
-     */
-    public static void setMTIFieldIfNotExist(Map<String, String> request) {
-        String mti = request.get(MERCHANT_TRANSACTION_IDENTIFIER);
-        if (StringUtils.isBlank(mti)) {
-            request.put(MERCHANT_TRANSACTION_IDENTIFIER, generateMTI());
+    public static String checkIfMTIFiledExist(Document request, String nsURI) {
+        Element element = Utility.getElement(request, MERCHANT_TRANSACTION_IDENTIFIER, nsURI);
+        String mtiFieldValue = checkIfMTIFiledExist(element);
+        if(StringUtils.isBlank(mtiFieldValue)){
+            element = Utility.getElement(request, MERCHANT_TRANSACTION_IDENTIFIER, null);
+            mtiFieldValue = checkIfMTIFiledExist(element);
         }
+        return mtiFieldValue;
     }
 
-    public static String generateMTI() {
-        if(addr == null){
-            return null;
+    public static String checkIfMTIFiledExist(Element element) {
+        if(element != null){
+            return element.getAttribute(MERCHANT_TRANSACTION_IDENTIFIER);
         }
-        BigInteger ip = new BigInteger(1, addr.getAddress());
-
-        // pad the ip address string to 10 characters
-        String ipString = ip.toString();
-        if (ipString.length() < 10) {
-            ipString = "0000000000".substring(ipString.length()) + ipString;
-        }
-
-        // trim leading characters in case it's > 10 digits long
-        if (ipString.length() > 10) {
-            ipString = ipString.substring(ipString.length() - 10);
-        }
-
-        // pad the time string to 12 characters
-        String timeString;
-        timeString = String.valueOf(newTick());
-        if (timeString.length() < 12) {
-            timeString = "000000000000".substring(timeString.length()) + timeString;
-        }
-
-        // tim leading characters if time > 12 digits.
-        if (timeString.length() > 12) {
-            timeString = timeString.substring(timeString.length() - 12);
-        }
-        return (timeString + ipString);
-    }
-
-    private static long newTick() {
-        return newTick(System.currentTimeMillis());
-    }
-
-    private static long newTick(long currentTimeMillis) {
-        synchronized (lastTickLock) {
-            if (currentTimeMillis <= lastTick) {
-                currentTimeMillis = lastTick + 1;
-            }
-            lastTick = currentTimeMillis;
-        }
-        return lastTick;
-    }
-
-    /**
-     * Validates the IP address.  The only validation currenly
-     * being made is the check against 127.0.0.1.
-     **/
-    private static void validateIPAddress(InetAddress addr)
-            throws UnknownHostException {
-        if (addr.equals(InetAddress.getByName("127.0.0.1"))) {
-            throw new UnknownHostException(
-                    "127.0.0.1 is not allowed.  Use a different IP address.");
-        }
+        return null;
     }
 }	

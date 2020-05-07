@@ -51,9 +51,6 @@ public class Client {
 
     private static final String ELEM_NVP_REPLY = "nvpReply";
 
-    private static final String MERCHANT_ID = "merchantID";
-    private static final String KEY_ALIAS = "keyAlias";
-
     private static ConcurrentHashMap<String, MerchantConfig> mcObjects = new ConcurrentHashMap<String, MerchantConfig>();
 
     /**
@@ -103,9 +100,14 @@ public class Client {
             }
 
             setVersionInformation(request);
-            if(mc.retryIfMTIFieldExistEnabled()) {
-                setMTIFieldIfNotExist(request);
+
+            if (mc.getUseHttpClientWithConnectionPool()){
+                String mtiField = request.get(MERCHANT_TRANSACTION_IDENTIFIER);
+                if(StringUtils.isBlank(mtiField)) {
+                    throw new ClientException(HTTP_BAD_REQUEST, MTI_FIELD_ERR_MSG, false, logger);
+                }
             }
+
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
@@ -184,6 +186,7 @@ public class Client {
      * Sets the version information in the request.
      *
      * @param request request to set the version information in.
+     *
      */
     private static void setVersionInformation(Map<String, String> request) {
         request.put(ELEM_CLIENT_LIBRARY, Utility.NVP_LIBRARY);
@@ -234,7 +237,7 @@ public class Client {
 
         if ( mc.getUseSignAndEncrypted() ) {
         	// Encrypt signed Document
-            resultDocument = SecurityUtil.handleMessageCreation(resultDocument, request.get(MERCHANT_ID), logger);
+            resultDocument = SecurityUtil.handleMessageCreation(resultDocument, request.get(ELEM_MERCHANT_ID), logger);
             logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
         }
         if (logSignedData) {
@@ -325,13 +328,13 @@ public class Client {
      */
     static private MerchantConfig getMerchantConfigObject(Map<String, String> request, Properties props) throws ConfigException {
         MerchantConfig mc;
-        String merchantID = request.get(MERCHANT_ID);
+        String merchantID = request.get(ELEM_MERCHANT_ID);
         if (merchantID == null) {
             // if no merchantID is present in the request, get its
             // value from the properties and add it to the request.
             mc = new MerchantConfig(props, null);
             merchantID = mc.getMerchantID();
-            request.put(MERCHANT_ID, merchantID);
+            request.put(ELEM_MERCHANT_ID, merchantID);
         } else {
             mc = new MerchantConfig(props, merchantID);
         }
@@ -346,11 +349,11 @@ public class Client {
      * @return String
      */
     private static String getMerchantId(Map<String, String> request, Properties props) {
-        String merchantID = request.get(MERCHANT_ID);
+        String merchantID = request.get(ELEM_MERCHANT_ID);
         if (merchantID == null) {
             // if no merchantID is present in the request, get its
             // value from the properties
-            merchantID = props.getProperty(MERCHANT_ID);
+            merchantID = props.getProperty(ELEM_MERCHANT_ID);
         }
         return merchantID;
     }
@@ -389,12 +392,12 @@ public class Client {
             }
         }
         MerchantConfig mc = mcObjects.get(midOrKeyAlias);
-        String merchantID = request.get(MERCHANT_ID);
+        String merchantID = request.get(ELEM_MERCHANT_ID);
         // if no merchantID is present in the request, get its
         // value from the properties and add it to the request.
         if(StringUtils.isEmpty(merchantID)) {
             merchantID = mc.getMerchantID();
-            request.put(MERCHANT_ID, merchantID);
+            request.put(ELEM_MERCHANT_ID, merchantID);
         }
         return mc;
     }
