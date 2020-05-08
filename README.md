@@ -240,9 +240,9 @@ _______________________________
   3)Changed retry interval from second to millisecond
   
   4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
-    
-  5) Added troubleshooting section in README.
-
+  
+  5)Added troubleshooting section in README.
+  
 Version Cybersource-sdk-java 6.2.9 (APR,2020)
 _______________________________
   1)Corrected request header name
@@ -336,12 +336,12 @@ _______________________________
             Client.runTransaction(requestMap, merchantProperties);
         }catch (ClientException e){
             e.getInnerException().printStackTrace();
+            // or 
+            String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);      
         }
         
-        or  
-        
-        String stackTrace = Utility.getStackTrace(e.getInnerException());
-  
+   
+      
 ## Documentation
 - For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>.
 - For all other support needs, see <https://support.cybersource.com/>.

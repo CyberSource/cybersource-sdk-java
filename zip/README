@@ -355,11 +355,10 @@ _______________________________
             Client.runTransaction(requestMap, merchantProperties);
         }catch (ClientException e){
             e.getInnerException().printStackTrace();
+            // or
+            String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);
         }
 
-         or
-
-         String stackTrace = Utility.getStackTrace(e.getInnerException());
 
 ##Documentation
 
