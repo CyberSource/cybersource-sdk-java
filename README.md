@@ -337,6 +337,10 @@ _______________________________
         }catch (ClientException e){
             e.getInnerException().printStackTrace();
         }
+        
+        or  
+        
+        String stackTrace = Utility.getStackTrace(e.getInnerException());
   
 ## Documentation
 - For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>.
