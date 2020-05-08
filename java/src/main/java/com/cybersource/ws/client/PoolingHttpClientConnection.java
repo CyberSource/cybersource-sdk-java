@@ -81,9 +81,9 @@ public class PoolingHttpClientConnection extends Connection {
                         String hostname = uri.getHost();
                         connectionManager = new PoolingHttpClientConnectionManager();
                         connectionManager.setDefaultMaxPerRoute(merchantConfig.getDefaultMaxConnectionsPerRoute());
-                        connectionManager.setDefaultSocketConfig(SocketConfig.custom().setSoKeepAlive(true).setSoTimeout(mc.getSocketTimeoutMs()).build());
+                        connectionManager.setDefaultSocketConfig(SocketConfig.custom().setSoKeepAlive(true).setSoTimeout(merchantConfig.getSocketTimeoutMs()).build());
                         connectionManager.setMaxTotal(merchantConfig.getMaxConnections());
-                        connectionManager.setValidateAfterInactivity(mc.getValidateAfterInactivityMs());
+                        connectionManager.setValidateAfterInactivity(merchantConfig.getValidateAfterInactivityMs());
                         final HttpHost httpHost = new HttpHost(hostname);
                         connectionManager.setMaxPerRoute(new HttpRoute(httpHost), merchantConfig.getMaxConnectionsPerRoute());
                         initHttpClient(merchantConfig, connectionManager);

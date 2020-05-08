@@ -154,6 +154,8 @@ an I/O error/exception, when executing a request over a connection that has been
 server and similar or some other exception has occurred. It is not recommended to retry on non-idempotent methods, so we are considering `merchantTransactionIdentifier` as
 idempotent key. Hence if you want to use PoolingHttpClient, merchantTransactionIdentifier field is mandatory in the payload(nvp or xml).
 
+merchantTransactionIdentifier field should be present in the original request for all the services. The value of the merchant transaction ID must be unique for 60 days.
+
 To get more information related to connection pooling please refer wiki.
 
 ##Message Level Encryption
