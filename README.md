@@ -157,7 +157,13 @@ keytool -list -v -keystore <Your_keystore_name>`
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
   
 ## PoolingHttpClient
-   To get more information please refer wiki.
+   PoolingHttpClient is built using the apache's PoolingHttpClientConnectionManager class. It comes with retry functionality which is very much needed in case if
+   SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side. However there might be some cases when
+   transaction has reached server and similar or some other exception has occurred. It is not recommended to retry on non-idempotent methods, so we are considering
+   `merchantTransactionIdentifier` as idempotent key. Hence if you want to use PoolingHttpClient, merchantTransactionIdentifier field is mandatory in the payload(nvp or xml).
+   
+   
+   To get more information related to connection pooling please refer wiki.
    
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
@@ -215,7 +221,9 @@ _______________________________
   
   3)Changed retry interval from second to millisecond
   
-  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to cybersource
+  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
+    
+  5) Added troubleshooting section in README.
 
 Version Cybersource-sdk-java 6.2.9 (APR,2020)
 _______________________________
@@ -313,7 +321,7 @@ _______________________________
         }
   
 ## Documentation
-- For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>.
-- For all other support needs, see <http://www.cybersource.com/support>.
+- For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>.
+- For all other support needs, see <https://support.cybersource.com/>.
 
 
