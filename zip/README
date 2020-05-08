@@ -80,18 +80,33 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
          - Refer to the "PoolingHttpClientShutdown" section below.
 
     n. Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
-         Note : Below default values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
+         Note : Sample values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
          Before using these values in actual real time application, please consider all real time factors. Refer this link for more detailed explanation.
-         - `maxConnections` set the maximum number of total open connections. default value is 200
-         - `defaultMaxConnectionsPerRoute` Set the maximum number of concurrent connections per route. default value is 200
-         - `maxConnectionsPerRoute` Set the total number of concurrent connections to a specific route. default value is 200
-         - `connectionRequestTimeoutMs` the time to wait for a connection from the connection manager/pool. default value is 1000
-         - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 2000
-         - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 2000
-         - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 3000
-         - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connaection can be idle before it is evicted from the pool. default value is 30000
+         - 'maxConnections' Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to be opened with the target service.
+            There is no default value. For applications that create many long-lived connections, increase the value of this parameter.
+         - 'defaultMaxConnectionsPerRoute' the maximum number of connections per (any) route.
+         - 'maxConnectionsPerRoute' Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to the same host or route.
+            In SDK, all above config does same functionality and the same value can be given to these configs as we have only one route.
+            Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
+         - 'connectionRequestTimeoutMs' Time taken in milliseconds to get connection request from the pool. If it times out, it will throw error as Timeout waiting for connection from pool
+         - 'connectionTimeoutMs' Specifies the number of milliseconds to wait while a connection is being established.
+         - 'socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
+         - 'evictThreadSleepTimeMs' Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread.
+            This thread will check if any idle/expired/stale connections are available in pool and evict it.
+         - 'maxKeepAliveTimeMs' Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
+         - 'staleConnectionCheckEnabled` It determines whether the stale connection check is to be used. Disabling the stale connection check can result in slight performance improvement
+            at the risk of getting an I/O error, when executing a request over a connection that has been closed at the server side. By default it is set to true, which means it is enabled.
+         - 'validateAfterInactivityMs' By default it is set to 0. This value can be set if in case you decide to disable staleConnectionCheckEnabled to get slight better performance.
+            We recommended a value of 2000ms.
+         - 'enabledShutdownHook` We should close the connection manager, http client and idle connection cleaner thread when application get shutdown both abruptly and gracefully.
+            If `enabledShutdownHook` is true, then JVM runtime addShutdownHook method will be initialized. Shutdown Hooks are a special construct that allows developers to plug in a piece of
+            code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean-up operations in case the VM is shutting down.
+                `    private void addShutdownHook() {
+                      Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
+                    }`
+            createShutdownHookThread method will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread. By default this is enabled.
 
-    o. If "merchantConfigCacheEnabled" is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
+    o. If 'merchantConfigCacheEnabled' is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
          - If cache enabled is true, for single merchant id, if you change any properties after first initialization, it will not reflect.
 
     p. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
