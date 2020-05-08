@@ -60,11 +60,11 @@ public class JDKHttpURLConnection extends Connection {
     /**
      * Post request by jdkHttpURL connection
      * @param request
-     * @param requestSentTime
+     * @param startTime
      * @throws IOException
      * @throws TransformerException
      */
-    void postDocument(Document request, long requestSentTime)
+    void postDocument(Document request, long startTime)
             throws IOException,
             TransformerException {
         //long startTime = System.nanoTime();
@@ -72,7 +72,7 @@ public class JDKHttpURLConnection extends Connection {
         URL url = new URL(serverURL);
         con = ConnectionHelper.openConnection(url, mc);
         con.setRequestProperty(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-        con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - requestSentTime));
+        con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - startTime));
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         ConnectionHelper.setTimeout(con, mc.getTimeout());
@@ -176,7 +176,7 @@ public class JDKHttpURLConnection extends Connection {
         if (mc.getEnableLog() && con != null) {
             String responseTime = con.getHeaderField(RESPONSE_TIME_REPLY);
             if (StringUtils.isNotBlank(responseTime)) {
-                long resIAT = getResponseIssuedAtTimeInSecs(responseTime);
+                long resIAT = getResponseIssuedAtTime(responseTime);
                 if (resIAT > 0) {
                     logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
                 }

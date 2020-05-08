@@ -146,18 +146,18 @@ public class PoolingHttpClientConnection extends Connection {
      * Method to post the request using http pool connection
      *
      * @param request
-     * @param requestSentTime
+     * @param startTime
      * @throws IOException
      * @throws TransformerException
      */
     @Override
-    void postDocument(Document request, long requestSentTime) throws IOException, TransformerException {
+    void postDocument(Document request, long startTime) throws IOException, TransformerException {
         String serverURL = mc.getEffectiveServerURL();
         httpPost = new HttpPost(serverURL);
         String requestString = documentToString(request);
         StringEntity stringEntity = new StringEntity(requestString, "UTF-8");
         httpPost.setEntity(stringEntity);
-        httpPost.setHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - requestSentTime));
+        httpPost.setHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - startTime));
         httpPost.setHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         logRequestHeaders();
         httpContext = HttpClientContext.create();
@@ -293,7 +293,7 @@ public class PoolingHttpClientConnection extends Connection {
         if (mc.getEnableLog() && httpResponse != null) {
             Header responseTimeHeader = httpResponse.getFirstHeader(RESPONSE_TIME_REPLY);
             if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
-                long resIAT = getResponseIssuedAtTimeInSecs(responseTimeHeader.getValue());
+                long resIAT = getResponseIssuedAtTime(responseTimeHeader.getValue());
                 if (resIAT > 0) {
                     logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
                 }

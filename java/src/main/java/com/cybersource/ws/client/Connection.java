@@ -98,14 +98,14 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     /**
      * Abstract method to post request
      * @param request
-     * @param requestSentTime
+     * @param startTime
      * @throws IOException
      * @throws TransformerConfigurationException
      * @throws TransformerException
      * @throws MalformedURLException
      * @throws ProtocolException
      */
-    abstract void postDocument(Document request, long requestSentTime)
+    abstract void postDocument(Document request, long startTime)
             throws IOException, TransformerConfigurationException,
             TransformerException, MalformedURLException,
             ProtocolException;
@@ -141,10 +141,10 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
      * @throws ClientException
      * @throws FaultException
      */
-    public Document post(Document request, long requestSentTime)
+    public Document post(Document request, long startTime)
             throws ClientException, FaultException {
         try {
-            postDocument(request, requestSentTime);
+            postDocument(request, startTime);
             checkForFault();
             return (parseReceivedDocument());
         } catch (IOException e) {

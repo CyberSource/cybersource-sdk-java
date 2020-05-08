@@ -91,7 +91,7 @@ public class Client {
         LoggerWrapper logger = null;
         Connection con = null;
         try {
-            long requestSentTime = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
             boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
             if(isMerchantConfigCacheEnabled) {
                 mc = getInstanceMap(request, props);
@@ -151,7 +151,7 @@ public class Client {
             else{
             	con = Connection.getInstance(mc, builder, logger);
             }
-            Document wrappedReply = con.post(signedDoc, requestSentTime);
+            Document wrappedReply = con.post(signedDoc, startTime);
             Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
             logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ",false);
 

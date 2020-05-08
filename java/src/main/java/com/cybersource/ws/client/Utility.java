@@ -542,12 +542,12 @@ public class Utility {
     }
 
     /**
-     * get response issued time in seconds
+     * get response issued time
      *
      * @param responseTime
      * @return long
      */
-    public static long getResponseIssuedAtTimeInSecs(String responseTime) {
+    public static long getResponseIssuedAtTime(String responseTime) {
         return parseLong(responseTime, 0L);
     }
 

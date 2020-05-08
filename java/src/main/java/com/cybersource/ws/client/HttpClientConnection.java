@@ -64,14 +64,14 @@ public class HttpClientConnection extends Connection {
     /**
      * Post request by httpclient connection
      * @param request
-     * @param requestSentTime
+     * @param startTime
      * @throws IOException
      * @throws TransformerException
      */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#postDocument(org.w3c.dom.Document)
      */
-    void postDocument(Document request, long requestSentTime)
+    void postDocument(Document request, long startTime)
             throws IOException, TransformerException {
     	
     	/*
@@ -93,7 +93,7 @@ public class HttpClientConnection extends Connection {
         postMethod.setRequestEntity(
                 new StringRequestEntity(requestString, null, "UTF-8"));
         postMethod.setRequestHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-        postMethod.setRequestHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-requestSentTime));
+        postMethod.setRequestHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-startTime));
 		logRequestHeaders();
         logger.log(Logger.LT_INFO,
                 "Sending " + requestString.length() + " bytes to " + serverURL);
@@ -285,7 +285,7 @@ public class HttpClientConnection extends Connection {
         if(mc.getEnableLog() && postMethod != null) {
             Header responseTimeHeader = postMethod.getResponseHeader(RESPONSE_TIME_REPLY);
             if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
-                long resIAT = getResponseIssuedAtTimeInSecs(responseTimeHeader.getValue());
+                long resIAT = getResponseIssuedAtTime(responseTimeHeader.getValue());
                 if (resIAT > 0) {
                     logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
                 }

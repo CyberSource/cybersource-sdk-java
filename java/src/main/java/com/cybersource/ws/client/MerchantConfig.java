@@ -58,6 +58,7 @@ public class MerchantConfig {
     private String logFilename;
     private int logMaximumSize;
     private boolean useHttpClient;
+    private boolean merchantConfigCacheEnabled;
     private boolean useHttpClientWithConnectionPool;
     private int maxConnections;
     private int defaultMaxConnectionsPerRoute;
@@ -68,6 +69,15 @@ public class MerchantConfig {
     private int evictThreadSleepTimeMs;
     private int maxKeepAliveTimeMs;
     private int validateAfterInactivityMs;
+    private boolean staleConnectionCheckEnabled;
+    private boolean shutdownHookEnabled;
+    private boolean retryIfMTIFieldExist;
+
+    //Retry Pattern
+    private boolean allowRetry;
+    private int numberOfRetries = 0;
+    private long retryInterval = 0;
+
     private int timeout;
     private String proxyHost;
     private int proxyPort;
@@ -77,20 +87,11 @@ public class MerchantConfig {
     private String customHttpClass;
     private boolean customHttpClassEnabled;
     private boolean certificateCacheEnabled;
-    private boolean merchantConfigCacheEnabled;
-    private boolean staleConnectionCheckEnabled;
-    private boolean shutdownHookEnabled;
-    private boolean retryIfMTIFieldExist;
     // computed values
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
     private String effectivePassword;
     private boolean useSignAndEncrypted;
-
-    //Retry Pattern
-    private int numberOfRetries = 0;
-    private long retryInterval = 0;
-    private boolean allowRetry;
 
     /**
      * Getter method for useSignAndEncrypted
@@ -671,8 +672,8 @@ public class MerchantConfig {
             retryIfMTIFieldExist = getBooleanProperty(merchantID, "retryIfMTIFieldExist", true);
         }
 
-        allowRetry = getBooleanProperty(merchantID, "allowRetry", true);
         if (useHttpClient || useHttpClientWithConnectionPool) {
+            allowRetry = getBooleanProperty(merchantID, "allowRetry", true);
             if (allowRetry) {
                 numberOfRetries = getIntegerProperty(merchantID, "numberOfRetries", 3);
                 if (numberOfRetries > 0)
