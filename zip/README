@@ -261,8 +261,8 @@ provides reusable components for client-side authentication, HTTP state manageme
 Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
 
-  1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
-  2)Added PoolingHttpClientConnection implementation
+  1)Added PoolingHttpClient implementation
+  2)MerchantConfig Object Caching based on KeyAlias/Merchant Id
   3)Changed retry interval from second to millisecond
   4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
   5)Added troubleshooting section in README.

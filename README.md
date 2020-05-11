@@ -233,9 +233,9 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
 
-  1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
+  1)Added PoolingHttpClientConnection implementation
   
-  2)Added PoolingHttpClientConnection implementation
+  2)MerchantConfig Object Caching based on KeyAlias/Merchant Id
   
   3)Changed retry interval from second to millisecond
   
