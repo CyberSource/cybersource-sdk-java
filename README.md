@@ -230,7 +230,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.10 (APR,2020)
+Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
 
   1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
