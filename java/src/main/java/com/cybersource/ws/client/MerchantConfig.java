@@ -850,8 +850,8 @@ public class MerchantConfig {
         appendPair(sb, "enableCacert", enableCacert);
         if (useHttpClient || useHttpClientWithConnectionPool) {
             appendPair(sb, "allowRetry", allowRetry);
-            appendPair(sb, "RetryCount", numberOfRetries);
-            appendPair(sb, "RetryInterval", retryInterval);
+            appendPair(sb, "retryCount", numberOfRetries);
+            appendPair(sb, "retryInterval", retryInterval);
         }
         if (useHttpClientWithConnectionPool) {
             appendPair(sb, "maxConnections", maxConnections);
