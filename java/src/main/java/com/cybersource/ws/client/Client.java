@@ -103,7 +103,8 @@ public class Client {
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
-            if (mc.getUseHttpClientWithConnectionPool()){
+            String isAuthService = request.get(AUTH_SERVICE_NVP);
+            if (Boolean.valueOf(isAuthService) && mc.getUseHttpClientWithConnectionPool()){
                 String mtiField = request.get(MERCHANT_TRANSACTION_IDENTIFIER);
                 if(StringUtils.isBlank(mtiField)) {
                     throw new ClientException(HTTP_BAD_REQUEST, MTI_FIELD_ERR_MSG, false, logger);

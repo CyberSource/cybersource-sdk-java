@@ -50,6 +50,11 @@ public class Utility {
     public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
     public static final String RESPONSE_TIME_REPLY = "v-c-response-time";
     public static final String MERCHANT_TRANSACTION_IDENTIFIER = "merchantTransactionIdentifier";
+
+    public static final String AUTH_SERVICE = "ccAuthService";
+    public static final String AUTH_SERVICE_XML_RUN_ATT = "run";
+    public static final String AUTH_SERVICE_NVP = "ccAuthService_run";
+
     public static final String ELEM_MERCHANT_ID = "merchantID";
     public static final String KEY_ALIAS = "keyAlias";
     public static final String ELEM_MERCHANT_REFERENCE_CODE = "merchantReferenceCode";
@@ -592,4 +597,15 @@ public class Utility {
         return mtiFieldValue;
     }
 
+    public static String checkIfAuthServiceFieldExist(Document request, String nsURI) {
+        Element authServiceElement = Utility.getElement(request, AUTH_SERVICE, nsURI);
+        if(authServiceElement == null){
+            authServiceElement = Utility.getElement(request, AUTH_SERVICE, null);
+        }
+        String isAuthService = null;
+        if(authServiceElement != null){
+            isAuthService = authServiceElement.getAttribute(AUTH_SERVICE_XML_RUN_ATT);
+        }
+        return isAuthService;
+    }
 }	

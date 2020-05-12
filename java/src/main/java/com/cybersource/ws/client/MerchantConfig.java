@@ -254,11 +254,8 @@ public class MerchantConfig {
     }
 
     /**
-     * retryIfMTIFieldExist If enabled and merchantTransactionIdentifier field is passed in payload then SDK will
-     * retry the transaction in case when connection pooling http client is used and if SDK receives an I/O error/exception, when executing
-     * a request over a connection that has been closed at the server side.
-     *
-     * The value of the merchantTransactionIdentifier[MTI] field must be unique
+     * retryIfMTIFieldExist If enabled then SDK will retry the transaction in case when connection pooling http client is used
+     * and if SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side.
      *
      * If not enabled, a transaction may fail(retry wont occur in some cases) if while sending transaction SDK receives an I/O error/exception, when executing
      * a request over a connection that has been closed at the server side.

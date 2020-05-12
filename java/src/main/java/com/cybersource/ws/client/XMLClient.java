@@ -171,7 +171,8 @@ public class XMLClient {
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
-            if (mc.getUseHttpClientWithConnectionPool()){
+            String isAuthService = checkIfAuthServiceFieldExist(request, nsURI);
+            if (Boolean.valueOf(isAuthService) && mc.getUseHttpClientWithConnectionPool()){
                 String mtiField = checkIfMTIFiledExist(request, nsURI);
                 if(StringUtils.isBlank(mtiField)) {
                     throw new ClientException(HTTP_BAD_REQUEST, MTI_FIELD_ERR_MSG, false, logger);

@@ -174,14 +174,7 @@ keytool -list -v -keystore <Your_keystore_name>`
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
   
 ## PoolingHttpClient
-   PoolingHttpClient is built using the apache's PoolingHttpClientConnectionManager class. It comes with retry functionality which is very much needed in case if
-   SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side. However there might be some cases when
-   transaction has reached server and similar or some other exception has occurred. It is not recommended to retry on non-idempotent methods, so we are considering
-   `merchantTransactionIdentifier` as idempotent key. Hence if you want to use PoolingHttpClient, merchantTransactionIdentifier field is mandatory in the payload(nvp or xml).
-   
-   merchantTransactionIdentifier field should be present in the original request for all the services. The value of the merchant transaction ID must be unique for 60 days.
-   
-   To get more information related to connection pooling please refer wiki.
+5
    
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
