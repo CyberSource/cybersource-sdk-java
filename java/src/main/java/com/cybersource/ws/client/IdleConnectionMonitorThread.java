@@ -4,11 +4,12 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import java.util.concurrent.TimeUnit;
+
 /**
- * Class creates daemon thread to monitor and kill the idle/stale/expired
+ * Creates daemon thread to monitor and kill the idle/stale/expired
  * connections in the connection pool.
  */
-public  class IdleConnectionMonitorThread extends Thread {
+public class IdleConnectionMonitorThread extends Thread {
 
     private final HttpClientConnectionManager connMgr;
     private volatile boolean shutdown;
@@ -16,10 +17,10 @@ public  class IdleConnectionMonitorThread extends Thread {
     private long idleTime;
 
     /**
-     * Constructor.
-     * @param connMgr - HttpClientConnectionManager
+     *
+     * @param connMgr   - HttpClientConnectionManager
      * @param sleepTime - long
-     * @param idleTime - long
+     * @param idleTime  - long
      */
     public IdleConnectionMonitorThread(HttpClientConnectionManager connMgr, long sleepTime, long idleTime) {
         super();
@@ -28,9 +29,6 @@ public  class IdleConnectionMonitorThread extends Thread {
         this.idleTime = idleTime;
     }
 
-    /**
-     * Override run method
-     */
     @Override
     public void run() {
         try {
@@ -52,7 +50,8 @@ public  class IdleConnectionMonitorThread extends Thread {
     }
 
     /**
-     * get idle time of connection
+     * Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
+     *
      * @return long
      */
     public long getIdleTime() {
@@ -60,7 +59,9 @@ public  class IdleConnectionMonitorThread extends Thread {
     }
 
     /**
-     * get sleep time of connection
+     * Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread.
+     * This thread will check if any idle/expired/stale connections are available in pool and evict it.
+     *
      * @return long
      */
     public long getSleepTime() {
