@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.cybersource.ws.client.Utility.*;
 
 /**
- * Class containing runTransaction() methods that accept the requests in the
+ * Containing runTransaction() methods that accept the requests in the
  * form of a Document object.
  */
 public class XMLClient {
@@ -80,33 +80,6 @@ public class XMLClient {
             initException = e;
         } catch (IOException e) {
             initException = e;
-        }
-    }
-
-    /**
-     * Returns the effective namespace URI for the specified merchant id.
-     * Refer to <code>MerchantConfig.getProperty()</code> for the search
-     * behavior.  This method is provided so that the nvpSample application
-     * can dynamically plug the correct namespace URI into the nvpSample XML
-     * inputs.  You do not need to call it if you have the namespace URI
-     * hardcoded in your XML documents.
-     *
-     * @param props      Properties object to look up the properties in.
-     * @param merchantID merchant ID whose effective namespace URI is wanted.
-     *                   It may be null, in which case, the generic effective
-     *                   namespace URI is returned.
-     * @throws ClientException if a ConfigException occurs.  Call
-     *                         <code>getInnerException()</code> to get at the
-     *                         ConfigException.
-     */
-    public static String getEffectiveNamespaceURI(
-            Properties props, String merchantID)
-            throws ClientException {
-        try {
-            MerchantConfig mc = new MerchantConfig(props, merchantID);
-            return (mc.getEffectiveNamespaceURI());
-        } catch (ConfigException ce) {
-            throw new ClientException(ce, false, null);
         }
     }
 
@@ -241,6 +214,33 @@ public class XMLClient {
                 con.release();
             }
        }
+    }
+
+    /**
+     * Returns the effective namespace URI for the specified merchant id.
+     * Refer to <code>MerchantConfig.getProperty()</code> for the search
+     * behavior.  This method is provided so that the nvpSample application
+     * can dynamically plug the correct namespace URI into the nvpSample XML
+     * inputs.  You do not need to call it if you have the namespace URI
+     * hardcoded in your XML documents.
+     *
+     * @param props      Properties object to look up the properties in.
+     * @param merchantID merchant ID whose effective namespace URI is wanted.
+     *                   It may be null, in which case, the generic effective
+     *                   namespace URI is returned.
+     * @throws ClientException if a ConfigException occurs.  Call
+     *                         <code>getInnerException()</code> to get at the
+     *                         ConfigException.
+     */
+    public static String getEffectiveNamespaceURI(
+            Properties props, String merchantID)
+            throws ClientException {
+        try {
+            MerchantConfig mc = new MerchantConfig(props, merchantID);
+            return (mc.getEffectiveNamespaceURI());
+        } catch (ConfigException ce) {
+            throw new ClientException(ce, false, null);
+        }
     }
 
     /**

@@ -22,7 +22,6 @@ import java.util.Hashtable;
 
 /**
  * Payment Card Information which is sent as part of Transaction details
- * @author sunagara
  *
  */
 public class PCI {
@@ -239,7 +238,7 @@ public class PCI {
     }
 
     /**
-     * Mask the data.The masking rules in this method were per Jason Hengels.
+     * Mask the data.
      * @param field
      * @param val
      * @return

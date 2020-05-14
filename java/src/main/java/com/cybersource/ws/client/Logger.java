@@ -19,7 +19,7 @@
 package com.cybersource.ws.client;
 
 /**
- * Interface that may be implemented to supply a different Logger object
+ * this may be implemented to supply a different Logger object
  * to the runTransaction() method of the clients.  The default Logger object
  * created and used by the clients writes to a file.
  */

@@ -41,16 +41,14 @@ import java.util.List;
 import static com.cybersource.ws.client.Utility.*;
 
 /**
- * Class helps in posting the Request document for the Transaction using HttpClient.
+ * Helps in posting the Request document for the Transaction using HttpClient.
  * Converts the document to String format and also helps in setting up the Proxy connections.
  *
- * @author sunagara
  */
 public class HttpClientConnection extends Connection {
     private PostMethod postMethod = null;
 
     /**
-     * Constructor.
      * @param mc
      * @param builder
      * @param logger
@@ -101,7 +99,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method to check is request sent or not
+     * To check is request sent or not
      * @return boolean
      */
     /* (non-Javadoc)
@@ -112,7 +110,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method to release the http connections
+     * To release the http connections
      */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#release()
@@ -125,7 +123,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get http response code
+     * To get http response code
      * @return int
      */
     /* (non-Javadoc)
@@ -136,7 +134,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get response stream
+     * To get response stream
      * @return InputStream
      * @throws IOException
      */
@@ -149,7 +147,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get response error stream
+     * To get response error stream
      * @return InputStream
      * @throws IOException
      */
@@ -162,7 +160,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method helps to set the timeout for HTTP request call.
+     * Helps to set the timeout for HTTP request call.
      * cybs.properties can be used to configure the timeout details.
      * @param httpClient
      * @param timeoutInMs
@@ -175,7 +173,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * This method is useful in Client environment where Firewall is set to prevent accessing the external services. 
+     * This is useful in Client environment where Firewall is set to prevent accessing the external services.
      * Proxy settings are required in such scenarios. 
      * @param httpClient
      */
@@ -201,7 +199,7 @@ public class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method converts Document to String using java.xml package library.
+     * Converts Document to String using java.xml package library.
      * @param doc - Document object
      * @return - String object
      * @throws TransformerConfigurationException
@@ -266,9 +264,6 @@ public class HttpClientConnection extends Connection {
         }
     }
 
-    /**
-     * Log Request Headers
-     */
     @Override
 	public void logRequestHeaders() {
         if(mc.getEnableLog() && postMethod!=null) {
@@ -277,9 +272,6 @@ public class HttpClientConnection extends Connection {
         }
 	}
 
-    /**
-     * Log Response Headers
-     */
 	@Override
 	public void logResponseHeaders() {
         if(mc.getEnableLog() && postMethod != null) {

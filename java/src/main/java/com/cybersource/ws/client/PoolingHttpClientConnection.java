@@ -37,9 +37,11 @@ import java.util.List;
 import static com.cybersource.ws.client.Utility.*;
 
 /**
- * Class creates pooling http client connection flow. It maintains a pool of
+ * Creates pooling http client connection flow. It maintains a pool of
  * http client connections and is able to service connection requests
  * from multiple execution threads.
+ *
+ * Class helps in posting the Request document for the Transaction using HttpClient.
  */
 public class PoolingHttpClientConnection extends Connection {
     private HttpPost httpPost = null;
@@ -52,7 +54,6 @@ public class PoolingHttpClientConnection extends Connection {
     private static PoolingHttpClientConnectionManager connectionManager = null;
 
     /**
-     * Constructor.
      *
      * @param mc
      * @param builder
@@ -101,8 +102,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Initialize Http Client
-     *
      * @param merchantConfig
      * @param poolingHttpClientConnManager
      */
@@ -130,7 +129,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Initialize thread to clean Idle/Stale/Expired connections
+     * Create and start thread to clean Idle,Stale and Expired connections
      *
      * @param merchantConfig
      * @param poolingHttpClientConnManager
@@ -143,7 +142,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to post the request using http pool connection
+     * To post the request using http pool connection
      *
      * @param request
      * @param startTime
@@ -167,7 +166,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to check whether request sent or not
+     * To check whether request sent or not
      *
      * @return boolean
      */
@@ -192,7 +191,7 @@ public class PoolingHttpClientConnection extends Connection {
         return new Thread() {
             public void run() {
                 try {
-                    PoolingHttpClientConnection.this.onShutdown();
+                    PoolingHttpClientConnection.onShutdown();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -201,7 +200,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to close the httpClient, connectionManager, staleMonitorThread
+     * To close the httpClient, connectionManager, staleMonitorThread
      * when application got shutdown
      *
      * @throws IOException
@@ -225,7 +224,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to close httpResponse
+     * To close httpResponse
      *
      * @throws ClientException
      */
@@ -242,8 +241,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get http response code
-     *
      * @return int
      */
     @Override
@@ -252,7 +249,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get response stream
      *
      * @return InputStream
      * @throws IOException
@@ -263,7 +259,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get response error stream
      *
      * @return InputStream
      * @throws IOException
@@ -273,9 +268,6 @@ public class PoolingHttpClientConnection extends Connection {
         return getResponseStream();
     }
 
-    /**
-     * Log Request Headers
-     */
     @Override
     public void logRequestHeaders() {
         if (mc.getEnableLog() && httpPost != null) {
@@ -285,9 +277,6 @@ public class PoolingHttpClientConnection extends Connection {
 
     }
 
-    /**
-     * Log Response Headers
-     */
     @Override
     public void logResponseHeaders() {
         if (mc.getEnableLog() && httpResponse != null) {
@@ -324,7 +313,11 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Inner class for custom retry handling
+     * A custom retry handler which will retry the transaction if request is not sent or in case of connection reset and
+     * NoHttpResponse Exception.
+     *
+     * CustomRetryHandler will be enabled only if allowRetry property is set to true. retryInterval and numberOfRetries are also config based
+     * See README for more information.
      */
     private class CustomRetryHandler implements HttpRequestRetryHandler {
         long retryWaitInterval = mc.getRetryInterval();

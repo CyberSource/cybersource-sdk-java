@@ -50,15 +50,7 @@ public class MerchantConfig {
     private String serverURL;
     private String namespaceURI;
     private String password;
-    private boolean enableJdkCert;
-    private boolean enableCacert;
-    private boolean enableLog;
-    private boolean logSignedData;
-    private String logDirectory;
-    private String logFilename;
-    private int logMaximumSize;
-    private boolean useHttpClient;
-    private boolean merchantConfigCacheEnabled;
+
     private boolean useHttpClientWithConnectionPool;
     private int maxConnections;
     private int defaultMaxConnectionsPerRoute;
@@ -73,422 +65,42 @@ public class MerchantConfig {
     private boolean shutdownHookEnabled;
     private boolean retryIfMTIFieldExist;
 
+    private boolean useHttpClient;
+
     //Retry Pattern
     private boolean allowRetry;
     private int numberOfRetries = 0;
     private long retryInterval = 0;
 
     private int timeout;
+
     private String proxyHost;
     private int proxyPort;
     private String proxyUser;
     private String proxyPassword;
+
+    private boolean enableJdkCert;
+    private boolean enableCacert;
+    private boolean enableLog;
+    private boolean logSignedData;
+    private String logDirectory;
+    private String logFilename;
+    private int logMaximumSize;
+
     private String cacertPassword;
     private String customHttpClass;
     private boolean customHttpClassEnabled;
+
     private boolean certificateCacheEnabled;
+    private boolean useSignAndEncrypted;
+    private boolean merchantConfigCacheEnabled;
+
     // computed values
     private String effectiveServerURL;
     private String effectiveNamespaceURI;
     private String effectivePassword;
-    private boolean useSignAndEncrypted;
 
     /**
-     * Getter method for useSignAndEncrypted
-     *
-     * @return boolean
-     */
-    // getter methods
-    public boolean getUseSignAndEncrypted() {
-        return useSignAndEncrypted;
-    }
-
-    /**
-     * Getter method for merchantID
-     *
-     * @return String
-     */
-    public String getMerchantID() {
-        return merchantID;
-    }
-
-    /**
-     * Getter method for keysDirectory
-     *
-     * @return String
-     */
-    public String getKeysDirectory() {
-        return keysDirectory;
-    }
-
-    /**
-     * If keyAlias not null, return keyAlias, else return merchantId
-     *
-     * @return String
-     */
-    public String getKeyAlias() {
-        if (keyAlias != null)
-            return keyAlias;
-        else
-            return getMerchantID();
-    }
-
-    /**
-     * If keyPassword not null, return keyPassword, else return merchantId
-     *
-     * @return String
-     */
-    public String getKeyPassword() {
-        if (keyPassword != null)
-            return keyPassword;
-        else
-            return getMerchantID();
-    }
-
-    /**
-     * Getter method for sendToProduction
-     *
-     * @return boolean
-     */
-    public boolean getSendToProduction() {
-        return sendToProduction;
-    }
-
-    /**
-     * Getter method for sendToAkamai
-     *
-     * @return boolean
-     */
-    public boolean getSendToAkamai() {
-        return sendToAkamai;
-    }
-
-    /**
-     * Getter method for targetAPIVersion
-     *
-     * @return String
-     */
-    public String getTargetAPIVersion() {
-        return targetAPIVersion;
-    }
-
-    /**
-     * Getter method for keyFilename
-     *
-     * @return String
-     */
-    public String getKeyFilename() {
-        return keyFilename;
-    }
-
-    /**
-     * Getter method for serverURL
-     *
-     * @return String
-     */
-    public String getServerURL() {
-        return serverURL;
-    }
-
-    /**
-     * Getter method for namespaceURI
-     *
-     * @return String
-     */
-    public String getNamespaceURI() {
-        return namespaceURI;
-    }
-
-    /**
-     * Getter method for password
-     *
-     * @return String
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Getter method for enableLog
-     *
-     * @return boolean
-     */
-    public boolean getEnableLog() {
-        return enableLog;
-    }
-
-    /**
-     * Getter method for logSignedData
-     *
-     * @return boolean
-     */
-    public boolean getLogSignedData() {
-        return logSignedData;
-    }
-
-    /**
-     * Getter method for logDirectory
-     *
-     * @return String
-     */
-    public String getLogDirectory() {
-        return logDirectory;
-    }
-
-    /**
-     * Getter method for logFilename
-     *
-     * @return String
-     */
-    public String getLogFilename() {
-        return logFilename;
-    }
-
-    /**
-     * Getter method for logMaximumSize
-     *
-     * @return int
-     */
-    public int getLogMaximumSize() {
-        return logMaximumSize;
-    }
-
-    /**
-     * retryIfMTIFieldExist If enabled then SDK will retry the transaction in case when connection pooling http client is used
-     * and if SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side.
-     *
-     * If not enabled, a transaction may fail(retry wont occur in some cases) if while sending transaction SDK receives an I/O error/exception, when executing
-     * a request over a connection that has been closed at the server side.
-     * @return boolean
-     */
-    public boolean retryIfMTIFieldExistEnabled() {
-        return retryIfMTIFieldExist;
-    }
-
-    /**
-     * Getter method for useHttpClient
-     *
-     * @return boolean
-     */
-    public boolean getUseHttpClient() {
-        return useHttpClient;
-    }
-
-    /**
-     * Getter method for useHttpClientWithConnectionPool
-     *
-     * @return boolean
-     */
-    public boolean getUseHttpClientWithConnectionPool() {
-        return useHttpClientWithConnectionPool;
-    }
-
-    /**
-     * Getter method for timeout, it is set in seconds
-     * default is 130seconds
-     *
-     * @return int
-     */
-    public int getTimeout() {
-        return timeout;
-    }
-
-    /**
-     * Getter method for maxConnections
-     *
-     * @return int
-     */
-    public int getMaxConnections() {
-        return maxConnections;
-    }
-
-    /**
-     * Getter method for defaultMaxConnectionsPerRoute
-     *
-     * @return int
-     */
-    public int getDefaultMaxConnectionsPerRoute() {
-        return defaultMaxConnectionsPerRoute;
-    }
-
-    /**
-     * Getter method for maxConnectionsPerRoute
-     *
-     * @return int
-     */
-    public int getMaxConnectionsPerRoute() {
-        return maxConnectionsPerRoute;
-    }
-
-    /**
-     * Getter method for connectionRequestTimeoutMs
-     *
-     * @return int
-     */
-    public int getConnectionRequestTimeoutMs() {
-        return connectionRequestTimeoutMs;
-    }
-
-    /**
-     * Getter method for connectionTimeoutMs
-     *
-     * @return int
-     */
-    public int getConnectionTimeoutMs() {
-        return connectionTimeoutMs;
-    }
-
-    /**
-     * Getter method for socketTimeoutMs
-     *
-     * @return int
-     */
-    public int getSocketTimeoutMs() {
-        return socketTimeoutMs;
-    }
-
-    /**
-     * Getter method for evictThreadSleepTimeMs
-     *
-     * @return int
-     */
-    public int getEvictThreadSleepTimeMs() {
-        return evictThreadSleepTimeMs;
-    }
-
-    /**
-     * Getter method for maxKeepAliveTimeMs
-     *
-     * @return int
-     */
-    public int getMaxKeepAliveTimeMs() {
-        return maxKeepAliveTimeMs;
-    }
-
-    /**
-     * Defines period of inactivity in milliseconds after which persistent connections must be re-validated prior to being
-     * leased to the consumer. Non-positive value passed to this method disables connection validation.
-     * This check helps detect connections that have become stale (half-closed) while kept inactive in the pool.
-     *
-     * @return int
-     */
-    public int getValidateAfterInactivityMs() {
-        return validateAfterInactivityMs;
-    }
-
-    /**
-     * Getter method for proxyHost
-     *
-     * @return String
-     */
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * Getter method for proxyPort
-     *
-     * @return int
-     */
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * Getter method for proxyUser
-     *
-     * @return String
-     */
-    public String getProxyUser() {
-        return proxyUser;
-    }
-
-    /**
-     * Getter method for proxyPassword
-     *
-     * @return String
-     */
-    public String getProxyPassword() {
-        return proxyPassword != null ? proxyPassword : "";
-    }
-
-    /**
-     * Getter method for certificateCacheEnabled
-     *
-     * @return boolean
-     */
-    public boolean isCertificateCacheEnabled() {
-        return certificateCacheEnabled;
-    }
-
-    /**
-     * Getter method for merchantConfigCacheEnabled
-     *
-     * @return boolean
-     */
-    public boolean isMerchantConfigCacheEnabled() {
-        return merchantConfigCacheEnabled;
-    }
-
-    /**
-     * Getter method for staleConnectionCheckEnabled
-     *
-     * @return boolean
-     */
-    public boolean isStaleConnectionCheckEnabled() {
-        return staleConnectionCheckEnabled;
-    }
-
-    /**
-     * Getter method for shutdownHookEnabled
-     *
-     * @return boolean
-     */
-    public boolean isShutdownHookEnabled() {
-        return shutdownHookEnabled;
-    }
-
-
-
-    /**
-     * Returns the effective server URL to which the request will be sent.
-     * If a serverURL is specified, then that is what is returned.
-     * Otherwise, the effective server URL is derived from the values of
-     * sendToAkamai, sendToProduction and targetAPIVersion.
-     *
-     * @return the effective server URL.
-     */
-    public String getEffectiveServerURL() {
-        return effectiveServerURL;
-    }
-
-
-    /**
-     * Returns the effective namespace URI to be used to parse the request and
-     * reply documents.  If a namespaceURI is specified, then that is
-     * what is returned.  Otherwise, the effective namespace URI is derived
-     * from the value of targetAPIVersion.
-     *
-     * @return the effective namespace URI.
-     */
-    public String getEffectiveNamespaceURI() {
-        return effectiveNamespaceURI;
-    }
-
-    /**
-     * Returns the effective key password.  If a password is specified, then
-     * that is what is returned.  Otherwise, the effective password is
-     * the same as the merchantID.
-     *
-     * @return the effective key password.
-     */
-    public String getEffectivePassword() {
-        return effectivePassword;
-    }
-
-
-    /**
-     * Constructor.
      *
      * @param _props      Properties object to get properties from.  May be
      *                    null, in which case, all properties will be read
@@ -497,6 +109,9 @@ public class MerchantConfig {
      *                    specific properties will take precedence over
      *                    the generic ones (i.e. those that do not start
      *                    with a merchant id prefix).
+     *
+     *                    See README for more information.
+     *
      * @throws ConfigException if something is missing of invalid in the
      *                         configuration.
      */
@@ -585,10 +200,6 @@ public class MerchantConfig {
         effectivePassword = password != null ? password : merchantID;
 
         useSignAndEncrypted = getBooleanProperty(merchantID, "useSignAndEncrypted", false);
-
-        if (useHttpClient && useHttpClientWithConnectionPool) {
-            throw new ConfigException("both useHttpClient and useHttpClientWithConnectionPool cannot be true at same time");
-        }
 
         if (useHttpClientWithConnectionPool) {
             if (StringUtils.isEmpty(getProperty(merchantID, "maxConnections"))) {
@@ -689,6 +300,315 @@ public class MerchantConfig {
                 keyFilename = "cacerts";
             }
         }
+    }
+
+    public boolean getUseSignAndEncrypted() {
+        return useSignAndEncrypted;
+    }
+
+    public String getMerchantID() {
+        return merchantID;
+    }
+
+    /**
+     *
+     * @return String keysDirectory path of p12 files
+     */
+    public String getKeysDirectory() {
+        return keysDirectory;
+    }
+
+    /**
+     * If keyAlias not null, return keyAlias, else return merchantId
+     *
+     * @return String
+     */
+    public String getKeyAlias() {
+        if (keyAlias != null)
+            return keyAlias;
+        else
+            return getMerchantID();
+    }
+
+    /**
+     * If keyPassword not null, return keyPassword, else return merchantId
+     *
+     * @return String
+     */
+    public String getKeyPassword() {
+        if (keyPassword != null)
+            return keyPassword;
+        else
+            return getMerchantID();
+    }
+
+    public boolean getSendToProduction() {
+        return sendToProduction;
+    }
+
+    public boolean getSendToAkamai() {
+        return sendToAkamai;
+    }
+
+    public String getTargetAPIVersion() {
+        return targetAPIVersion;
+    }
+
+    public String getKeyFilename() {
+        return keyFilename;
+    }
+
+    public String getServerURL() {
+        return serverURL;
+    }
+
+    public String getNamespaceURI() {
+        return namespaceURI;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean getEnableLog() {
+        return enableLog;
+    }
+
+    public boolean getLogSignedData() {
+        return logSignedData;
+    }
+
+    public String getLogDirectory() {
+        return logDirectory;
+    }
+
+    public String getLogFilename() {
+        return logFilename;
+    }
+
+    public int getLogMaximumSize() {
+        return logMaximumSize;
+    }
+
+    /**
+     * retryIfMTIFieldExist If enabled then SDK will retry the transaction in case when connection pooling http client is used
+     * and if SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side.
+     *
+     * If not enabled, a transaction may fail(retry wont occur in some cases) if while sending transaction SDK receives an I/O error/exception, when executing
+     * a request over a connection that has been closed at the server side.
+     * @return boolean
+     */
+    public boolean retryIfMTIFieldExistEnabled() {
+        return retryIfMTIFieldExist;
+    }
+
+    public boolean getUseHttpClient() {
+        return useHttpClient;
+    }
+
+    public boolean getUseHttpClientWithConnectionPool() {
+        return useHttpClientWithConnectionPool;
+    }
+
+    /**
+     * Timeout is set in seconds default is 130seconds
+     * And it used as connectionTimeout and SocketTimeout in case of Jdk HttpUrlConnection and Apache's HttpClient.
+     *
+     * @return int
+     */
+    public int getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to be opened with the target service.
+     * There is no default value. For applications that create many long-lived connections, increase the value of this parameter
+     *
+     * @return int
+     */
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    /**
+     * the maximum number of connections per (any) route
+     *
+     * @return int
+     */
+    public int getDefaultMaxConnectionsPerRoute() {
+        return defaultMaxConnectionsPerRoute;
+    }
+
+    /**
+     * Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to the same host or route.
+     * In SDK, all above config does same functionality and the same value can be given to these configs as we have only one route.
+     *
+     * Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
+     *
+     * @return int
+     */
+    public int getMaxConnectionsPerRoute() {
+        return maxConnectionsPerRoute;
+    }
+
+    /**
+     * Time taken in milliseconds to get connection request from the pool.
+     * If it times out, it will throw error as Timeout waiting for connection from pool.
+     *
+     * @return int
+     */
+    public int getConnectionRequestTimeoutMs() {
+        return connectionRequestTimeoutMs;
+    }
+
+    /**
+     * Specifies the number of milliseconds to wait while a connection is being established.
+     *
+     * @return int
+     */
+    public int getConnectionTimeoutMs() {
+        return connectionTimeoutMs;
+    }
+
+    /**
+     * Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
+     *
+     * @return int
+     */
+    public int getSocketTimeoutMs() {
+        return socketTimeoutMs;
+    }
+
+    /**
+     *  Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread.
+     *
+     * @return int
+     */
+    public int getEvictThreadSleepTimeMs() {
+        return evictThreadSleepTimeMs;
+    }
+
+    /**
+     * Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
+     *
+     * @return int
+     */
+    public int getMaxKeepAliveTimeMs() {
+        return maxKeepAliveTimeMs;
+    }
+
+    /**
+     * Defines period of inactivity in milliseconds after which persistent connections must be re-validated prior to being
+     * leased to the consumer. Non-positive value passed to this method disables connection validation.
+     * This check helps detect connections that have become stale (half-closed) while kept inactive in the pool.
+     *
+     * By default it is set to 0. This value can be set a positive value, if in case you decide to disable staleConnectionCheckEnabled
+     * to get slight better performance. We recommended a value of 2000ms.
+     * @return int
+     */
+    public int getValidateAfterInactivityMs() {
+        return validateAfterInactivityMs;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    public String getProxyUser() {
+        return proxyUser;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword != null ? proxyPassword : "";
+    }
+
+    /**
+     * If this property is set to false then the p12 certificate of a merchant will be reloaded
+     * every time a transaction is made
+     *
+     * @return boolean
+     */
+    public boolean isCertificateCacheEnabled() {
+        return certificateCacheEnabled;
+    }
+
+    /**
+     * If this property is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
+     * If cache enabled is true, for single merchant id, if you change any properties after first initialization, it will not reflect
+     *
+     * @return boolean
+     */
+    public boolean isMerchantConfigCacheEnabled() {
+        return merchantConfigCacheEnabled;
+    }
+
+    /**
+     * It determines whether the stale connection check is to be used. Disabling the stale connection check can result in slight performance improvement
+     * at the risk of getting an I/O error, when executing a request over a connection that has been closed at the server side.
+     * By default it is set to true, which means it is enabled.
+     *
+     * @return boolean
+     */
+    public boolean isStaleConnectionCheckEnabled() {
+        return staleConnectionCheckEnabled;
+    }
+
+    /**
+     * This is to enable shutdown hook in case of httpclient with connection Polling.
+     *
+     * ShutdownHook method will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread. By default this is enabled.
+     * We should close the connection manager, http client and idle connection cleaner thread when application get shutdown both abruptly and gracefully.
+     * If `enabledShutdownHook` is true, then JVM runtime addShutdownHook method will be initialized. Shutdown Hooks are a special construct that allows
+     * developers to plug in a piece of code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean-up
+     * operations in case the VM is shutting down.
+     *
+     *
+     * @return boolean
+     */
+    public boolean isShutdownHookEnabled() {
+        return shutdownHookEnabled;
+    }
+
+
+
+    /**
+     * Returns the effective server URL to which the request will be sent.
+     * If a serverURL is specified, then that is what is returned.
+     * Otherwise, the effective server URL is derived from the values of
+     * sendToAkamai, sendToProduction and targetAPIVersion.
+     *
+     * @return the effective server URL.
+     */
+    public String getEffectiveServerURL() {
+        return effectiveServerURL;
+    }
+
+
+    /**
+     * Returns the effective namespace URI to be used to parse the request and
+     * reply documents.  If a namespaceURI is specified, then that is
+     * what is returned.  Otherwise, the effective namespace URI is derived
+     * from the value of targetAPIVersion.
+     *
+     * @return the effective namespace URI.
+     */
+    public String getEffectiveNamespaceURI() {
+        return effectiveNamespaceURI;
+    }
+
+    /**
+     * Returns the effective key password.  If a password is specified, then
+     * that is what is returned.  Otherwise, the effective password is
+     * the same as the merchantID.
+     *
+     * @return the effective key password.
+     */
+    public String getEffectivePassword() {
+        return effectivePassword;
     }
 
     /**

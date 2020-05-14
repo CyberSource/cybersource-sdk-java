@@ -32,7 +32,6 @@ public class LoggerWrapper implements Logger {
     private UUID uniqueKey;
 
     /**
-     * Constructor.
      *
      * @param _logger       Logger object to encapsulate.  May be null, in which
      *                      case, a LoggerImpl object will be created (unless
@@ -77,7 +76,6 @@ public class LoggerWrapper implements Logger {
     }
 
     /**
-     * Getter method for uniqueKey
      * @return UUID
      */
     public String getUniqueKey() {
@@ -143,11 +141,6 @@ public class LoggerWrapper implements Logger {
         return logger;
     }
 
-    /**
-     * Returns the encapsulated StopWatch object.
-     *
-     * @return the encapsulated StopWatch object.
-     */
     public MyStopWatch getStopWatch() {
         return stopWatch;
     }

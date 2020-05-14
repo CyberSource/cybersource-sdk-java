@@ -21,7 +21,8 @@ package com.cybersource.ws.client;
 import java.net.HttpURLConnection;
 
 /**
- * Exception class used by both Basic and XML clients.
+ * Used by both Basic and XML clients.
+ * All exceptions other than faults are wrapped in ClientException.
  */
 public class ClientException
         extends Exception {
@@ -31,7 +32,6 @@ public class ClientException
     private String httpError = null;
 
     /**
-     * Constructor.
      *
      * @param _innerException the actual exception that occurred.
      * @param logger          used to log the exception details.
@@ -43,7 +43,6 @@ public class ClientException
     }
 
     /**
-     * Constructor.
      *
      * @param _innerException the actual exception that occurred.
      * @param _critical       flag that tells whether or not the exception
@@ -59,7 +58,6 @@ public class ClientException
     }
 
     /**
-     * Constructor.
      *
      * @param _httpStatusCode HTTP status code
      * @param logger          used to log the exception details.
@@ -72,7 +70,6 @@ public class ClientException
     }
 
     /**
-     * Constructor.
      *
      * @param _httpStatusCode HTTP status code
      * @param _httpError      Additional HTTP error information; may be null.
@@ -86,7 +83,6 @@ public class ClientException
     }
 
     /**
-     * Constructor.
      *
      * @param _httpStatusCode HTTP status code
      * @param _httpError      Additional HTTP error information; may be null.

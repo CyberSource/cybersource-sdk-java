@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.cybersource.ws.client.Utility.*;
 
 /**
- * Class containing runTransaction() methods that accept the requests in the
+ * Containing runTransaction() methods that accept the requests in the
  * form of a Map object.
  */
 public class Client {
@@ -62,7 +62,7 @@ public class Client {
      * @throws FaultException  if a fault occurs.
      * @throws ClientException if any other exception occurs.
      */
-    public static Map runTransaction(Map<String,String> request, Properties props)
+    public static Map<String,String> runTransaction(Map<String,String> request, Properties props)
             throws FaultException, ClientException {
         return (runTransaction(
                 request, props, null, true, true));
@@ -248,8 +248,18 @@ public class Client {
         return resultDocument ;
     }
 
+
+    /**
+     * Wraps the given Map object in SOAP envelope.
+     *
+     * @param request Map object containing the request.
+     * @param mc      MerchantConfig object.
+     * @param builder	    DocumentBuilder object.
+     * @return document.
+     * @throws IOException   if reading from string fails.
+     * @throws SAXException
+     */
     private static Document soapWrap(Map request, MerchantConfig mc, DocumentBuilder builder) throws SAXException, IOException{
-    	// wrap in SOAP envelope
         Object[] arguments
                 = {mc.getEffectiveNamespaceURI(),
                 mapToString(request, false, PCI.REQUEST)};
@@ -276,7 +286,6 @@ public class Client {
     	// 3/8/2016 if the message was encrypted we need to decrypt it
 
         boolean logSignedData = mc.getLogSignedData();
-
 
         if (logSignedData) {
             logger.log(Logger.LT_REPLY,

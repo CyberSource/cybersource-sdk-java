@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Class containing useful constants and methods.
+ * Containing useful constants and methods.
  */
 public class Utility {
     private Utility() {
@@ -546,18 +546,12 @@ public class Utility {
         return (elem);
     }
 
-    /**
-     * get response issued time
-     *
-     * @param responseTime
-     * @return long
-     */
     public static long getResponseIssuedAtTime(String responseTime) {
         return parseLong(responseTime, 0L);
     }
 
     /**
-     * get response transit time in seconds
+     * This is the response transit time in seconds.
      *
      * @param resIssuedAtTime
      * @return long
@@ -589,6 +583,13 @@ public class Utility {
         return result;
     }
 
+    /**
+     * Checks if the request documents contains merchantTransactionIdentifier element.
+     *
+     * @param request       Document object to own the Element object.
+     * @param nsURI       Namespace URI to use.
+     * @return merchantTransactionIdentifier element value else null if not exist.
+     */
     public static String checkIfMTIFiledExist(Document request, String nsURI) {
         String mtiFieldValue = Utility.getElementText(request, MERCHANT_TRANSACTION_IDENTIFIER, nsURI);
         if(StringUtils.isBlank(mtiFieldValue)){
@@ -597,6 +598,13 @@ public class Utility {
         return mtiFieldValue;
     }
 
+    /**
+     * Checks if the request documents contains ccAuthService element.
+     *
+     * @param request     Document object to own the Element object.
+     * @param nsURI       Namespace URI to use.
+     * @return ccAuthService element value else null if not exist.
+     */
     public static String checkIfAuthServiceFieldExist(Document request, String nsURI) {
         Element authServiceElement = Utility.getElement(request, AUTH_SERVICE, nsURI);
         if(authServiceElement == null){

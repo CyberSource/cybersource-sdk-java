@@ -35,10 +35,9 @@ import static com.cybersource.ws.client.Utility.*;
 
 
 /**
- * Class helps in posting the Request document for the Transaction using URLConnection.
+ * Helps in posting the Request document for the Transaction using HttpURLConnection.
  * Converts the document to String format and also helps in setting up the Proxy connections.
  *
- * @author sunagara
  */
 public class JDKHttpURLConnection extends Connection {
     private boolean _isRequestSent = false;
@@ -46,7 +45,6 @@ public class JDKHttpURLConnection extends Connection {
 
 
     /**
-     * Constructor.
      * @param mc
      * @param builder
      * @param logger
@@ -87,10 +85,6 @@ public class JDKHttpURLConnection extends Connection {
         _isRequestSent = true;
     }
 
-    /**
-     * Method to check is request sent or not
-     * @return boolean
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#isRequestSent()
      */
@@ -98,9 +92,6 @@ public class JDKHttpURLConnection extends Connection {
         return _isRequestSent;
     }
 
-    /**
-     * Method to release the connections
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#release()
      */
@@ -108,11 +99,6 @@ public class JDKHttpURLConnection extends Connection {
         con = null;
     }
 
-    /**
-     * Method to get http response code
-     * @return int
-     * @throws IOException
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
@@ -121,11 +107,6 @@ public class JDKHttpURLConnection extends Connection {
         return con != null ? con.getResponseCode() : -1;
     }
 
-    /**
-     * Method to get response error stream
-     * @return InputStram
-     * @throws IOException
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseStream()
      */
@@ -134,10 +115,6 @@ public class JDKHttpURLConnection extends Connection {
         return con != null ? con.getInputStream() : null;
     }
 
-    /**
-     * Method to get response error stream
-     * @return InputStream
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseErrorStream()
      */
@@ -146,7 +123,6 @@ public class JDKHttpURLConnection extends Connection {
     }
 
     /**
-     * Converts Document to byte array stream
      *
      * @param doc - Document document
      * @return - byte array stream.
@@ -168,9 +144,6 @@ public class JDKHttpURLConnection extends Connection {
         }
     }
 
-    /**
-     * Log Response Headers
-     */
     @Override
     public void logResponseHeaders() {
         if (mc.getEnableLog() && con != null) {
@@ -185,9 +158,6 @@ public class JDKHttpURLConnection extends Connection {
         }
     }
 
-    /**
-     * Log Request Headers
-     */
     @Override
     public void logRequestHeaders() {
         if (mc.getEnableLog() && con != null) {
