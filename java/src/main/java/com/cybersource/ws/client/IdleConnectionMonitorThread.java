@@ -38,7 +38,7 @@ public class IdleConnectionMonitorThread extends Thread {
                     wait(getSleepTime());
                     PoolingHttpClientConnectionManager poolConnMgr = (PoolingHttpClientConnectionManager) connMgr;
                     //System.out.println("before closing expired and idl conn, stats is "+poolConnMgr.getTotalStats() + "Current Time: "+ java.time.LocalTime.now());
-                    long startTimer = System.currentTimeMillis();
+                    //long startTimer = System.currentTimeMillis();
                     connMgr.closeExpiredConnections();
                     connMgr.closeIdleConnections(idleTime, TimeUnit.MILLISECONDS);
                     //System.out.println("Took " + (System.currentTimeMillis() - startTimer) + "ms to close expired and idl conn, now stats is "+poolConnMgr.getTotalStats());
