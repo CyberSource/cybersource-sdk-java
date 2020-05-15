@@ -14,14 +14,11 @@ import org.w3c.dom.Element;
 
 
 /**
- * Test case to validate the Conenction instance
+ * Test case to validate the HttpClientConnection instance
  * @author sunagara
  *
  */
-public class ConnectionIT {
-
-    private Connection con = null;
-    private Properties merchantProperties = new Properties();
+public class HttpClientConnectionSystemTest {
     private String requestFilename = "src/test/resources/auth.xml";
 
     /**
@@ -29,6 +26,8 @@ public class ConnectionIT {
      */
     @Test
     public void testGetInstance(){
+        HttpClientConnection con = null;
+        Properties merchantProperties = new Properties();
         //Loading the properties file from src/test/resources
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
         if (in == null) {
@@ -39,7 +38,6 @@ public class ConnectionIT {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-
         DocumentBuilder builder;
         try {
             builder = Utility.newDocumentBuilder();
@@ -50,16 +48,16 @@ public class ConnectionIT {
             String nsURI = mc.getEffectiveNamespaceURI();
             setMerchantID(request, merchantID, nsURI);
             LoggerWrapper logger = new LoggerWrapper(null, true, true, mc);
-            con = Connection.getInstance(mc, builder, logger);
+            con = new HttpClientConnection(mc,builder,logger);
             Assert.assertNotNull(con);
+
 
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (ConfigException e) {
             e.printStackTrace();
-        } catch (ClientException e) {
-            e.printStackTrace();
         }
+
     }
 
     /**
