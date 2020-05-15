@@ -83,14 +83,14 @@ abstract public class Connection {
     }
 
     /**
-     * method to check is request sent or not
+     * To check is request sent or not
      *
      * @return boolean
      */
     abstract public boolean isRequestSent();
 
     /**
-     * method to release the connection related objects
+     * To release the connection related objects
      *
      * @throws ClientException
      */
@@ -112,24 +112,14 @@ abstract public class Connection {
             TransformerException, MalformedURLException,
             ProtocolException;
 
-    /**
-     * @return int
-     * @throws IOException
-     */
+
     abstract int getHttpResponseCode()
             throws IOException;
 
-    /**
-     * @return InputStream
-     * @throws IOException
-     */
     abstract InputStream getResponseStream()
             throws IOException;
 
-    /**
-     * @return InputStram
-     * @throws IOException
-     */
+
     abstract InputStream getResponseErrorStream()
             throws IOException;
 
