@@ -25,6 +25,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,32 +37,46 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.cybersource.ws.client.Utility.*;
+
 /**
- * Class helps in posting the Request document for the Transaction using HttpClient.
+ * Helps in posting the Request document for the Transaction using HttpClient.
  * Converts the document to String format and also helps in setting up the Proxy connections.
  *
- * @author sunagara
  */
-class HttpClientConnection extends Connection {
+public class HttpClientConnection extends Connection {
     private PostMethod postMethod = null;
 
+    /**
+     * @param mc
+     * @param builder
+     * @param logger
+     */
     HttpClientConnection(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) {
         super(mc, builder, logger);
         logger.log(Logger.LT_INFO, "Using HttpClient for connections.");
     }
 
+    /**
+     * Post request by httpclient connection
+     * @param request
+     * @param startTime
+     * @throws IOException
+     * @throws TransformerException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#postDocument(org.w3c.dom.Document)
      */
-    void postDocument(Document request)
+    void postDocument(Document request, long startTime)
             throws IOException, TransformerException {
     	
     	/*
     	 * SimpleHttpConnectionManager(boolean alwaysClose) : 
     	 * alwaysClose - if set true, the connection manager will always close connections upon release.
     	 */
-    	
+
         HttpClient httpClient = new HttpClient(new SimpleHttpConnectionManager(true));
         setTimeout(httpClient, mc.getTimeout() * 1000);
         setProxy(httpClient);
@@ -72,16 +87,21 @@ class HttpClientConnection extends Connection {
                 HttpMethodParams.RETRY_HANDLER, new MyRetryHandler());
 
         String requestString = documentToString(request);
-        logger.log(Logger.LT_INFO,
-                "Sending " + requestString.length() + " bytes to " + serverURL);
 
         postMethod.setRequestEntity(
                 new StringRequestEntity(requestString, null, "UTF-8"));
         postMethod.setRequestHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+        postMethod.setRequestHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis()-startTime));
 		logRequestHeaders();
+        logger.log(Logger.LT_INFO,
+                "Sending " + requestString.length() + " bytes to " + serverURL);
         httpClient.executeMethod(postMethod);
     }
 
+    /**
+     * To check is request sent or not
+     * @return boolean
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#isRequestSent()
      */
@@ -89,6 +109,9 @@ class HttpClientConnection extends Connection {
         return postMethod != null && postMethod.isRequestSent();
     }
 
+    /**
+     * To release the http connections
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#release()
      */
@@ -99,6 +122,10 @@ class HttpClientConnection extends Connection {
         }
     }
 
+    /**
+     * To get http response code
+     * @return int
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
@@ -106,6 +133,11 @@ class HttpClientConnection extends Connection {
         return postMethod != null ? postMethod.getStatusCode() : -1;
     }
 
+    /**
+     * To get response stream
+     * @return InputStream
+     * @throws IOException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseStream()
      */
@@ -114,6 +146,11 @@ class HttpClientConnection extends Connection {
         return postMethod != null ? postMethod.getResponseBodyAsStream() : null;
     }
 
+    /**
+     * To get response error stream
+     * @return InputStream
+     * @throws IOException
+     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseErrorStream()
      */
@@ -123,7 +160,7 @@ class HttpClientConnection extends Connection {
     }
 
     /**
-     * Methos helps to set the timeout for HTTP request call.
+     * Helps to set the timeout for HTTP request call.
      * cybs.properties can be used to configure the timeout details.
      * @param httpClient
      * @param timeoutInMs
@@ -136,7 +173,7 @@ class HttpClientConnection extends Connection {
     }
 
     /**
-     * This method is useful in Client environment where Firewall is set to prevent accessing the external services. 
+     * This is useful in Client environment where Firewall is set to prevent accessing the external services.
      * Proxy settings are required in such scenarios. 
      * @param httpClient
      */
@@ -162,7 +199,7 @@ class HttpClientConnection extends Connection {
     }
 
     /**
-     * Method converts Document to String using java.xml package library.
+     * Converts Document to String using java.xml package library.
      * @param doc - Document object
      * @return - String object
      * @throws TransformerConfigurationException
@@ -216,7 +253,7 @@ class HttpClientConnection extends Connection {
                 // if it's OK to retry methods that have been sent
             	try {
          	        Thread.sleep(retryWaitInterval);
-         	        logger.log( Logger.LT_INFO+" Retrying Request -- ",mc.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
+         	        logger.log( Logger.LT_INFO, " Retrying Request -- "+logger.getUniqueKey()+ " Retry Count -- "+executionCount);
                  } catch (InterruptedException e) {
          	        e.printStackTrace();
                  }
@@ -226,17 +263,28 @@ class HttpClientConnection extends Connection {
             return false;
         }
     }
-    
+
     @Override
-	public void logRequestHeaders() {		
-		List<Header> reqheaders=Arrays.asList(postMethod.getRequestHeaders());
-        logger.log(Logger.LT_INFO, "Request Headers: " +reqheaders);
+	public void logRequestHeaders() {
+        if(mc.getEnableLog() && postMethod!=null) {
+            List<Header> reqheaders = Arrays.asList(postMethod.getRequestHeaders());
+            logger.log(Logger.LT_INFO, "Request Headers: " + reqheaders);
+        }
 	}
-	
+
 	@Override
 	public void logResponseHeaders() {
-		List<Header> respheaders=Arrays.asList(postMethod.getResponseHeaders());
-		 logger.log(Logger.LT_INFO, "Response Headers"+ respheaders);
+        if(mc.getEnableLog() && postMethod != null) {
+            Header responseTimeHeader = postMethod.getResponseHeader(RESPONSE_TIME_REPLY);
+            if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
+                long resIAT = getResponseIssuedAtTime(responseTimeHeader.getValue());
+                if (resIAT > 0) {
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
+                }
+            }
+            List<Header> respheaders = Arrays.asList(postMethod.getResponseHeaders());
+            logger.log(Logger.LT_INFO, "Response Headers" + respheaders);
+        }
 	}
 	
 }

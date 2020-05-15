@@ -22,10 +22,9 @@ import java.util.Hashtable;
 
 /**
  * Payment Card Information which is sent as part of Transaction details
- * @author sunagara
  *
  */
-class PCI {
+public class PCI {
     public static final int REQUEST = 0;
     public static final int REPLY = 1;
 
@@ -46,7 +45,7 @@ class PCI {
 
         safeTable.put("item", "unitPrice quantity productCode productName productSKU productRisk taxAmount cityOverrideAmount cityOverrideRate countyOverrideAmount countyOverrideRate districtOverrideAmount districtOverrideRate stateOverrideAmount stateOverrideRate countryOverrideAmount countryOverrideRate orderAcceptanceCity orderAcceptanceCounty orderAcceptanceCountry orderAcceptanceState orderAcceptancePostalCode orderOriginCity orderOriginCounty orderOeriginCountry orderOriginState orderOriginPostalCode shipFromCity shipFromCounty shipFromCountry shipFromState shipFromPostalCode export noExport nationalTax vatRate sellerRegistration buyerRegistration middlemanRegistration pointOfTitleTransfer giftCategory timeCategory hostHedge timeHedge velocityHedge unitOfMeasure taxRate totalAmount discountAmount discountRate commodityCode grossNetIndicator taxTypeApplied discountIndicator alternateTaxID");
 
-        safeTable.put("ccAuthService", "run cavv commerceIndicator eciRaw xid reconcilationID avsLevel fxQuoteID returnAuthRecord authType verbalAuthCode billPayment");
+        safeTable.put("ccAuthService", "run cavv commerceIndicator eciRaw xid reconciliationID avsLevel fxQuoteID returnAuthRecord authType verbalAuthCode billPayment");
 
         safeTable.put("ccCaptureService", "run authType verbalAuthCode authRequestID transactionToken reconciliationID partialPaymentID purchasingLevel industryDataType");
 
@@ -238,7 +237,12 @@ class PCI {
         return isSafe(type, field) ? val : mask(field, val);
     }
 
-    // the masking rules in this method were per Jason Hengels.
+    /**
+     * Mask the data.
+     * @param field
+     * @param val
+     * @return
+     */
     public static String mask(String field, String val) {
         int len = val != null ? val.length() : 0;
         if (len == 0) return "";

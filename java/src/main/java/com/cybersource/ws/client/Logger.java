@@ -19,21 +19,21 @@
 package com.cybersource.ws.client;
 
 /**
- * Interface that may be implemented to supply a different Logger object
+ * this may be implemented to supply a different Logger object
  * to the runTransaction() method of the clients.  The default Logger object
  * created and used by the clients writes to a file.
  */
 public interface Logger {
     // pre-defined log types
-    public static final String LT_FILESTART = "FILESTART";
-    public static final String LT_TRANSTART = "TRANSTART";
-    public static final String LT_MERCHCFG = "MERCHCFG ";
-    public static final String LT_PROXYCFG = "PROXYCFG ";
-    public static final String LT_REQUEST = "REQUEST  ";
-    public static final String LT_REPLY = "REPLY    ";
-    public static final String LT_FAULT = "FAULT    ";
-    public static final String LT_INFO = "INFO     ";
-    public static final String LT_EXCEPTION = "EXCEPTION";
+    String LT_FILESTART = "FILESTART";
+    String LT_TRANSTART = "TRANSTART";
+    String LT_MERCHCFG = "MERCHCFG ";
+    String LT_PROXYCFG = "PROXYCFG ";
+    String LT_REQUEST = "REQUEST  ";
+    String LT_REPLY = "REPLY    ";
+    String LT_FAULT = "FAULT    ";
+    String LT_INFO = "INFO     ";
+    String LT_EXCEPTION = "EXCEPTION";
 
     /**
      * This is where any PER-TRANSACTION preparation should be done.  Any one-

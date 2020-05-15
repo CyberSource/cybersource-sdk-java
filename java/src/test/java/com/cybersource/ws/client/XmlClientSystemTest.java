@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
  * Date: 6/23/14
  * Time: 10:39 AM
  */
-public class XmlClientIT {
+public class XmlClientSystemTest {
     private String requestFilename = "src/test/resources/auth.xml";
 
     /**

@@ -49,7 +49,7 @@ public class CustomHttpConnectionClass extends Connection{
 	}
 	
 	@Override
-	void postDocument(Document request) throws IOException,
+	void postDocument(Document request, long startTime) throws IOException,
 			TransformerConfigurationException, TransformerException,
 			MalformedURLException, ProtocolException {
 		HttpClient httpClient = new HttpClient();
@@ -171,7 +171,7 @@ public class CustomHttpConnectionClass extends Connection{
                 // if it's OK to retry methods that have been sent
             	try {
          	        Thread.sleep(retryWaitInterval);
-         	        logger.log( Logger.LT_INFO+" Retrying Request -- ",mc.getUniqueKey().toString()+ " Retry Count -- "+executionCount);
+         	        logger.log( Logger.LT_INFO," Retrying Request -- " +logger.getUniqueKey()+ " Retry Count -- "+executionCount);
                  } catch (InterruptedException e) {
          	        // TODO Auto-generated catch block
          	        e.printStackTrace();
