@@ -59,18 +59,53 @@ You do not need to download and build the source to use the SDK but if you want 
     - Set `sendToAkamai` config parameter with toggle value "true/false" to turn on/off routing requests through Akamai to Cybersource. By default, it is set to true.
     - `serverURL` config parameter will take precedence over `sendToProduction` and `sendToAkamai` config parameters. By default the `serverURL` configuration is commented out.
     - If `enableJdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
-      - To know how to convert p12 to JKS refer the JKS creation section of this document.
-    - If 'enableCacert' property parameter is set to true, certificates will be read from the cacerts file specified at keysDirectory location.If keysDirectory path is not set,certificate will be loaded from Java Installation cacerts file. The cacerts file should be of the same name as specified in keyFilename.
+        - To know how to convert p12 to JKS refer the JKS creation section of this document.
+    - If 'enableCacert' property parameter is set to true, certificates will be read from the cacerts file specified at keysDirectory location.
+        - If keysDirectory path is not set,certificate will be loaded from Java Installation cacerts file. The cacerts file should be of the same name as specified in keyFilename.
     - If `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
-    - `allowRetry` config parameter will only work for HttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
-    - Set integer values for config parameter `numberOfRetries` *and* `retryInterval`. Retry Interval is time delay for next retry in seconds.
-      - Number of retry parameter should be set between 1 to 5. Any other value will throw an Error Message.
+    - If `useHttpClient` parameter is set to true (default is false), then simple HttpClientConnection will be enabled
+    - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled. In case of poolingHttpConnection, 
+      we are initializing connection manager and httpclient once, If any change in value in between the application is running, it will not reflect. need to restart it. 
+    - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
+      
+      Note : Sample values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc.
+      Before using these values in actual real time application, please consider all real time factors.
+         - `maxConnections` Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to be opened with the target service. 
+            There is no default value. For applications that create many long-lived connections, increase the value of this parameter.
+         - `defaultMaxConnectionsPerRoute` the maximum number of connections per (any) route.
+         - `maxConnectionsPerRoute` Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to the same host or route. 
+            In SDK, all above config does same functionality and the same value can be given to these configs as we have only one route. 
+            
+            Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
+         - `connectionRequestTimeoutMs` Time taken in milliseconds to get connection request from the pool. If it times out, it will throw error as Timeout waiting for connection from pool
+         - `connectionTimeoutMs` Specifies the number of milliseconds to wait while a connection is being established.
+         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
+         - `evictThreadSleepTimeMs` Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread. 
+            This thread will check if any idle/expired/stale connections are available in pool and evict it.
+         - `maxKeepAliveTimeMs` Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
+         - `staleConnectionCheckEnabled` It determines whether the stale connection check is to be used. Disabling the stale connection check can result in slight performance improvement 
+            at the risk of getting an I/O error, when executing a request over a connection that has been closed at the server side. By default it is set to true, which means it is enabled.
+         - `validateAfterInactivityMs` By default it is set to 0. This value can be set if in case you decide to disable staleConnectionCheckEnabled to get slight better performance. 
+            We recommended a value of 2000ms. 
+         - `enabledShutdownHook` We should close the connection manager, http client and idle connection cleaner thread when application get shutdown both abruptly and gracefully.
+            If `enabledShutdownHook` is true, then JVM runtime addShutdownHook method will be initialized. Shutdown Hooks are a special construct that allows developers to plug in a piece of 
+            code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean-up operations in case the VM is shutting down.
+                `    private void addShutdownHook() {
+                      Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
+                    }`
+            createShutdownHookThread method will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread. By default this is enabled when useHttpClientWithConnectionPool is true.
+    - `allowRetry` config parameter will only work for HttpClient and PoolingHttpClient. 
+       Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
+       - Set integer values and long values for config parameter `numberOfRetries` *and* `retryInterval` respectively. Retry Interval is time delay for next retry in milliSeconds.
+          - Number of retry parameter should be set between 1 to 5. By default the value for numberOfRetries will be 3. Any other value will throw an Error Message.
       - Refer to the [Retry Pattern](README.md#retry-pattern) section below.
     - Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
     - Set customHttpClassEnabled to true to make use of Custom Http Library. 
       - Enter the custom class name in customHttpClass field. Provide the full package name along with the class name.
         example customHttpClass= <packagename.customHttpClass>
       - The custom HTTP Class must have a three argument constructor which accepts MerchantConfig, DocumentBuilder and LoggerWrapper as argument. Then it should call the constructor of the parent class.
+    - `merchantConfigCacheEnabled` If this property is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
+     -If cache enabled is true, for single merchant id, if you change any properties after first initialization, it will not reflect.
 - Build this project using Maven.
   - `mvn clean` - Cleans the Project
   - `mvn install` - Builds the project and creates a jar file of client SDK. Includes running all unit tests and integration tests
@@ -138,7 +173,15 @@ keytool -list -v -keystore <Your_keystore_name>`
   - The first entry should contain a chain of two certificates - `CyberSourceCertAuth` and <Merchant_ID> with alias name <Merchant_ID>
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
   
-  
+## PoolingHttpClient
+   PoolingHttpClient is built using the apache's PoolingHttpClientConnectionManager class. It comes with retry functionality which is very much needed in case if
+   SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side. However there might be some cases when
+   transaction has reached server and similar or some other exception has occurred. We are considering `merchantTransactionIdentifier` as idempotent key, specially 
+   in case of auth service(`ccAuthService`). Hence if you want to use PoolingHttpClient, for auth service(`ccAuthService`) merchantTransactionIdentifier field is 
+   mandatory in the payload for both nvp and xml. The value of the merchant transaction ID must be unique for 60 days.
+   
+   To get more information related to connection pooling please refer wiki.
+   
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
 
@@ -156,10 +199,10 @@ CyberSource supports Message Level Encryption (MLE) for Simple Order API. Messag
 
 ## Retry Pattern
 
-Retry Pattern allows to retry sending a failed request and it will only work with `useHttpClient=true`. `allowRetry` flag enables the retry mechanism. 
+Retry Pattern allows to retry sending a failed request and it will only work with `useHttpClient=true` or `useHttpClientWithConnectionPool. `allowRetry` flag enables the retry mechanism. 
   - Set the value of `allowRetry` parameter to "TRUE/FALSE". Then the system will retry the failed request as many times as configured by the merchant in the config parameter 'numberOfRetries'.
-  - numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 5. User can set a delay in between the retry attempts.
-  - Config parameter for this property is 'retryInterval' in `cybs.property` file. The default value for 'retryInterval' parameter is 5 which means a delay of 5 seconds.
+  - numberOfRetries parameter value should be set between 0 to 5. By default the value for numberOfRetries will be 3. User can set a delay in between the retry attempts.
+  - Config parameter for this property is 'retryInterval' in `cybs.property` file. The default value for 'retryInterval' parameter is 1000 which means a delay of 1000 milliSeconds.
 
 ## Third Party jars
     1. org.apache.ws.security.wss4j:1.6.19
@@ -180,12 +223,27 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       JUnit is a unit testing framework for Java.
     9. org.mockito:mockito-all:1.10.19
       Mock objects library for java  
+    10. org.apache.httpcomponents:httpclient:4.5.11
+       Provides reusable components for client-side authentication, HTTP state management, and HTTP connection management. It is used for poolinghttpclientconnectionmanager feature.
+
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.9 (APR,2020)
+Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
 
+  1)Added PoolingHttpClientConnection implementation
+  
+  2)MerchantConfig Object Caching based on KeyAlias/Merchant Id
+  
+  3)Changed retry interval from second to millisecond
+  
+  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
+  
+  5)Added troubleshooting section in README.
+  
+Version Cybersource-sdk-java 6.2.9 (APR,2020)
+_______________________________
   1)Corrected request header name
   
 Version Cybersource-sdk-java 6.2.8 (FEB,2020)
@@ -250,8 +308,41 @@ Version Cybersource-sdk-java 6.1.0 (Feb 24,2016)
 _______________________________
   1) SHA256 changes which are required to signed the request with SHA256.
 
+## Troubleshooting
+- If you get an exception **`java.lang.SecurityException: JCE cannot authenticate the provider BC`**. This could be because of
+  many reasons. bcprov*.jar is a signed jar if java fails to validate the signature, it throws this exception. Make sure
+  you run below java command to verify this signature.
+   
+    `jarsigner -verify bcprov-jdk15on-1.61.jar` 
+    
+  when above command fails it says "jar is unsigned. (signatures missing or not parsable)", this could be because of many
+  reasons. e.g 
+  
+        1) When we unpack it and include in our own jar file. Including bcprov*.jar separately in the CLASSPATH should solve this issue.
+        2) May be changes in Oracle jar signer. If using Java SDK 1.6 or 1.7 with cybersource-sdk-java:6.2.7 and higher 
+           (ships with org.bouncycastle:bcprov-jdk15on:1.61). Upgrading version to bcprov-jdk15to18-1.63.jar should solve this issue.
+        3) If you are using some old version of JBOSS and have copied bcprov*.jar under $JBOSS_HOME/server/default/lib/. 
+            copying bcprov*.jar in $JBOSS_HOME/server/default/lib/ instead of $JBOSS_HOME/server/servername/lib/ should solve this issue.
+            
+- If you get an exception  **`exception decrypting data - java.security.InvalidKeyException: Illegal key size`**. 
+  It is recommended to download Unlimited Strength Jurisdiction Policy files from Oracle (US_export_policy.jar and local_policy.jar) 
+  for appropriate JAVA version. I meant if merchant are using java 6 then download these policy file only for java6. 
+  You need to copy security jars (US_export_policy.jar, local_policy.jar) in the $JAVA_HOME/jre/lib/security directory not in $JAVA_HOME/jre/lib/ext/).
+
+- Put below block of code to handle the ClientException to print the complete stacktrace.
+
+        try{
+            Client.runTransaction(requestMap, merchantProperties);
+        }catch (ClientException e){
+            e.getInnerException().printStackTrace();
+            // or 
+            String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);      
+        }
+        
+   
+      
 ## Documentation
-- For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>.
-- For all other support needs, see <http://www.cybersource.com/support>.
+- For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>.
+- For all other support needs, see <https://support.cybersource.com/>.
 
 

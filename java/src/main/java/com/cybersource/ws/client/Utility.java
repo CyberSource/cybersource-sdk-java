@@ -1,29 +1,26 @@
 /*
-* Copyright 2003-2014 CyberSource Corporation
-*
-* THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
-* AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
-* DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
-* COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
-* EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
-* WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
-* DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-* SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
-* OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
-* ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
-* DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
-* DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
-* WITH ANY PARTICULAR OPERATING SYSTEM.
-*/
+ * Copyright 2003-2014 CyberSource Corporation
+ *
+ * THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
+ * AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
+ * DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
+ * COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
+ * EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
+ * WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
+ * DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ * SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
+ * OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
+ * ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
+ * DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
+ * DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
+ * WITH ANY PARTICULAR OPERATING SYSTEM.
+ */
 
 package com.cybersource.ws.client;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -39,7 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Class containing useful constants and methods.
+ * Containing useful constants and methods.
  */
 public class Utility {
     private Utility() {
@@ -50,6 +47,25 @@ public class Utility {
      */
     public static final String VERSION = "6.2.10";
     public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
+    public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
+    public static final String RESPONSE_TIME_REPLY = "v-c-response-time";
+    public static final String MERCHANT_TRANSACTION_IDENTIFIER = "merchantTransactionIdentifier";
+
+    public static final String AUTH_SERVICE = "ccAuthService";
+    public static final String AUTH_SERVICE_XML_RUN_ATT = "run";
+    public static final String AUTH_SERVICE_NVP = "ccAuthService_run";
+
+    public static final String ELEM_MERCHANT_ID = "merchantID";
+    public static final String KEY_ALIAS = "keyAlias";
+    public static final String ELEM_MERCHANT_REFERENCE_CODE = "merchantReferenceCode";
+    public static final String ELEM_CLIENT_LIBRARY = "clientLibrary";
+    public static final String ELEM_CLIENT_LIBRARY_VERSION = "clientLibraryVersion";
+    public static final String ELEM_CLIENT_ENVIRONMENT = "clientEnvironment";
+    /**
+     * HTTP Status-Code 400: Bad Request.
+     */
+    public static final int HTTP_BAD_REQUEST = 400;
+    public static final String MTI_FIELD_ERR_MSG = "merchantTransactionIdentifier field is mandatory if useHttpClientWithConnectionPool is set to true";
 
     /**
      * If in the Request map, a key called "_has_escapes" is present and is set
@@ -58,15 +74,28 @@ public class Utility {
      * This might prove useful for more advanced users of the Basic client.
      */
     private static final String HAS_ESCAPES = "_has_escapes";
-    
+
+    /**
+     * NVP library information.
+     */
+    public static final String NVP_LIBRARY = new StringBuilder().append("Java NVP").append("/")
+            .append(VERSION).toString();
+
+    /**
+     * XML library information.
+     */
+    public static final String XML_LIBRARY = new StringBuilder().append("Java XML").append("/")
+            .append(VERSION).toString();
+
     /**
      * Environment information.
      */
     public static final String ENVIRONMENT
-            = System.getProperty("os.name") + "/" +
-            System.getProperty("os.version") + "/" +
-            System.getProperty("java.vendor") + "/" +
-            System.getProperty("java.version");
+            = new StringBuilder().append(System.getProperty("os.name")).append("/")
+            .append(System.getProperty("os.version"))
+            .append("/").append(System.getProperty("java.vendor"))
+            .append("/").append(System.getProperty("java.version"))
+            .toString();
 
 
     /**
@@ -125,7 +154,7 @@ public class Utility {
      *
      * @param commandLineArgs the command-line arguments.
      * @return Properties object containing the run-time properties required by
-     *         the clients.
+     * the clients.
      */
     public static Properties readProperties(String[] commandLineArgs) {
         Properties props = new Properties();
@@ -233,6 +262,8 @@ public class Utility {
             throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
+        //to prevent XXE is always to disable DTDs (External Entities) completely
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         return (dbf.newDocumentBuilder());
     }
 
@@ -243,7 +274,7 @@ public class Utility {
      * @param elementName local name to search for.
      * @param nsURI       namespaceURI to used (may be null).
      * @return the Element object corresponding to the given element name or
-     *         <code>null</code> if none is found.
+     * <code>null</code> if none is found.
      */
     public static Element getElement(
             Document owner, String elementName, String nsURI) {
@@ -267,7 +298,7 @@ public class Utility {
      * @param elementName local name to search for.
      * @param nsURI       namespaceURI to used (may be null).
      * @return the text value of the given element name in the CyberSource
-     *         namespace or <code>null</code> if none is found.
+     * namespace or <code>null</code> if none is found.
      */
     public static String getElementText(
             Document owner, String elementName, String nsURI) {
@@ -350,15 +381,15 @@ public class Utility {
             }
         }
     }
-    
+
     /**
      * Converts a name-value pair string into a Map object.
      *
      * @param src String containing name-value pairs.
      * @return resulting Map object; will be empty if the string was null or
-     *         empty.
+     * empty.
      */
-    public static HashMap stringToMap(String src) {
+    public static HashMap<String, String> stringToMap(String src) {
         HashMap<String, String> dest = new HashMap<String, String>();
 
         if (src == null) {
@@ -394,7 +425,7 @@ public class Utility {
 
         return (dest);
     }
-    
+
     /**
      * Converts the contents of a Map object into a string, one name-value pair
      * to a line and the name and value are separated by an equal sign.
@@ -405,10 +436,10 @@ public class Utility {
      *             is the request or the reply map.  Pass either
      *             PCI.REQUEST or PCI.REPLY.
      * @return resulting string; will be empty if the Map object was null or
-     *         empty.
+     * empty.
      */
     public static String mapToString(Map src, boolean mask, int type) {
-        StringBuffer dest = new StringBuffer();
+        StringBuilder dest = new StringBuilder();
 
         if (src != null && !src.isEmpty()) {
             Iterator iter = src.keySet().iterator();
@@ -417,7 +448,7 @@ public class Utility {
                 key = (String) iter.next();
                 val = mask ? PCI.maskIfNotSafe(type, key, (String) src.get(key))
                         : (String) src.get(key);
-                dest.append(key + "=" + val + "\n");
+                dest.append(key).append("=").append(val).append("\n");
             }
         } else {
             return dest.toString();
@@ -432,14 +463,27 @@ public class Utility {
                 ? dest.toString() : StringEscapeUtils.escapeXml11((dest.toString())));
     }
 
-    
+
     /**
      * Read the request xml file
-     * @param props Properties object to lookup properties in
+     *
+     * @param props    Properties object to lookup properties in
      * @param filename Filename of file containing XML request
      * @return Document Request from filename read as document
      */
     public static Document readRequest(Properties props, String filename) {
+        return readRequest(props, filename, null);
+    }
+
+    /**
+     * Read the request xml file
+     *
+     * @param props      Properties object to lookup properties in
+     * @param filename   Filename of file containing XML request
+     * @param merchantId merchantId
+     * @return Document Request from filename read as document
+     */
+    public static Document readRequest(Properties props, String filename, String merchantId) {
         Document doc = null;
 
         try {
@@ -453,7 +497,7 @@ public class Utility {
                 StringBuilder sb = new StringBuilder(xmlString);
                 sb.replace(
                         pos, pos + 7,
-                        XMLClient.getEffectiveNamespaceURI(props, null));
+                        XMLClient.getEffectiveNamespaceURI(props, merchantId));
                 xmlBytes = sb.toString().getBytes("UTF-8");
             }
 
@@ -461,6 +505,8 @@ public class Utility {
             ByteArrayInputStream bais = new ByteArrayInputStream(xmlBytes);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
+            //to prevent XXE is always to disable DTDs (External Entities) completely
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder builder = dbf.newDocumentBuilder();
             doc = builder.parse(bais);
             bais.close();
@@ -476,12 +522,12 @@ public class Utility {
 
         return (doc);
     }
-    
+
     /**
      * Creates an Element object in the CyberSource namespace.
      *
      * @param owner       Document object to own the Element object.
-     * @param nsURI		  Namespace URI to use.
+     * @param nsURI       Namespace URI to use.
      * @param elementName local name of Element object to create.
      * @param textValue   text value of the new Element object.
      * @return the newly created Element object.
@@ -500,5 +546,74 @@ public class Utility {
         return (elem);
     }
 
-    
+    public static long getResponseIssuedAtTime(String responseTime) {
+        return parseLong(responseTime, 0L);
+    }
+
+    /**
+     * This is the response transit time in seconds.
+     *
+     * @param resIssuedAtTime
+     * @return long
+     */
+    public static long getResponseTransitTime(long resIssuedAtTime) {
+        if (resIssuedAtTime > 0) {
+            if(checkIfEpochTimeInSecs(resIssuedAtTime)) {
+                return (System.currentTimeMillis() / 1000) - resIssuedAtTime;
+            }else{
+                return System.currentTimeMillis() - resIssuedAtTime;
+            }
+        }
+        return 0;
+    }
+
+    private static boolean checkIfEpochTimeInSecs(long resIssuedAtTime) {
+        return String.valueOf(resIssuedAtTime).length() == 10;
+    }
+
+    private static long parseLong(String val, long defaultValue) {
+        long result = defaultValue;
+        if (val != null) {
+            try {
+                result = Long.parseLong(val);
+            } catch (NumberFormatException e) {
+                //ignored
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks if the request documents contains merchantTransactionIdentifier element.
+     *
+     * @param request       Document object to own the Element object.
+     * @param nsURI       Namespace URI to use.
+     * @return merchantTransactionIdentifier element value else null if not exist.
+     */
+    public static String checkIfMTIFiledExist(Document request, String nsURI) {
+        String mtiFieldValue = Utility.getElementText(request, MERCHANT_TRANSACTION_IDENTIFIER, nsURI);
+        if(StringUtils.isBlank(mtiFieldValue)){
+            mtiFieldValue = Utility.getElementText(request, MERCHANT_TRANSACTION_IDENTIFIER, null);
+        }
+        return mtiFieldValue;
+    }
+
+    /**
+     * Checks if the request documents contains ccAuthService element.
+     *
+     * @param request     Document object to own the Element object.
+     * @param nsURI       Namespace URI to use.
+     * @return ccAuthService element value else null if not exist.
+     */
+    public static String checkIfAuthServiceFieldExist(Document request, String nsURI) {
+        Element authServiceElement = Utility.getElement(request, AUTH_SERVICE, nsURI);
+        if(authServiceElement == null){
+            authServiceElement = Utility.getElement(request, AUTH_SERVICE, null);
+        }
+        String isAuthService = null;
+        if(authServiceElement != null){
+            isAuthService = authServiceElement.getAttribute(AUTH_SERVICE_XML_RUN_ATT);
+        }
+        return isAuthService;
+    }
 }	

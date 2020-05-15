@@ -4,20 +4,31 @@ import org.apache.ws.security.components.crypto.CredentialException;
 import org.apache.ws.security.components.crypto.Merlin;
 
 import java.io.IOException;
-import java.security.*;
+import java.security.KeyStoreException;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 /**
- * Created by jeaton on 3/11/2016.
+ * This is to add identity to keystore.
  */
 public class MessageHandlerKeyStore extends Merlin {
 
+    /**
+     * @throws CredentialException
+     * @throws IOException
+     */
 	public MessageHandlerKeyStore() throws CredentialException, IOException {
         super(null);
         properties = new Properties();
     }
 
+    /**
+     * Add Identity to KeyStore
+     * @param id Identity
+     * @param logger Logger
+     * @throws SignEncryptException
+     */
     public void addIdentityToKeyStore(Identity id, Logger logger) throws SignEncryptException {
         if (id == null)
             return;

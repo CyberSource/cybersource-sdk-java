@@ -21,7 +21,7 @@ package com.cybersource.ws.client;
 import org.w3c.dom.Document;
 
 /**
- * Exception that encapsulates a fault returned by CyberSource.  Used by both
+ * Exception that encapsulates a fault returned by CyberSource.Used by both
  * the Basic and XML clients.
  */
 public class FaultException

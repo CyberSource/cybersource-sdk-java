@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import java.util.*;
 
-public class RetryIT{
+public class RetrySystemTest{
 
 	private static final String SERVER_URL = "https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor";
 	private static final String WRONG_SERVER_URL = "https://ics2wstest123.ic3.com/commerce/1.x/transactionProcessor";
@@ -37,9 +37,10 @@ public class RetryIT{
 	@Test 
 	public void checkRetryConfigValuesForHttpClient() throws Exception
 	{
-		String errMsg="Invalid value of numberOfRetries and/or retryInterval";
+		String expectedErrMsg="Invalid value of numberOfRetries and/or retryInterval(in ms)";
 		// request  fails as number of retry value is incorrect
 		props.setProperty("useHttpClient", "true");
+		props.setProperty("useHttpClientWithConnectionPool", "false");
 		props.setProperty("allowRetry", "true");
 		props.setProperty("numberOfRetries", "10");
 		props.setProperty("retryInterval", "10");
@@ -49,7 +50,7 @@ public class RetryIT{
 			Client.runTransaction(new HashMap(), props);
 		}
 		catch(ClientException e){
-			assertEquals(errMsg, e.getMessage());
+			assertEquals(expectedErrMsg, e.getMessage());
 		}
 
 	}  
@@ -60,6 +61,7 @@ public class RetryIT{
 		// In this case retry should not be active as it is non http client. transaction should be successful.
 		String errMsg="Invalid value of numberOfRetries and/or retryInterval";
 		props.setProperty("useHttpClient", "false");
+		props.setProperty("useHttpClientWithConnectionPool", "false");
 		props.setProperty("allowRetry", "true");
 		props.setProperty("numberOfRetries", "10");
 		props.setProperty("retryInterval", "10");
@@ -77,9 +79,10 @@ public class RetryIT{
 	@Test 
 	public void checkNegativeForHttp() throws Exception
 	{
-		String errMsg="Invalid value of numberOfRetries and/or retryInterval";
+		String expectedErrMsg="Invalid value of numberOfRetries and/or retryInterval(in ms)";
 		// request  fails as number of retry and retry interval values are in negative
 		props.setProperty("useHttpClient", "true");
+		props.setProperty("useHttpClientWithConnectionPool", "false");
 		props.setProperty("allowRetry", "true");
 		props.setProperty("numberOfRetries", "-10");
 		props.setProperty("retryInterval", "-10");
@@ -89,7 +92,7 @@ public class RetryIT{
 		}
 		catch (ClientException e)
 		{
-			assertEquals(errMsg, e.getMessage());
+			assertEquals(expectedErrMsg, e.getMessage());
 		}
 	}
 	
@@ -97,6 +100,7 @@ public class RetryIT{
 	public void retryDisabled() throws Exception{
 		// request should work as the Allow Retry is set to false other values will be ignored
 		props.setProperty("useHttpClient", "true");
+		props.setProperty("useHttpClientWithConnectionPool", "false");
 		props.setProperty("allowRetry", "false");
 		props.setProperty("numberOfRetries", "-10");
 		props.setProperty("retryInterval", "-10");

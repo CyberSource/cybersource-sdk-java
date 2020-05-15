@@ -111,6 +111,8 @@ public class Identity {
     /**
      * If merchant uploads a new key then isValid method will return false and certificate reload will happen.
      * else isValid method will return true and certificate reload will not occur.
+     * @param keyFile - File
+     * @param logger - Logger
     */
     
 	public boolean isValid(File keyFile, Logger logger) {
@@ -163,55 +165,101 @@ public class Identity {
         }
         
     }
+
+    /**
+     * getter method for name
+     * @return String
+     */
     public String getName() {
         return name;
     }
-    
-    
+
+
+    /**
+     * setter method for name
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
-    
-    
+
+
+    /**
+     * getter method for keyAlias
+     * @return String
+     */
     public String getKeyAlias() {
         return keyAlias;
     }
-    
-    
+
+
+    /**
+     * setter method for keyAlias
+     * @param keyAlias
+     */
     public void setKeyAlias(String keyAlias) {
         this.keyAlias = keyAlias;
     }
-    
-    
+
+
+    /**
+     * getter method for serialNumber
+     * @return String
+     */
     public String getSerialNumber() {
         
         return serialNumber;
     }
 
+
+    /**
+     * getter method for pswd
+     * @return char[]
+     */
     public char[] getPswd() {
         return pswd;
     }
 
+    /**
+     * setter method for serialNumber
+     * @param serialNumber
+     */
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
-    
-    
+
+
+    /**
+     * getter method for x509Cert
+     * @return X509Certificate
+     */
     public X509Certificate getX509Cert() {
         return x509Cert;
     }
-    
-    
+
+
+    /**
+     * setter method for x509Cert
+     * @param x509Cert
+     */
     public void setX509Cert(X509Certificate x509Cert) {
         this.x509Cert = x509Cert;
     }
-    
-    
+
+
+    /**
+     * getter method for privateKey
+     * @return PrivateKey
+     */
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
-    
-    
+
+
+    /**
+     * setter method for privateKey
+     * @param privateKey
+     */
     public void setPrivateKey(PrivateKey privateKey) {
         this.privateKey = privateKey;
     }

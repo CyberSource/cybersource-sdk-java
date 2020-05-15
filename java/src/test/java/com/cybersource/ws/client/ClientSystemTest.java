@@ -32,7 +32,7 @@ import java.util.Properties;
  * This class helps in testing the Client.java class which uses Name Value pair as the input data
  * author : sunagara
  */
-public class ClientIT extends BaseTest {
+public class ClientSystemTest extends BaseTest {
 
 
    // Test case takes the Transaction Data and Merchant Properties details are given as input.

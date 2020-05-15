@@ -22,6 +22,9 @@ import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Utility class for security related functions like loading p12 key, create signed or encrypted doc,
+ */
 
 public class SecurityUtil {
     
@@ -103,7 +106,7 @@ public class SecurityUtil {
     }
     
     /**
-     *Reads the Certificate or Public key  and Private from the P12 key .
+     * Reads the Certificate or Public key  and Private from the P12 key .
      * @param merchantConfig - Merchant Config details
      * @param logger - logger object
      * @throws SignException
@@ -172,8 +175,17 @@ public class SecurityUtil {
             throw new SignException(e);
         }
     }
-    
-    
+
+
+    /**
+     * Create signed encrypted document
+     * @param signedDoc
+     * @param merchantId
+     * @param logger
+     * @return Document
+     * @throws SignEncryptException
+     * @throws SignException
+     */
     public static Document handleMessageCreation(Document signedDoc, String merchantId, Logger logger) throws SignEncryptException, SignException{
         
         logger.log(Logger.LT_INFO, "Encrypting Signed doc ...");
@@ -221,7 +233,16 @@ public class SecurityUtil {
         encrBuilder.prependToHeader(secHeader);
         return signedEncryptedDoc;
     }
-    
+
+    /**
+     * Create signed document
+     * @param workingDocument
+     * @param keyAlias
+     * @param password
+     * @param logger
+     * @return Document
+     * @throws SignException
+     */
     public static Document createSignedDoc(Document workingDocument,String keyAlias, String password,Logger logger) throws SignException {
         
         logger.log(Logger.LT_INFO, "Signing request...");
@@ -257,8 +278,15 @@ public class SecurityUtil {
             throw new SignException(e.getMessage());
         }
     }
-    
-    
+
+
+    /**
+     * read jdk certificates from cacerts file
+     * @param merchantConfig
+     * @param logger
+     * @throws SignEncryptException
+     * @throws SignException
+     */
 	public static void readJdkCert(MerchantConfig merchantConfig, Logger logger)
 			throws SignEncryptException, SignException {
 		KeyStore keystore;
