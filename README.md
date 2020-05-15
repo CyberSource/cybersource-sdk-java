@@ -228,85 +228,77 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 
 ## Changes
-
+_______________________________
 Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
-
-  1)Added PoolingHttpClientConnection implementation
-  
-  2)MerchantConfig Object Caching based on KeyAlias/Merchant Id
-  
-  3)Changed retry interval from second to millisecond
-  
-  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
-  
-  5)Added troubleshooting section in README.
-  
+    1)Added PoolingHttpClientConnection implementation
+    2)MerchantConfig Object Caching based on KeyAlias/Merchant Id
+    3)Changed retry interval from second to millisecond
+    4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
+    5)Added troubleshooting section in README.
+_______________________________
 Version Cybersource-sdk-java 6.2.9 (APR,2020)
 _______________________________
-  1)Corrected request header name
-  
+    1)Corrected request header name
+_______________________________  
 Version Cybersource-sdk-java 6.2.8 (FEB,2020)
 _______________________________
-
-  1)Added request header and logged request and response headers
-  
-  2)Caching of certificate is done using keyAlias earlier it was done using merchant_id
-
+    1)Added request header and logged request and response headers
+    
+    2)Caching of certificate is done using keyAlias earlier it was done using merchant_id
+_______________________________
 Version Cybersource-sdk-java 6.2.7 (MAR,2019)
 _______________________________
-  1) Fixed security vulnerabilities found in the jar dependencies.
+    1) Fixed security vulnerabilities found in the jar dependencies.
         xmlsec jar :-upgraded from version 1.4.3 to version 1.5.6
         opensaml jar :- Removed this jar as its not impacting our code base
         bcprov jar :- upgraded from version 1.54 to version 1.61
-  2) Fixed keyfile password issue. Now using keyfile password to store/load p12 certs. 
-
+    2) Fixed keyfile password issue. Now using keyfile password to store/load p12 certs. 
 _______________________________
-
 Version Cybersource-sdk-java 6.2.6 (MAY,2018)
 _______________________________
-  1) Added certificateCacheEnabled optional feature. certificateCacheEnabled parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made.If the certificateCacheEnabled is true then only at the first time certificate of a merchant will loaded from filesystem.
-  2) Introduced a new feature to check merchant .p12 certificate file validity at run time. If it is replaced at runtime then SDK will reload the new certificate into the cache.
-  3) Changed clientLibrary version to 6.2.6;
-
+    1) Added certificateCacheEnabled optional feature. certificateCacheEnabled parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made.If the certificateCacheEnabled is true then only at the first time certificate of a merchant will loaded from filesystem.
+    2) Introduced a new feature to check merchant .p12 certificate file validity at run time. If it is replaced at runtime then SDK will reload the new certificate into the cache.
+    3) Changed clientLibrary version to 6.2.6;
+_______________________________  
 Version Cybersource-sdk-java 6.2.5 (OCT,2017)
 _______________________________
-  1) Merchant cert to be read from JAVA key store. Flag is added to enable reading cert from Java keystore.
-  2) Added Custom HttpClient feature. Merchants can use there own http client instead of defaults which comes with SDK.
-  3) Http Client connection reuse issue.
-  4) Changed clientLibrary version to 6.2.5; in 6.2.4 release it was missed. So, in 6.2.4 release, clientLibrary version was      pointing to 6.2.3.
+    1) Merchant cert to be read from JAVA key store. Flag is added to enable reading cert from Java keystore.
+    2) Added Custom HttpClient feature. Merchants can use there own http client instead of defaults which comes with SDK.
+    3) Http Client connection reuse issue.
+    4) Changed clientLibrary version to 6.2.5; in 6.2.4 release it was missed. So, in 6.2.4 release, clientLibrary version was      pointing to 6.2.3.
 _______________________________  
 Version Cybersource-sdk-java 6.2.4 (Dec 15, 2016)
 _______________________________
-  1) RetryPattern config for http client.
-  2) Code review comments.
-  3) Added timers to log the method execution time.
-  4) Sample added to support other services.
+    1) RetryPattern config for http client.
+    2) Code review comments.
+    3) Added timers to log the method execution time.
+    4) Sample added to support other services.
 _______________________________
 Version Cybersource-sdk-java 6.2.3 (Oct 17, 2016)
 _______________________________
-  1) Fixed performance issue; in case of multiple merchantIDs, p12 was getting loaded for every request.
-  2) p12 will be loaded once per merchantId.
+    1) Fixed performance issue; in case of multiple merchantIDs, p12 was getting loaded for every request.
+    2) p12 will be loaded once per merchantId.
 _______________________________
 Version Cybersource-sdk-java 6.2.2 (Sep 15, 2016)
 _______________________________
-  1)Upgraded 3rd party dependencies jars including wss4j.
+    1)Upgraded 3rd party dependencies jars including wss4j.
 _______________________________
 Version Cybersource-sdk-java 6.2.1 (Aug 4, 2016)
 _______________________________
-  1) AkamaiSureroute config parameter introduced
-  2) i18n fix for NVP sample.            
-  3) In `Sample/cybs.properties` file, `targetAPIVersion` changed to latest 1.129.
+    1) AkamaiSureroute config parameter introduced
+    2) i18n fix for NVP sample.            
+    3) In `Sample/cybs.properties` file, `targetAPIVersion` changed to latest 1.129.
 _______________________________
 Version Cybersource-sdk-java 6.2.0 (Jul 28, 2016)
 _______________________________
-  1) MLE[Message Level Encryption] is enabled.
-  2) published zip file with samples and packaged compiled cybersoruce-sdk-java jar file.
-  3) `Bouncycastle` jar issue; changed scope from provided to default"scope"
+    1) MLE[Message Level Encryption] is enabled.
+    2) published zip file with samples and packaged compiled cybersoruce-sdk-java jar file.
+    3) `Bouncycastle` jar issue; changed scope from provided to default"scope"
 _______________________________
 Version Cybersource-sdk-java 6.1.0 (Feb 24,2016)
 _______________________________
-  1) SHA256 changes which are required to signed the request with SHA256.
+    1) SHA256 changes which are required to signed the request with SHA256.
 
 ## Troubleshooting
 - If you get an exception **`java.lang.SecurityException: JCE cannot authenticate the provider BC`**. This could be because of
