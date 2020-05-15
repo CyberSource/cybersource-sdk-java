@@ -1,20 +1,20 @@
 /*
-* Copyright 2003-2014 CyberSource Corporation
-*
-* THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
-* AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
-* DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
-* COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
-* EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
-* WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
-* DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-* SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
-* OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
-* ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
-* DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
-* DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
-* WITH ANY PARTICULAR OPERATING SYSTEM.
-*/
+ * Copyright 2003-2014 CyberSource Corporation
+ *
+ * THE SOFTWARE AND THE DOCUMENTATION ARE PROVIDED ON AN "AS IS" AND "AS
+ * AVAILABLE" BASIS WITH NO WARRANTY.  YOU AGREE THAT YOUR USE OF THE SOFTWARE AND THE
+ * DOCUMENTATION IS AT YOUR SOLE RISK AND YOU ARE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR
+ * COMPUTER SYSTEM OR OTHER DEVICE OR LOSS OF DATA THAT RESULTS FROM SUCH USE. TO THE FULLEST
+ * EXTENT PERMISSIBLE UNDER APPLICABLE LAW, CYBERSOURCE AND ITS AFFILIATES EXPRESSLY DISCLAIM ALL
+ * WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE AND THE
+ * DOCUMENTATION, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ * SATISFACTORY QUALITY, ACCURACY, TITLE AND NON-INFRINGEMENT, AND ANY WARRANTIES THAT MAY ARISE
+ * OUT OF COURSE OF PERFORMANCE, COURSE OF DEALING OR USAGE OF TRADE.  NEITHER CYBERSOURCE NOR
+ * ITS AFFILIATES WARRANT THAT THE FUNCTIONS OR INFORMATION CONTAINED IN THE SOFTWARE OR THE
+ * DOCUMENTATION WILL MEET ANY REQUIREMENTS OR NEEDS YOU MAY HAVE, OR THAT THE SOFTWARE OR
+ * DOCUMENTATION WILL OPERATE ERROR FREE, OR THAT THE SOFTWARE OR DOCUMENTATION IS COMPATIBLE
+ * WITH ANY PARTICULAR OPERATING SYSTEM.
+ */
 
 package com.cybersource.ws.client;
 
@@ -38,26 +38,24 @@ import java.net.ProtocolException;
 
 
 /**
- * Connection class is a factory class for creating an instance for HttpClientConnection or
+ * It is a factory class for creating an instance for HttpClientConnection or
  * JDKHttpURLConnection or PoolingHttpClientConnection.
- *
- * @author sunagara
  */
 abstract public class Connection {
     final MerchantConfig mc;
     private final DocumentBuilder builder;
     final LoggerWrapper logger;
-    
-   /**
-    * Constructor.
-    * It initializes three arguments MerchantConfig, DocumentBuilder and Logger
-    * Any class extending this class must implement three argument constructor
-    * @param mc
-    * @param builder
-    * @param logger
- */
-protected Connection(MerchantConfig mc, DocumentBuilder builder,
-               LoggerWrapper logger) {
+
+    /**
+     * It initializes three arguments MerchantConfig, DocumentBuilder and Logger
+     * Any class extending this class must implement three argument constructor
+     *
+     * @param mc
+     * @param builder
+     * @param logger
+     */
+    protected Connection(MerchantConfig mc, DocumentBuilder builder,
+                         LoggerWrapper logger) {
         this.mc = mc;
         this.builder = builder;
         this.logger = logger;
@@ -65,6 +63,7 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
     /**
      * Get connection instance based on properties
+     *
      * @param mc
      * @param builder
      * @param logger
@@ -73,10 +72,10 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
      */
     public static Connection getInstance(
             MerchantConfig mc, DocumentBuilder builder, LoggerWrapper logger) throws ClientException {
-        if (mc.getUseHttpClient()) {
-            return new HttpClientConnection(mc, builder, logger);
-        } else if (mc.getUseHttpClientWithConnectionPool()) {
+        if (mc.getUseHttpClientWithConnectionPool()) {
             return new PoolingHttpClientConnection(mc, builder, logger);
+        } else if (mc.getUseHttpClient()) {
+            return new HttpClientConnection(mc, builder, logger);
         } else {
             // HttpClient is not set in properties file then JDKHttpURLConnection class instance.
             return new JDKHttpURLConnection(mc, builder, logger);
@@ -84,67 +83,58 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     }
 
     /**
-     * Abstract method to check is request sent or not
+     * To check is request sent or not
+     *
      * @return boolean
      */
     abstract public boolean isRequestSent();
 
     /**
-     * Abstract method to release the connection related objects
+     * To release the connection related objects
+     *
      * @throws ClientException
      */
     abstract public void release() throws ClientException;
 
     /**
-     * Abstract method to post request
+     * method to post request
+     *
      * @param request
-     * @param requestSentTime
+     * @param startTime
      * @throws IOException
      * @throws TransformerConfigurationException
      * @throws TransformerException
      * @throws MalformedURLException
      * @throws ProtocolException
      */
-    abstract void postDocument(Document request, long requestSentTime)
+    abstract void postDocument(Document request, long startTime)
             throws IOException, TransformerConfigurationException,
             TransformerException, MalformedURLException,
             ProtocolException;
 
-    /**
-     * Abstract method to get http response code
-     * @return int
-     * @throws IOException
-     */
+
     abstract int getHttpResponseCode()
             throws IOException;
 
-    /**
-     * Abstract method to get response stream
-     * @return InputStream
-     * @throws IOException
-     */
     abstract InputStream getResponseStream()
             throws IOException;
 
-    /**
-     * Abstract method to get response error stream
-     * @return InputStram
-     * @throws IOException
-     */
+
     abstract InputStream getResponseErrorStream()
             throws IOException;
 
     /**
      * Post the request document and validate the response for any faults from the Server.
+     *
      * @param request - Request document
      * @return - Response XML as Document object.
      * @throws ClientException
      * @throws FaultException
      */
-    public Document post(Document request, long requestSentTime)
+    public Document post(Document request, long startTime)
             throws ClientException, FaultException {
         try {
-            postDocument(request, requestSentTime);
+            postDocument(request, startTime);
             checkForFault();
             return (parseReceivedDocument());
         } catch (IOException e) {
@@ -162,7 +152,8 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
 
     /**
-     * Validate the Http response for any faults returned from the server. 
+     * Validate the Http response for any faults returned from the server.
+     *
      * @throws FaultException
      * @throws ClientException
      */
@@ -230,7 +221,8 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
     }
 
     /**
-     * Method helps to parse/read the response xml into Document object.
+     * Helps to parse/read the response xml into Document object.
+     *
      * @return - returns a Document object
      * @throws IOException
      * @throws SAXException
@@ -246,7 +238,8 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
 
     /**
      * Converts the Document object into ByteArrayStream.
-     * @param doc  - Document object
+     *
+     * @param doc - Document object
      * @return ByteArrayStream
      * @throws TransformerConfigurationException
      * @throws TransformerException
@@ -263,15 +256,9 @@ protected Connection(MerchantConfig mc, DocumentBuilder builder,
         return baos;
     }
 
-    /**
-     * Log Request Headers
-     */
-    	abstract public void logRequestHeaders();
+    abstract public void logRequestHeaders();
 
-    /**
-     * Log Response Headers
-     */
-    	abstract public void logResponseHeaders();
+    abstract public void logResponseHeaders();
 }
 
 

@@ -30,7 +30,6 @@ import java.nio.charset.Charset;
 /**
  * Helps in creating the Proxy and adding Proxy credentials to JDKHttpURLConnection.
  *
- * @author sunagara
  */
 public class ConnectionHelper {
 	

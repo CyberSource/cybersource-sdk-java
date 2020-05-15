@@ -80,18 +80,33 @@ Refer to our Developer's Guide for details <http://apps.cybersource.com/library/
          - Refer to the "PoolingHttpClientShutdown" section below.
 
     n. Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
-         Note : Below default values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
+         Note : Sample values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
          Before using these values in actual real time application, please consider all real time factors. Refer this link for more detailed explanation.
-         - `maxConnections` set the maximum number of total open connections. default value is 200
-         - `defaultMaxConnectionsPerRoute` Set the maximum number of concurrent connections per route. default value is 200
-         - `maxConnectionsPerRoute` Set the total number of concurrent connections to a specific route. default value is 200
-         - `connectionRequestTimeoutMs` the time to wait for a connection from the connection manager/pool. default value is 1000
-         - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 2000
-         - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 2000
-         - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 3000
-         - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connaection can be idle before it is evicted from the pool. default value is 30000
+         - 'maxConnections' Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to be opened with the target service.
+            There is no default value. For applications that create many long-lived connections, increase the value of this parameter.
+         - 'defaultMaxConnectionsPerRoute' the maximum number of connections per (any) route.
+         - 'maxConnectionsPerRoute' Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to the same host or route.
+            In SDK, all above config does same functionality and the same value can be given to these configs as we have only one route.
+            Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
+         - 'connectionRequestTimeoutMs' Time taken in milliseconds to get connection request from the pool. If it times out, it will throw error as Timeout waiting for connection from pool
+         - 'connectionTimeoutMs' Specifies the number of milliseconds to wait while a connection is being established.
+         - 'socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
+         - 'evictThreadSleepTimeMs' Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread.
+            This thread will check if any idle/expired/stale connections are available in pool and evict it.
+         - 'maxKeepAliveTimeMs' Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
+         - 'staleConnectionCheckEnabled` It determines whether the stale connection check is to be used. Disabling the stale connection check can result in slight performance improvement
+            at the risk of getting an I/O error, when executing a request over a connection that has been closed at the server side. By default it is set to true, which means it is enabled.
+         - 'validateAfterInactivityMs' By default it is set to 0. This value can be set if in case you decide to disable staleConnectionCheckEnabled to get slight better performance.
+            We recommended a value of 2000ms.
+         - 'enabledShutdownHook` We should close the connection manager, http client and idle connection cleaner thread when application get shutdown both abruptly and gracefully.
+            If `enabledShutdownHook` is true, then JVM runtime addShutdownHook method will be initialized. Shutdown Hooks are a special construct that allows developers to plug in a piece of
+            code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean-up operations in case the VM is shutting down.
+                `    private void addShutdownHook() {
+                      Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
+                    }`
+            createShutdownHookThread method will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread. By default this is enabled.
 
-    o. If "merchantConfigCacheEnabled" is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
+    o. If 'merchantConfigCacheEnabled' is set to true (default value is false) it will cache the merchantConfig object based on keyAlias/merchantID
          - If cache enabled is true, for single merchant id, if you change any properties after first initialization, it will not reflect.
 
     p. Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
@@ -148,15 +163,14 @@ try {
     e.getInnerException().printStackTrace();
 }
 
-##PoolingHttpClientShutdown
-In case of PoolingHttpClient Connection, we need to close the connection manager, http client and idle connection cleaner thread when application got shutdown abruptly or gracefully.
-If "enabledShutdownHook" is true, then JVM runtime addShutdownHook method will be initialized.
-Shutdown Hooks are a special construct that allows developers to plug in a piece of code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean up operations in case the VM is shutting down.
-private void addShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
-    }
-createShutdownHookThread will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread.
+##PoolingHttpClient
+PoolingHttpClient is built using the apache's PoolingHttpClientConnectionManager class. It comes with retry functionality which is very much needed in case if
+SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side. However there might be some cases when
+transaction has reached server and similar or some other exception has occurred. We are considering `merchantTransactionIdentifier` as idempotent key, specially in
+case of auth service(`ccAuthService`). Hence if you want to use PoolingHttpClient, for auth service(`ccAuthService`) merchantTransactionIdentifier field is mandatory
+in the payload for both nvp and xml. The value of the merchant transaction ID must be unique for 60 days.
 
+To get more information related to connection pooling please refer wiki.
 
 ##Message Level Encryption
 
@@ -243,13 +257,14 @@ provides reusable components for client-side authentication, HTTP state manageme
 
 ##Changes
 
-Version Cybersource-sdk-java 6.2.10 (APR,2020)
+Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
 
-  1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
-  2)Added PoolingHttpClientConnection implementation
+  1)Added PoolingHttpClient implementation
+  2)MerchantConfig Object Caching based on KeyAlias/Merchant Id
   3)Changed retry interval from second to millisecond
-  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to cybersource
+  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
+  5)Added troubleshooting section in README.
 
 Version Cybersource-sdk-java 6.2.9 (APR,2020)
 _______________________________
@@ -333,11 +348,21 @@ _______________________________
   for appropriate JAVA version. I meant if merchant are using java 6 then download these policy file only for java6.
   You need to copy security jars (US_export_policy.jar, local_policy.jar) in the $JAVA_HOME/jre/lib/security directory not in $JAVA_HOME/jre/lib/ext/).
 
+- Put below block of code to handle the ClientException to print the complete stacktrace.
+
+        try{
+            Client.runTransaction(requestMap, merchantProperties);
+        }catch (ClientException e){
+            e.getInnerException().printStackTrace();
+            // or
+            String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);
+        }
+
+
 ##Documentation
 
-For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>
-
-For all other support needs, see <http://www.cybersource.com/support>
+For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>
+For all other support needs, see <https://support.cybersource.com/>
 
 
 

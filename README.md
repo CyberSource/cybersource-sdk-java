@@ -59,28 +59,45 @@ You do not need to download and build the source to use the SDK but if you want 
     - Set `sendToAkamai` config parameter with toggle value "true/false" to turn on/off routing requests through Akamai to Cybersource. By default, it is set to true.
     - `serverURL` config parameter will take precedence over `sendToProduction` and `sendToAkamai` config parameters. By default the `serverURL` configuration is commented out.
     - If `enableJdkcert` parameter is set to true, certificates will be read from the JKS file specified at keysDirectory location. The JKS file should be of the same name as specified in keyFilename.
-      - To know how to convert p12 to JKS refer the JKS creation section of this document.
-    - If 'enableCacert' property parameter is set to true, certificates will be read from the cacerts file specified at keysDirectory location.If keysDirectory path is not set,certificate will be loaded from Java Installation cacerts file. The cacerts file should be of the same name as specified in keyFilename.
+        - To know how to convert p12 to JKS refer the JKS creation section of this document.
+    - If 'enableCacert' property parameter is set to true, certificates will be read from the cacerts file specified at keysDirectory location.
+        - If keysDirectory path is not set,certificate will be loaded from Java Installation cacerts file. The cacerts file should be of the same name as specified in keyFilename.
     - If `certificateCacheEnabled` parameter is set to false (default is true), the p12 certificate of a merchant will be reloaded from filesystem every time a transaction is made 
     - If `useHttpClient` parameter is set to true (default is false), then simple HttpClientConnection will be enabled
-    - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled
-     - In case of poolingHttpConnection, we are initializing connection manager and httpclient once, If any change in value in between the application is running, it will not reflect. need to restart it. 
-     - Refer to the [PoolingHttpClient Shutdown](README.md#poolinghttpclientshutdown) section below.
-    - If`enabledShutdownHook` is true (default is true), enables JVM runtime shutdown hook and execute our shutdown api. This is applicable only when useHttpClientWithConnectionPool is true.
+    - If `useHttpClientWithConnectionPool` parameter is set to true (default is false), then poolingHttpClientConnection will be enabled. In case of poolingHttpConnection, 
+      we are initializing connection manager and httpclient once, If any change in value in between the application is running, it will not reflect. need to restart it. 
     - Below properties are specific to poolinghttpclient connection, If it is not added in properties file, it will throw config exception.
-      Note : Below default values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc
-      Before using these values in actual real time application, please consider all real time factors. Refer this link for more detailed explanation.
-     - `maxConnections` set the maximum number of total open connections. default value is 200
-     - `defaultMaxConnectionsPerRoute` Set the maximum number of concurrent connections per route. default value is 200
-     - `maxConnectionsPerRoute` Set the total number of concurrent connections to a specific route. default value is 200
-     - `connectionRequestTimeoutMs` the time to wait for a connection from the connection manager/pool. default value is 1000
-     - `connectionTimeoutMs` the time to establish the connection with the remote host. default value is 2000
-     - `socketTimeoutMs` the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. default value is 2000
-     - `evictThreadSleepTimeMs` amount of time in milliseconds between sweeps by the idle connection evictor thread. default value is 3000
-     - `maxKeepAliveTimeMs` maximum amount of time in milliseconds that a connection can be idle before it is evicted from the pool. default value is 30000
-    - `allowRetry` config parameter will only work for HttpClient and PoolingHttpClient. Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
-    - Set integer values and long values for config parameter `numberOfRetries` *and* `retryInterval` respectively. Retry Interval is time delay for next retry in milliSeconds.
-      - Number of retry parameter should be set between 1 to 5. Any other value will throw an Error Message.
+      
+      Note : Sample values used in properties files are based on our testing application factors such as TPS, CPU, JVM, OS etc.
+      Before using these values in actual real time application, please consider all real time factors.
+         - `maxConnections` Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to be opened with the target service. 
+            There is no default value. For applications that create many long-lived connections, increase the value of this parameter.
+         - `defaultMaxConnectionsPerRoute` the maximum number of connections per (any) route.
+         - `maxConnectionsPerRoute` Specifies the maximum number of concurrent, active HTTP connections allowed by the resource instance to the same host or route. 
+            In SDK, all above config does same functionality and the same value can be given to these configs as we have only one route. 
+            
+            Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
+         - `connectionRequestTimeoutMs` Time taken in milliseconds to get connection request from the pool. If it times out, it will throw error as Timeout waiting for connection from pool
+         - `connectionTimeoutMs` Specifies the number of milliseconds to wait while a connection is being established.
+         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
+         - `evictThreadSleepTimeMs` Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread. 
+            This thread will check if any idle/expired/stale connections are available in pool and evict it.
+         - `maxKeepAliveTimeMs` Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
+         - `staleConnectionCheckEnabled` It determines whether the stale connection check is to be used. Disabling the stale connection check can result in slight performance improvement 
+            at the risk of getting an I/O error, when executing a request over a connection that has been closed at the server side. By default it is set to true, which means it is enabled.
+         - `validateAfterInactivityMs` By default it is set to 0. This value can be set if in case you decide to disable staleConnectionCheckEnabled to get slight better performance. 
+            We recommended a value of 2000ms. 
+         - `enabledShutdownHook` We should close the connection manager, http client and idle connection cleaner thread when application get shutdown both abruptly and gracefully.
+            If `enabledShutdownHook` is true, then JVM runtime addShutdownHook method will be initialized. Shutdown Hooks are a special construct that allows developers to plug in a piece of 
+            code to be executed when the JVM is shutting down. This comes in handy in cases where we need to do special clean-up operations in case the VM is shutting down.
+                `    private void addShutdownHook() {
+                      Runtime.getRuntime().addShutdownHook(this.createShutdownHookThread());
+                    }`
+            createShutdownHookThread method will call static shutdown api to close connectionManager, httpClient and IdleCleanerThread. By default this is enabled when useHttpClientWithConnectionPool is true.
+    - `allowRetry` config parameter will only work for HttpClient and PoolingHttpClient. 
+       Set `allowRetry` config parameter to "true" to enable retry mechanism and set merchant specific values for the retry.
+       - Set integer values and long values for config parameter `numberOfRetries` *and* `retryInterval` respectively. Retry Interval is time delay for next retry in milliSeconds.
+          - Number of retry parameter should be set between 1 to 5. By default the value for numberOfRetries will be 3. Any other value will throw an Error Message.
       - Refer to the [Retry Pattern](README.md#retry-pattern) section below.
     - Please refer to the accompanying documentation for the other optional properties that you may wish to specify.
     - Set customHttpClassEnabled to true to make use of Custom Http Library. 
@@ -157,7 +174,13 @@ keytool -list -v -keystore <Your_keystore_name>`
   - Second entry should be for `CyberSource_SJC_US` certificate with alias name as CyberSource_SJC_US
   
 ## PoolingHttpClient
-   To get more information please refer wiki.
+   PoolingHttpClient is built using the apache's PoolingHttpClientConnectionManager class. It comes with retry functionality which is very much needed in case if
+   SDK receives an I/O error/exception, when executing a request over a connection that has been closed at the server side. However there might be some cases when
+   transaction has reached server and similar or some other exception has occurred. We are considering `merchantTransactionIdentifier` as idempotent key, specially 
+   in case of auth service(`ccAuthService`). Hence if you want to use PoolingHttpClient, for auth service(`ccAuthService`) merchantTransactionIdentifier field is 
+   mandatory in the payload for both nvp and xml. The value of the merchant transaction ID must be unique for 60 days.
+   
+   To get more information related to connection pooling please refer wiki.
    
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
@@ -206,17 +229,19 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 
-Version Cybersource-sdk-java 6.2.10 (APR,2020)
+Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
 
-  1)MerchantConfig Object Caching based on KeyAlias/Merchant Id
+  1)Added PoolingHttpClientConnection implementation
   
-  2)Added PoolingHttpClientConnection implementation
+  2)MerchantConfig Object Caching based on KeyAlias/Merchant Id
   
   3)Changed retry interval from second to millisecond
   
-  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to cybersource
-
+  4)Added one more request header "v-c-client-computetime" to calculate time taken to send request to Cybersource
+  
+  5)Added troubleshooting section in README.
+  
 Version Cybersource-sdk-java 6.2.9 (APR,2020)
 _______________________________
   1)Corrected request header name
@@ -310,10 +335,14 @@ _______________________________
             Client.runTransaction(requestMap, merchantProperties);
         }catch (ClientException e){
             e.getInnerException().printStackTrace();
+            // or 
+            String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);      
         }
-  
+        
+   
+      
 ## Documentation
-- For more information about CyberSource services, see <http://www.cybersource.com/developers/documentation>.
-- For all other support needs, see <http://www.cybersource.com/support>.
+- For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>.
+- For all other support needs, see <https://support.cybersource.com/>.
 
 

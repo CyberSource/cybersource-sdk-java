@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import java.util.*;
 
-public class RetryIT{
+public class RetrySystemTest{
 
 	private static final String SERVER_URL = "https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor";
 	private static final String WRONG_SERVER_URL = "https://ics2wstest123.ic3.com/commerce/1.x/transactionProcessor";

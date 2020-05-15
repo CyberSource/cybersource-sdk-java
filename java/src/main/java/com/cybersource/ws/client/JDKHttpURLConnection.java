@@ -35,10 +35,9 @@ import static com.cybersource.ws.client.Utility.*;
 
 
 /**
- * Class helps in posting the Request document for the Transaction using URLConnection.
+ * Helps in posting the Request document for the Transaction using HttpURLConnection.
  * Converts the document to String format and also helps in setting up the Proxy connections.
  *
- * @author sunagara
  */
 public class JDKHttpURLConnection extends Connection {
     private boolean _isRequestSent = false;
@@ -46,7 +45,6 @@ public class JDKHttpURLConnection extends Connection {
 
 
     /**
-     * Constructor.
      * @param mc
      * @param builder
      * @param logger
@@ -60,11 +58,11 @@ public class JDKHttpURLConnection extends Connection {
     /**
      * Post request by jdkHttpURL connection
      * @param request
-     * @param requestSentTime
+     * @param startTime
      * @throws IOException
      * @throws TransformerException
      */
-    void postDocument(Document request, long requestSentTime)
+    void postDocument(Document request, long startTime)
             throws IOException,
             TransformerException {
         //long startTime = System.nanoTime();
@@ -72,7 +70,7 @@ public class JDKHttpURLConnection extends Connection {
         URL url = new URL(serverURL);
         con = ConnectionHelper.openConnection(url, mc);
         con.setRequestProperty(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-        con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - requestSentTime));
+        con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - startTime));
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         ConnectionHelper.setTimeout(con, mc.getTimeout());
@@ -87,10 +85,6 @@ public class JDKHttpURLConnection extends Connection {
         _isRequestSent = true;
     }
 
-    /**
-     * Method to check is request sent or not
-     * @return boolean
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#isRequestSent()
      */
@@ -98,9 +92,6 @@ public class JDKHttpURLConnection extends Connection {
         return _isRequestSent;
     }
 
-    /**
-     * Method to release the connections
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#release()
      */
@@ -108,11 +99,6 @@ public class JDKHttpURLConnection extends Connection {
         con = null;
     }
 
-    /**
-     * Method to get http response code
-     * @return int
-     * @throws IOException
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getHttpResponseCode()
      */
@@ -121,11 +107,6 @@ public class JDKHttpURLConnection extends Connection {
         return con != null ? con.getResponseCode() : -1;
     }
 
-    /**
-     * Method to get response error stream
-     * @return InputStram
-     * @throws IOException
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseStream()
      */
@@ -134,10 +115,6 @@ public class JDKHttpURLConnection extends Connection {
         return con != null ? con.getInputStream() : null;
     }
 
-    /**
-     * Method to get response error stream
-     * @return InputStream
-     */
     /* (non-Javadoc)
      * @see com.cybersource.ws.client.Connection#getResponseErrorStream()
      */
@@ -146,7 +123,6 @@ public class JDKHttpURLConnection extends Connection {
     }
 
     /**
-     * Converts Document to byte array stream
      *
      * @param doc - Document document
      * @return - byte array stream.
@@ -168,26 +144,20 @@ public class JDKHttpURLConnection extends Connection {
         }
     }
 
-    /**
-     * Log Response Headers
-     */
     @Override
     public void logResponseHeaders() {
         if (mc.getEnableLog() && con != null) {
             String responseTime = con.getHeaderField(RESPONSE_TIME_REPLY);
             if (StringUtils.isNotBlank(responseTime)) {
-                long resIAT = getResponseIssuedAtTimeInSecs(responseTime);
+                long resIAT = getResponseIssuedAtTime(responseTime);
                 if (resIAT > 0) {
-                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTimeSeconds(resIAT));
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
                 }
             }
             logger.log(Logger.LT_INFO, "Response headers : " + con.getHeaderFields());
         }
     }
 
-    /**
-     * Log Request Headers
-     */
     @Override
     public void logRequestHeaders() {
         if (mc.getEnableLog() && con != null) {

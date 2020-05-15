@@ -14,6 +14,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.*;
@@ -32,14 +33,15 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.cybersource.ws.client.Utility.*;
 
 /**
- * Class creates pooling http client connection flow. It maintains a pool of
+ * Creates pooling http client connection flow. It maintains a pool of
  * http client connections and is able to service connection requests
  * from multiple execution threads.
+ *
+ * Class helps in posting the Request document for the Transaction using HttpClient.
  */
 public class PoolingHttpClientConnection extends Connection {
     private HttpPost httpPost = null;
@@ -52,7 +54,6 @@ public class PoolingHttpClientConnection extends Connection {
     private static PoolingHttpClientConnectionManager connectionManager = null;
 
     /**
-     * Constructor.
      *
      * @param mc
      * @param builder
@@ -81,8 +82,9 @@ public class PoolingHttpClientConnection extends Connection {
                         String hostname = uri.getHost();
                         connectionManager = new PoolingHttpClientConnectionManager();
                         connectionManager.setDefaultMaxPerRoute(merchantConfig.getDefaultMaxConnectionsPerRoute());
+                        connectionManager.setDefaultSocketConfig(SocketConfig.custom().setSoKeepAlive(true).setSoTimeout(merchantConfig.getSocketTimeoutMs()).build());
                         connectionManager.setMaxTotal(merchantConfig.getMaxConnections());
-                        connectionManager.setValidateAfterInactivity(mc.getValidateAfterInactivityMs());
+                        connectionManager.setValidateAfterInactivity(merchantConfig.getValidateAfterInactivityMs());
                         final HttpHost httpHost = new HttpHost(hostname);
                         connectionManager.setMaxPerRoute(new HttpRoute(httpHost), merchantConfig.getMaxConnectionsPerRoute());
                         initHttpClient(merchantConfig, connectionManager);
@@ -100,8 +102,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Initialize Http Client
-     *
      * @param merchantConfig
      * @param poolingHttpClientConnManager
      */
@@ -129,7 +129,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Initialize thread to clean Idle/Stale/Expired connections
+     * Create and start thread to clean Idle,Stale and Expired connections
      *
      * @param merchantConfig
      * @param poolingHttpClientConnManager
@@ -142,21 +142,21 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to post the request using http pool connection
+     * To post the request using http pool connection
      *
      * @param request
-     * @param requestSentTime
+     * @param startTime
      * @throws IOException
      * @throws TransformerException
      */
     @Override
-    void postDocument(Document request, long requestSentTime) throws IOException, TransformerException {
+    void postDocument(Document request, long startTime) throws IOException, TransformerException {
         String serverURL = mc.getEffectiveServerURL();
         httpPost = new HttpPost(serverURL);
         String requestString = documentToString(request);
         StringEntity stringEntity = new StringEntity(requestString, "UTF-8");
         httpPost.setEntity(stringEntity);
-        httpPost.setHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - requestSentTime));
+        httpPost.setHeader(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - startTime));
         httpPost.setHeader(Utility.ORIGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         logRequestHeaders();
         httpContext = HttpClientContext.create();
@@ -166,7 +166,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to check whether request sent or not
+     * To check whether request sent or not
      *
      * @return boolean
      */
@@ -191,7 +191,7 @@ public class PoolingHttpClientConnection extends Connection {
         return new Thread() {
             public void run() {
                 try {
-                    PoolingHttpClientConnection.this.onShutdown();
+                    PoolingHttpClientConnection.onShutdown();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -200,7 +200,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to close the httpClient, connectionManager, staleMonitorThread
+     * To close the httpClient, connectionManager, staleMonitorThread
      * when application got shutdown
      *
      * @throws IOException
@@ -224,7 +224,7 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to close httpResponse
+     * To close httpResponse
      *
      * @throws ClientException
      */
@@ -241,8 +241,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get http response code
-     *
      * @return int
      */
     @Override
@@ -251,7 +249,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get response stream
      *
      * @return InputStream
      * @throws IOException
@@ -262,7 +259,6 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Method to get response error stream
      *
      * @return InputStream
      * @throws IOException
@@ -272,9 +268,6 @@ public class PoolingHttpClientConnection extends Connection {
         return getResponseStream();
     }
 
-    /**
-     * Log Request Headers
-     */
     @Override
     public void logRequestHeaders() {
         if (mc.getEnableLog() && httpPost != null) {
@@ -284,17 +277,14 @@ public class PoolingHttpClientConnection extends Connection {
 
     }
 
-    /**
-     * Log Response Headers
-     */
     @Override
     public void logResponseHeaders() {
         if (mc.getEnableLog() && httpResponse != null) {
             Header responseTimeHeader = httpResponse.getFirstHeader(RESPONSE_TIME_REPLY);
             if (responseTimeHeader != null && StringUtils.isNotBlank(responseTimeHeader.getValue())) {
-                long resIAT = getResponseIssuedAtTimeInSecs(responseTimeHeader.getValue());
+                long resIAT = getResponseIssuedAtTime(responseTimeHeader.getValue());
                 if (resIAT > 0) {
-                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTimeSeconds(resIAT));
+                    logger.log(Logger.LT_INFO, "responseTransitTimeSec : " + getResponseTransitTime(resIAT));
                 }
             }
             List<Header> respHeaders = Arrays.asList(httpResponse.getAllHeaders());
@@ -323,7 +313,11 @@ public class PoolingHttpClientConnection extends Connection {
     }
 
     /**
-     * Inner class for custom retry handling
+     * A custom retry handler which will retry the transaction if request is not sent or in case of connection reset and
+     * NoHttpResponse Exception.
+     *
+     * CustomRetryHandler will be enabled only if allowRetry property is set to true. retryInterval and numberOfRetries are also config based
+     * See README for more information.
      */
     private class CustomRetryHandler implements HttpRequestRetryHandler {
         long retryWaitInterval = mc.getRetryInterval();
@@ -337,19 +331,26 @@ public class PoolingHttpClientConnection extends Connection {
 
             HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
             if (!httpClientContext.isRequestSent()) {
-                try {
-                    Thread.sleep(retryWaitInterval);
-                    logger.log(Logger.LT_INFO, "Retrying Request -- " + logger.getUniqueKey() + " Retry Count -- " + executionCount);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
+                retryAfter(retryWaitInterval, executionCount, "request_not_sent");
                 return true;
             }
 
-            if (exception instanceof NoHttpResponseException) {
-                return false;
+            if(mc.retryIfMTIFieldExistEnabled()){
+                if (exception instanceof NoHttpResponseException) {
+                    retryAfter(retryWaitInterval, executionCount, "NoHttpResponseException");
+                    return true;
+                }
+                if(exception instanceof java.net.SocketException) {
+                    String errMessage = exception.getMessage();
+                    if (StringUtils.isBlank(errMessage)) {
+                        errMessage = exception.getLocalizedMessage();
+                    }
+                    if (StringUtils.isNotBlank(errMessage) && ( errMessage.equalsIgnoreCase("Connection reset") || errMessage.contains("Connection reset"))) {
+                        retryAfter(retryWaitInterval, executionCount, "SocketException:Connection reset");
+                        return true;
+                    }
+                }
             }
-
             return false;
         }
     }
@@ -377,6 +378,15 @@ public class PoolingHttpClientConnection extends Connection {
 
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
+        }
+    }
+
+    private void retryAfter(long millis, int executionCount, String reason) {
+        try {
+            Thread.sleep(millis);
+            logger.log(Logger.LT_INFO, "Retrying Request due to " + reason +"-- Retry Count -- " + executionCount);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
     }
 }

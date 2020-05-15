@@ -41,8 +41,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.cybersource.ws.client.Utility.*;
+
 /**
- * Class containing runTransaction() methods that accept the requests in the
+ * Containing runTransaction() methods that accept the requests in the
  * form of a Document object.
  */
 public class XMLClient {
@@ -53,14 +55,6 @@ public class XMLClient {
 
     private static final String ELEM_REQUEST_MESSAGE = "requestMessage";
     private static final String ELEM_REPLY_MESSAGE = "replyMessage";
-    private static final String ELEM_MERCHANT_ID = "merchantID";
-    private static final String KEY_ALIAS = "keyAlias";
-    private static final String ELEM_MERCHANT_REFERENCE_CODE
-            = "merchantReferenceCode";
-    private static final String ELEM_CLIENT_LIBRARY = "clientLibrary";
-    private static final String ELEM_CLIENT_LIBRARY_VERSION
-            = "clientLibraryVersion";
-    private static final String ELEM_CLIENT_ENVIRONMENT = "clientEnvironment";
 
     private static final String[] VERSION_FIELDS
             = {ELEM_CLIENT_LIBRARY,
@@ -86,33 +80,6 @@ public class XMLClient {
             initException = e;
         } catch (IOException e) {
             initException = e;
-        }
-    }
-
-    /**
-     * Returns the effective namespace URI for the specified merchant id.
-     * Refer to <code>MerchantConfig.getProperty()</code> for the search
-     * behavior.  This method is provided so that the nvpSample application
-     * can dynamically plug the correct namespace URI into the nvpSample XML
-     * inputs.  You do not need to call it if you have the namespace URI
-     * hardcoded in your XML documents.
-     *
-     * @param props      Properties object to look up the properties in.
-     * @param merchantID merchant ID whose effective namespace URI is wanted.
-     *                   It may be null, in which case, the generic effective
-     *                   namespace URI is returned.
-     * @throws ClientException if a ConfigException occurs.  Call
-     *                         <code>getInnerException()</code> to get at the
-     *                         ConfigException.
-     */
-    public static String getEffectiveNamespaceURI(
-            Properties props, String merchantID)
-            throws ClientException {
-        try {
-            MerchantConfig mc = new MerchantConfig(props, merchantID);
-            return (mc.getEffectiveNamespaceURI());
-        } catch (ConfigException ce) {
-            throw new ClientException(ce, false, null);
         }
     }
 
@@ -177,6 +144,14 @@ public class XMLClient {
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
 
+            String isAuthService = checkIfAuthServiceFieldExist(request, nsURI);
+            if (Boolean.valueOf(isAuthService) && mc.getUseHttpClientWithConnectionPool()){
+                String mtiField = checkIfMTIFiledExist(request, nsURI);
+                if(StringUtils.isBlank(mtiField)) {
+                    throw new ClientException(HTTP_BAD_REQUEST, MTI_FIELD_ERR_MSG, false, logger);
+                }
+            }
+
             setVersionInformation(request, nsURI);
 
             DocumentBuilder builder = Utility.newDocumentBuilder();
@@ -186,7 +161,7 @@ public class XMLClient {
             if(mc.isCustomHttpClassEnabled()){
 				Class<Connection> customConnectionClass;
 				try {
-					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getCustomHttpClass());
 					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class};
 					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
@@ -241,8 +216,32 @@ public class XMLClient {
        }
     }
 
-
-
+    /**
+     * Returns the effective namespace URI for the specified merchant id.
+     * Refer to <code>MerchantConfig.getProperty()</code> for the search
+     * behavior.  This method is provided so that the nvpSample application
+     * can dynamically plug the correct namespace URI into the nvpSample XML
+     * inputs.  You do not need to call it if you have the namespace URI
+     * hardcoded in your XML documents.
+     *
+     * @param props      Properties object to look up the properties in.
+     * @param merchantID merchant ID whose effective namespace URI is wanted.
+     *                   It may be null, in which case, the generic effective
+     *                   namespace URI is returned.
+     * @throws ClientException if a ConfigException occurs.  Call
+     *                         <code>getInnerException()</code> to get at the
+     *                         ConfigException.
+     */
+    public static String getEffectiveNamespaceURI(
+            Properties props, String merchantID)
+            throws ClientException {
+        try {
+            MerchantConfig mc = new MerchantConfig(props, merchantID);
+            return (mc.getEffectiveNamespaceURI());
+        } catch (ConfigException ce) {
+            throw new ClientException(ce, false, null);
+        }
+    }
 
     /**
      * Sets the merchantID in the request.
@@ -331,7 +330,7 @@ public class XMLClient {
         // create DocumentFragment for the version-related fields
         DocumentFragment versionsFragment = request.createDocumentFragment();
         versionsFragment.appendChild(Utility.createElement(
-                request, nsURI, ELEM_CLIENT_LIBRARY, "Java XML"));
+                request, nsURI, ELEM_CLIENT_LIBRARY, Utility.XML_LIBRARY));
         versionsFragment.appendChild(Utility.createElement(
                 request, nsURI, ELEM_CLIENT_LIBRARY_VERSION, Utility.VERSION));
         versionsFragment.appendChild(Utility.createElement(
@@ -595,8 +594,6 @@ public class XMLClient {
         }
         return mc;
     }
-
-
 }
 
 

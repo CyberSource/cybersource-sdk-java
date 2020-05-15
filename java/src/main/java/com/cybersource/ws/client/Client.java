@@ -37,8 +37,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.cybersource.ws.client.Utility.*;
+
 /**
- * Class containing runTransaction() methods that accept the requests in the
+ * Containing runTransaction() methods that accept the requests in the
  * form of a Map object.
  */
 public class Client {
@@ -48,9 +50,6 @@ public class Client {
             "\n</soap:Body>\n</soap:Envelope>";
 
     private static final String ELEM_NVP_REPLY = "nvpReply";
-
-    private static final String MERCHANT_ID = "merchantID";
-    private static final String KEY_ALIAS = "keyAlias";
 
     private static ConcurrentHashMap<String, MerchantConfig> mcObjects = new ConcurrentHashMap<String, MerchantConfig>();
 
@@ -63,7 +62,7 @@ public class Client {
      * @throws FaultException  if a fault occurs.
      * @throws ClientException if any other exception occurs.
      */
-    public static Map runTransaction(Map<String,String> request, Properties props)
+    public static Map<String,String> runTransaction(Map<String,String> request, Properties props)
             throws FaultException, ClientException {
         return (runTransaction(
                 request, props, null, true, true));
@@ -92,9 +91,7 @@ public class Client {
         LoggerWrapper logger = null;
         Connection con = null;
         try {
-            long requestSentTime = System.currentTimeMillis();
-            setVersionInformation(request);
-
+            long startTime = System.currentTimeMillis();
             boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
             if(isMerchantConfigCacheEnabled) {
                 mc = getInstanceMap(request, props);
@@ -102,20 +99,30 @@ public class Client {
                 mc = getMerchantConfigObject(request, props);
             }
 
+            setVersionInformation(request);
+
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
+
+            String isAuthService = request.get(AUTH_SERVICE_NVP);
+            if (Boolean.valueOf(isAuthService) && mc.getUseHttpClientWithConnectionPool()){
+                String mtiField = request.get(MERCHANT_TRANSACTION_IDENTIFIER);
+                if(StringUtils.isBlank(mtiField)) {
+                    throw new ClientException(HTTP_BAD_REQUEST, MTI_FIELD_ERR_MSG, false, logger);
+                }
+            }
 
             DocumentBuilder builder = Utility.newDocumentBuilder();
 
             Document signedDoc
                     = soapWrapAndSign(request, mc, builder,logger);
 
-//          FileWriter writer = new FileWriter(new File("signedDoc.xml"));
+//          FileWriter writer = new FileWriter(new File("nvp_signedDoc.xml"));
 //          writer.write(XMLUtils.PrettyDocumentToString(signedDoc));
 //          writer.close();
             if(mc.isCustomHttpClassEnabled()){
 				Class<Connection> customConnectionClass;
 				try {
-					customConnectionClass = (Class<Connection>) Class.forName(mc.getcustomHttpClass());
+					customConnectionClass = (Class<Connection>) Class.forName(mc.getCustomHttpClass());
 					Class[] constructor_Args = new Class[] {com.cybersource.ws.client.MerchantConfig.class, javax.xml.parsers.DocumentBuilder.class, com.cybersource.ws.client.LoggerWrapper.class};
 					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
@@ -145,7 +152,7 @@ public class Client {
             else{
             	con = Connection.getInstance(mc, builder, logger);
             }
-            Document wrappedReply = con.post(signedDoc, requestSentTime);
+            Document wrappedReply = con.post(signedDoc, startTime);
             Map<String, String> replyMap = soapUnwrap(wrappedReply, mc, logger);
             logger.log(Logger.LT_INFO, "Client, End of runTransaction Call   ",false);
 
@@ -179,13 +186,13 @@ public class Client {
      * Sets the version information in the request.
      *
      * @param request request to set the version information in.
+     *
      */
     private static void setVersionInformation(Map<String, String> request) {
-        request.put("clientLibrary", "Java Basic");
-        request.put("clientLibraryVersion", Utility.VERSION);
-        request.put("clientEnvironment", Utility.ENVIRONMENT);
+        request.put(ELEM_CLIENT_LIBRARY, Utility.NVP_LIBRARY);
+        request.put(ELEM_CLIENT_LIBRARY_VERSION, Utility.VERSION);
+        request.put(ELEM_CLIENT_ENVIRONMENT, Utility.ENVIRONMENT);
     }
-
 
     /**
      * Wraps the given Map object in SOAP envelope and signs it.
@@ -230,7 +237,7 @@ public class Client {
 
         if ( mc.getUseSignAndEncrypted() ) {
         	// Encrypt signed Document
-            resultDocument = SecurityUtil.handleMessageCreation(resultDocument, request.get(MERCHANT_ID), logger);
+            resultDocument = SecurityUtil.handleMessageCreation(resultDocument, request.get(ELEM_MERCHANT_ID), logger);
             logger.log(Logger.LT_INFO, "Client, End of handleMessageCreation   ", true);
         }
         if (logSignedData) {
@@ -241,8 +248,18 @@ public class Client {
         return resultDocument ;
     }
 
+
+    /**
+     * Wraps the given Map object in SOAP envelope.
+     *
+     * @param request Map object containing the request.
+     * @param mc      MerchantConfig object.
+     * @param builder	    DocumentBuilder object.
+     * @return document.
+     * @throws IOException   if reading from string fails.
+     * @throws SAXException
+     */
     private static Document soapWrap(Map request, MerchantConfig mc, DocumentBuilder builder) throws SAXException, IOException{
-    	// wrap in SOAP envelope
         Object[] arguments
                 = {mc.getEffectiveNamespaceURI(),
                 mapToString(request, false, PCI.REQUEST)};
@@ -269,7 +286,6 @@ public class Client {
     	// 3/8/2016 if the message was encrypted we need to decrypt it
 
         boolean logSignedData = mc.getLogSignedData();
-
 
         if (logSignedData) {
             logger.log(Logger.LT_REPLY,
@@ -321,13 +337,13 @@ public class Client {
      */
     static private MerchantConfig getMerchantConfigObject(Map<String, String> request, Properties props) throws ConfigException {
         MerchantConfig mc;
-        String merchantID = request.get(MERCHANT_ID);
+        String merchantID = request.get(ELEM_MERCHANT_ID);
         if (merchantID == null) {
             // if no merchantID is present in the request, get its
             // value from the properties and add it to the request.
             mc = new MerchantConfig(props, null);
             merchantID = mc.getMerchantID();
-            request.put(MERCHANT_ID, merchantID);
+            request.put(ELEM_MERCHANT_ID, merchantID);
         } else {
             mc = new MerchantConfig(props, merchantID);
         }
@@ -342,11 +358,11 @@ public class Client {
      * @return String
      */
     private static String getMerchantId(Map<String, String> request, Properties props) {
-        String merchantID = request.get(MERCHANT_ID);
+        String merchantID = request.get(ELEM_MERCHANT_ID);
         if (merchantID == null) {
             // if no merchantID is present in the request, get its
             // value from the properties
-            merchantID = props.getProperty(MERCHANT_ID);
+            merchantID = props.getProperty(ELEM_MERCHANT_ID);
         }
         return merchantID;
     }
@@ -385,12 +401,12 @@ public class Client {
             }
         }
         MerchantConfig mc = mcObjects.get(midOrKeyAlias);
-        String merchantID = request.get(MERCHANT_ID);
+        String merchantID = request.get(ELEM_MERCHANT_ID);
         // if no merchantID is present in the request, get its
         // value from the properties and add it to the request.
         if(StringUtils.isEmpty(merchantID)) {
             merchantID = mc.getMerchantID();
-            request.put(MERCHANT_ID, merchantID);
+            request.put(ELEM_MERCHANT_ID, merchantID);
         }
         return mc;
     }

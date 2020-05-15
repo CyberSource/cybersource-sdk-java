@@ -26,7 +26,6 @@ package com.cybersource.ws.client;
  */
 public class ConfigException extends Exception {
     /**
-     * Constructor.
      *
      * @param message exception message.
      */

@@ -87,8 +87,9 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -96,6 +97,11 @@
                                 <goals><goal>jar</goal></goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <additionalOptions>
+                                <additionalOption>-Xdoclint:none</additionalOption>
+                            </additionalOptions>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <artifactId>maven-jar-plugin</artifactId>
@@ -137,6 +143,20 @@
                         <configuration>
                             <source>1.6</source>
                             <target>1.6</target>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.4.3</version>
+                        <configuration>
+                            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*SystemTest.java</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -227,7 +247,7 @@
                     <artifactId>opensaml</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>     
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

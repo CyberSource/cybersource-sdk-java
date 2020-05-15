@@ -22,7 +22,6 @@ import java.util.Hashtable;
 
 /**
  * Payment Card Information which is sent as part of Transaction details
- * @author sunagara
  *
  */
 public class PCI {
@@ -46,7 +45,7 @@ public class PCI {
 
         safeTable.put("item", "unitPrice quantity productCode productName productSKU productRisk taxAmount cityOverrideAmount cityOverrideRate countyOverrideAmount countyOverrideRate districtOverrideAmount districtOverrideRate stateOverrideAmount stateOverrideRate countryOverrideAmount countryOverrideRate orderAcceptanceCity orderAcceptanceCounty orderAcceptanceCountry orderAcceptanceState orderAcceptancePostalCode orderOriginCity orderOriginCounty orderOeriginCountry orderOriginState orderOriginPostalCode shipFromCity shipFromCounty shipFromCountry shipFromState shipFromPostalCode export noExport nationalTax vatRate sellerRegistration buyerRegistration middlemanRegistration pointOfTitleTransfer giftCategory timeCategory hostHedge timeHedge velocityHedge unitOfMeasure taxRate totalAmount discountAmount discountRate commodityCode grossNetIndicator taxTypeApplied discountIndicator alternateTaxID");
 
-        safeTable.put("ccAuthService", "run cavv commerceIndicator eciRaw xid reconcilationID avsLevel fxQuoteID returnAuthRecord authType verbalAuthCode billPayment");
+        safeTable.put("ccAuthService", "run cavv commerceIndicator eciRaw xid reconciliationID avsLevel fxQuoteID returnAuthRecord authType verbalAuthCode billPayment");
 
         safeTable.put("ccCaptureService", "run authType verbalAuthCode authRequestID transactionToken reconciliationID partialPaymentID purchasingLevel industryDataType");
 
@@ -239,7 +238,7 @@ public class PCI {
     }
 
     /**
-     * Mask the data.The masking rules in this method were per Jason Hengels.
+     * Mask the data.
      * @param field
      * @param val
      * @return

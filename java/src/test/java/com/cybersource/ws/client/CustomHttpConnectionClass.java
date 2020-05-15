@@ -49,7 +49,7 @@ public class CustomHttpConnectionClass extends Connection{
 	}
 	
 	@Override
-	void postDocument(Document request, long requestSentTime) throws IOException,
+	void postDocument(Document request, long startTime) throws IOException,
 			TransformerConfigurationException, TransformerException,
 			MalformedURLException, ProtocolException {
 		HttpClient httpClient = new HttpClient();
