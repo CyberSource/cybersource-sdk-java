@@ -229,6 +229,12 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 _______________________________
+Version Cybersource-sdk-java 6.2.11 (JUNE,2020)
+_______________________________
+    1)Exception handling improvement.
+    2)Upgrading Apache's basic http client functionality.
+    3)Separate out connection and socket timeout prop. Right now both are set via timeout property in case of jdk HttpUrlConnectiona and Apache basic http client.
+_______________________________
 Version Cybersource-sdk-java 6.2.10 (MAY,2020)
 _______________________________
     1)Added PoolingHttpClientConnection implementation
@@ -323,6 +329,7 @@ _______________________________
 
 - Put below block of code to handle the ClientException to print the complete stacktrace.
 
+        In 6.2.10 or below releases, handle the exception as 
         try{
             Client.runTransaction(requestMap, merchantProperties);
         }catch (ClientException e){
@@ -331,7 +338,12 @@ _______________________________
             String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);      
         }
         
-   
+        In 6.2.11 release onward, handle the exception as 
+         try{
+             Client.runTransaction(requestMap, merchantProperties);
+         }catch (ClientException e){
+             String stackTrace = Utility.getStackTrace(e);      
+         }
       
 ## Documentation
 - For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>.

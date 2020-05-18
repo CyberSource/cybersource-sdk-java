@@ -39,6 +39,10 @@ public class SignException extends Exception {
         super(msg);
     }
 
+    public SignException(String msg, Throwable cause) {
+        super(msg,cause);
+    }
+
     /**
      * Gets the actual exception that occurred.
      *

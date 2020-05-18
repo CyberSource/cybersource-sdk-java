@@ -128,10 +128,6 @@ public class XMLClient {
 
         try {
             long requestSentTime = System.currentTimeMillis();
-            // At this point, we do not know what namespace to use yet so
-            // we locate the first merchantID element with any namespace
-            // (actually, there should be just one.  Otherwise, there's
-            // something wrong with their XML request).
 
             boolean isMerchantConfigCacheEnabled = Boolean.parseBoolean(props.getProperty("merchantConfigCacheEnabled", "false"));
             if(isMerchantConfigCacheEnabled) {
@@ -140,6 +136,10 @@ public class XMLClient {
                 mc = getMerchantConfigObject(request, props);
             }
 
+            // At this point, we do not know what namespace to use yet so
+            // we locate the first merchantID element with any namespace
+            // (actually, there should be just one.  Otherwise, there's
+            // something wrong with their XML request).
             nsURI = mc.getEffectiveNamespaceURI();
 
             logger = new LoggerWrapper(_logger, prepare, logTranStart, mc);
@@ -166,25 +166,25 @@ public class XMLClient {
 					con=customConnectionClass.getDeclaredConstructor(constructor_Args).newInstance(mc, builder, logger);
 
 				} catch (InstantiationException e) {
-					logger.log(Logger.LT_INFO, "Failed to Instantiate the class "+e);
+					logger.log(Logger.LT_INFO, "Failed to instantiate the class "+e);
 					throw new ClientException(e, false, null);
 				} catch (IllegalAccessException e) {
-					logger.log(Logger.LT_INFO, "Could not Access the method invoked "+e);
+					logger.log(Logger.LT_INFO, "Could not access the method invoked "+e);
 					throw new ClientException(e, false, null);
 				} catch (ClassNotFoundException e) {
-					logger.log(Logger.LT_INFO, "Could not load the custom HTTP class ");
+					logger.log(Logger.LT_INFO, "Could not load the custom HTTP class "+ e);
 					throw new ClientException(e, false, null);
 				} catch (IllegalArgumentException e) {
-					logger.log(Logger.LT_INFO, "Method invoked with Illegal Argument list  "+e);
+					logger.log(Logger.LT_INFO, "Method invoked with illegal argument list  "+e);
 					throw new ClientException(e, false, null);
 				} catch (SecurityException e) {
-					logger.log(Logger.LT_INFO, "Security Exception "+e);
+					logger.log(Logger.LT_INFO, "Security exception "+e);
 					throw new ClientException(e, false, null);
 				} catch (InvocationTargetException e) {
-					logger.log(Logger.LT_INFO, "Exception occured while calling the method "+e);
+					logger.log(Logger.LT_INFO, "Exception occurred while calling the method "+e);
 					throw new ClientException(e, false, null);
 				} catch (NoSuchMethodException e) {
-					logger.log(Logger.LT_INFO, "Method not found ");
+					logger.log(Logger.LT_INFO, "Method not found "+ e);
 					throw new ClientException(e, false, null);
 				}
             }

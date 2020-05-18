@@ -849,7 +849,7 @@ public class MerchantConfig {
         try {
             return (Integer.parseInt(strValue));
         } catch (NumberFormatException nfe) {
-            throw new ConfigException(prop + " has an invalid value.");
+            throw new ConfigException(prop + " has an invalid value.", nfe);
         }
     }
 
@@ -860,7 +860,7 @@ public class MerchantConfig {
         try {
             return (Integer.parseInt(strValue));
         } catch (NumberFormatException nfe) {
-            throw new ConfigException(prop + " has an invalid value.");
+            throw new ConfigException(prop + " has an invalid value.", nfe);
         }
     }
 
