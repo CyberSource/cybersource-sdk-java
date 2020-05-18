@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.cybersource</groupId>
     <artifactId>cybersource-sdk-java</artifactId>
-    <version>6.2.10-SNAPSHOT</version>
+    <version>6.2.11-SNAPSHOT</version>
     <name>cybersource-sdk-java</name>
     <description>Simple Order API Client</description>
     <url>http://www.cybersource.com</url>
@@ -192,6 +192,28 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals><goal>jar</goal></goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
       <dependency>

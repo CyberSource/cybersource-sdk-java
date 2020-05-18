@@ -11,6 +11,8 @@
 
 .idea/
 *.iml
+*.ipr
+*.iws
 
 #########
 ## Maven
