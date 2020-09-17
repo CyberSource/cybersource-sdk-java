@@ -185,6 +185,21 @@ keytool -list -v -keystore <Your_keystore_name>`
 ## Message Level Encryption
 CyberSource supports Message Level Encryption (MLE) for Simple Order API. Message level encryption conforms to the SOAP Security 1.0 specification published by the OASIS standards group. 
 
+## Meta Key support
+SOAPI Java SDK supports meta key by default. Additional details regarding cybs.properties.
+    merchantID=  <comment/remove this> 
+    keysDirectory=Directory where P12 is present
+    keyAlias=<Refers to the portfolio>
+    keyPassword=<Password of p12>
+    targetAPIVersion=<latest API version, refer here https://ics2ws.ic3.com/commerce/1.x/transactionProcessor>
+    keyFilename= <metakey downloaded from portfolio MID>
+ 
+    Auth sample payload:
+        merchantID=<meta_2232323> <Refers to the Child transactional MID>
+        ccAuthService_run=true
+        merchantReferenceCode=MRC-14344 
+        billTo_firstName=John
+
 ### Authentication Details
     Message level encryption authenticates using the same mechanism as signed SOAP messages. The signature creation involves utilizing the merchants private key which combined with a hash of the message to be signed, can be validated with the merchants certificate and the message which was signed. 
     The merchant certificate is included in the SOAP message for both signature and message level encryption. Message level encryption, encrypts a temporary message key for a specific recipient. This is done by encrypting the temporary message key with the recipient’s public certificate. Therefore only the party holding the private key (CyberSource) can decrypt the temporary message key. The merchant sending the request must be a valid merchant for the environment which the message is being processed in. After validating the merchant and retrieving the CyberSource copy of the merchant certificate from our database, these additional authentication steps are performed:

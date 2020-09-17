@@ -329,28 +329,34 @@ public class PoolingHttpClientConnection extends Connection {
                 return false;
             }
 
+            if(exception instanceof org.apache.http.conn.ConnectTimeoutException || exception instanceof org.apache.http.conn.HttpHostConnectException){
+                retryAfter(retryWaitInterval, executionCount, exception.getMessage());
+                return true;
+            }
+
+            if(mc.retryIfMTIFieldExistEnabled()){
+                if (exception instanceof NoHttpResponseException) {
+                    retryAfter(retryWaitInterval, executionCount, exception.getMessage());
+                    return true;
+                }
+                if(exception instanceof java.net.SocketException || exception instanceof javax.net.ssl.SSLException) {
+                    String errMessage = exception.getMessage();
+                    if (StringUtils.isBlank(errMessage)) {
+                        errMessage = exception.getLocalizedMessage();
+                    }
+                    if (StringUtils.isNotBlank(errMessage) && ( errMessage.equalsIgnoreCase("Connection reset") || errMessage.contains("Connection reset"))) {
+                        retryAfter(retryWaitInterval, executionCount, errMessage);
+                        return true;
+                    }
+                }
+            }
+
             HttpClientContext httpClientContext = HttpClientContext.adapt(httpContext);
             if (!httpClientContext.isRequestSent()) {
                 retryAfter(retryWaitInterval, executionCount, "request_not_sent");
                 return true;
             }
 
-            if(mc.retryIfMTIFieldExistEnabled()){
-                if (exception instanceof NoHttpResponseException) {
-                    retryAfter(retryWaitInterval, executionCount, "NoHttpResponseException");
-                    return true;
-                }
-                if(exception instanceof java.net.SocketException) {
-                    String errMessage = exception.getMessage();
-                    if (StringUtils.isBlank(errMessage)) {
-                        errMessage = exception.getLocalizedMessage();
-                    }
-                    if (StringUtils.isNotBlank(errMessage) && ( errMessage.equalsIgnoreCase("Connection reset") || errMessage.contains("Connection reset"))) {
-                        retryAfter(retryWaitInterval, executionCount, "SocketException:Connection reset");
-                        return true;
-                    }
-                }
-            }
             return false;
         }
     }
