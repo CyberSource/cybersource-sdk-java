@@ -79,7 +79,7 @@ You do not need to download and build the source to use the SDK but if you want 
             Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
          - `connectionRequestTimeoutMs` Time taken in milliseconds to get connection request from the pool. If it times out, it will throw error as Timeout waiting for connection from pool
          - `connectionTimeoutMs` Specifies the number of milliseconds to wait while a connection is being established.
-         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
+         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. Recommanded valut is 130000 (in ms).
          - `evictThreadSleepTimeMs` Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread. 
             This thread will check if any idle/expired/stale connections are available in pool and evict it.
          - `maxKeepAliveTimeMs` Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
