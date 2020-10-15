@@ -2,14 +2,21 @@ package com.cybersource.sample;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.cybersource.ws.client.*;
+import org.apache.commons.lang3.StringUtils;
+
+import static com.cybersource.ws.client.Utility.MERCHANT_TRANSACTION_IDENTIFIER;
 
 
 /**
@@ -17,15 +24,15 @@ import com.cybersource.ws.client.*;
  */
 public class RunSample {
 	public enum sample{ auth, capture, emv_auth, credit, auth_reversal, sale;
-	 public static int enum_exist(String str) {
-		    for (sample me : sample.values()) {
-		        if (me.name().equalsIgnoreCase(str))
-		            return me.ordinal();
-		    }
-		    return -1;
+		public static int enum_exist(String str) {
+			for (sample me : sample.values()) {
+				if (me.name().equalsIgnoreCase(str))
+					return me.ordinal();
+			}
+			return -1;
 		}
 
-	 }
+	}
 	Properties cybsProps = new Properties();
 	private static final String PROPERTIES="cybs.properties";
 	static String authDecision;
@@ -33,7 +40,7 @@ public class RunSample {
 
 	/**
 	 * Entry point.
-	 * 
+	 *
 	 * @param args
 	 *            command-line arguments. The name of the property file may be
 	 *            passed as a command-line argument. If not passed, it will look
@@ -44,7 +51,7 @@ public class RunSample {
 		String argument=args[0];
 		Properties props = readProperty(argument + ".properties");
 		@SuppressWarnings("unchecked")
-		
+
 		String requestID;
 		String emvrequestID;
 
@@ -52,53 +59,53 @@ public class RunSample {
 		cybProperties = readCybsProperty(PROPERTIES);
 		int choice =sample.enum_exist(argument);
 		switch (choice) {
-		
-		case 0:
-			requestID = runAuth(cybProperties);
-			break;
-		
-		case 1:
-			requestID = runAuth(cybProperties);
-			System.out.println("Request ID is " + requestID);
-			if (!("null".equals(requestID))) {
-				requestID = runCapture(cybProperties, requestID, argument);
-			}
-			break;
-		
-		case 2:
-			emvrequestID = runAuthEMV(cybProperties,argument);
-			break;
-		
-		case 3:
-			requestID = runAuth(cybProperties );
-			System.out.println("Request ID is " + requestID);
-			if (!("null".equals(requestID))) {
-				requestID = runCapture(cybProperties, requestID,  argument);
-				if (!("null".equals(requestID)))
-					runCredit(cybProperties, requestID, argument);
-			}
-			break;
 
-		case 4:
-			requestID = runAuth(cybProperties);
-			if (!("null".equals(requestID))) {
-				runAuthReversal(cybProperties, requestID, argument);
-			}
-			break;
-		case 5:
-			runSale(cybProperties);
-			break;
-		case -1:
-			System.out.println(" \t\t Enter the correct Service_name\n\n "+
-					"\t\t while running the Script enter the service_name \n\n"+
-					"\t\t for example to run a auth transaction enter the following command: \n"+
-					"\t\t\t  for windows : runSample <service_name> \n "+
-					"\t\t\t  for linux : ./runSample.sh <service_name>  \n"+
-					"\t\t service name argument can be auth,sale,credit,authreversal,capture,emv_auth \n"+
-					"\t\t NOTE: if no argument is entered the script will terminate the program");
-			break;
-		default:
-			break;
+			case 0:
+				requestID = runAuth(cybProperties);
+				break;
+
+			case 1:
+				requestID = runAuth(cybProperties);
+				System.out.println("Request ID is " + requestID);
+				if (!("null".equals(requestID))) {
+					requestID = runCapture(cybProperties, requestID, argument);
+				}
+				break;
+
+			case 2:
+				emvrequestID = runAuthEMV(cybProperties,argument);
+				break;
+
+			case 3:
+				requestID = runAuth(cybProperties );
+				System.out.println("Request ID is " + requestID);
+				if (!("null".equals(requestID))) {
+					requestID = runCapture(cybProperties, requestID,  argument);
+					if (!("null".equals(requestID)))
+						runCredit(cybProperties, requestID, argument);
+				}
+				break;
+
+			case 4:
+				requestID = runAuth(cybProperties);
+				if (!("null".equals(requestID))) {
+					runAuthReversal(cybProperties, requestID, argument);
+				}
+				break;
+			case 5:
+				runSale(cybProperties);
+				break;
+			case -1:
+				System.out.println(" \t\t Enter the correct Service_name\n\n "+
+						"\t\t while running the Script enter the service_name \n\n"+
+						"\t\t for example to run a auth transaction enter the following command: \n"+
+						"\t\t\t  for windows : runSample <service_name> \n "+
+						"\t\t\t  for linux : ./runSample.sh <service_name>  \n"+
+						"\t\t service name argument can be auth,sale,credit,authreversal,capture,emv_auth \n"+
+						"\t\t NOTE: if no argument is entered the script will terminate the program");
+				break;
+			default:
+				break;
 
 		}
 	}
@@ -113,8 +120,8 @@ public class RunSample {
 			// run transaction now
 			Map<String, String> reply = Client.runTransaction(request, props);
 			displayMap("CREDIT CARD SALE REPLY:", reply);
-				requestID = (String) reply.get("requestID");
-				System.out.println("Sale completed " +requestID);
+			requestID = (String) reply.get("requestID");
+			System.out.println("Sale completed " +requestID);
 
 		} catch (ClientException e) {
 			System.out.println(e.getMessage());
@@ -132,16 +139,18 @@ public class RunSample {
 	}
 	/**
 	 * Runs Credit Card Authorization.
-	 * 
+	 *
 	 * @param props
 	 *            Properties object.
 	 * @return the requestID.
 	 */
-	
+
 	public static String runAuth(Properties props) {
+		long startTime = System.currentTimeMillis();
 		String requestID = null;
 		Properties authProps = new Properties();
 		authProps = readProperty("auth.properties");
+		authProps.put(MERCHANT_TRANSACTION_IDENTIFIER,UniquIDGenerator.getInstance().createUniqueID());
 		HashMap<String, String> request = new HashMap<String, String>(
 				(Map) authProps);
 		try {
@@ -151,29 +160,29 @@ public class RunSample {
 			displayMap("CREDIT CARD AUTHORIZATION REPLY:", reply);
 			// if the authorization was successful, obtain the request id
 			// for the follow-on capture later.
-			String decision = (String) reply.get("decision");
-			if ("ACCEPT".equalsIgnoreCase(decision)) {
-				requestID = (String) reply.get("requestID");
+			String decision = reply.get("decision");
+			if (StringUtils.isNotBlank(decision)) {
+				requestID = reply.get("requestID");
 			}
-
+			if (requestID == null) {
+				System.out.println("Request id null >>" + reply);
+			}
 		} catch (ClientException e) {
-			System.out.println(e.getMessage());
-			if (e.isCritical()) {
-				handleCriticalException(e, request);
-			}
+			String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);
+			System.out.println("client exception >>> " + stackTrace);
 		} catch (FaultException e) {
-			System.out.println(e.getMessage());
-			if (e.isCritical()) {
-				handleCriticalException(e, request);
-			}
+			System.out.println("fault exception >>>" + e);
+		} catch (Exception e) {
+			System.out.println("exception >>>" + e.getMessage());
 		}
 
+		System.out.println("Time taken for request id : " + requestID + " "  +(System.currentTimeMillis()-startTime));
 		return (requestID);
 	}
 
 	/**
 	 * Runs Credit Card Capture.
-	 * 
+	 *
 	 * @param props
 	 *            Properties object.
 	 * @param authRequestID
@@ -184,15 +193,15 @@ public class RunSample {
 		captureProps = readProperty("capture.properties");
 		HashMap<String, String> request = new HashMap<String, String>(
 				(Map) captureProps);
-		
+
 		request.put("ccCaptureService_authRequestID", authRequestID);
 		try {
 			displayMap("FOLLOW-ON CAPTURE REQUEST:", request);
 			// run transaction now
 			Map<String, String> reply = Client.runTransaction(request, props);
-			
+
 			displayMap("FOLLOW-ON CAPTURE REPLY:", reply);
-			
+
 		} catch (ClientException e) {
 			System.out.println(e.getMessage());
 			if (e.isCritical()) {
@@ -210,7 +219,7 @@ public class RunSample {
 	/**
 	 * @param props
 	 * @param authRequestID
-	 * @param request
+	 * @param propFileName
 	 */
 	public static void runAuthReversal(Properties props, String authRequestID, String propFileName) {
 		Properties authReversalProps = new Properties();
@@ -245,8 +254,6 @@ public class RunSample {
 		authEMVProps = readProperty(propFileName+".properties");
 		HashMap<String, String> request = new HashMap<String, String>(
 				(Map) authEMVProps);
-		
-		
 		try {
 			displayMap("CREDIT CARD EMVAUTHORIZATION REQUEST:", request);
 			// run transaction now
@@ -301,7 +308,7 @@ public class RunSample {
 
 	/**
 	 * Displays the content of the Map object.
-	 * 
+	 *
 	 * @param header
 	 *            Header text.
 	 * @param map
@@ -353,7 +360,7 @@ public class RunSample {
 
 	/**
 	 * See header comment in the other version of handleCriticalException above.
-	 * 
+	 *
 	 * @param e
 	 *            Critical ClientException object.
 	 * @param request
@@ -393,4 +400,81 @@ public class RunSample {
 		return (cybsProps);
 	}
 
+	public static class UniquIDGenerator {
+		private AtomicLong serialNumber = new AtomicLong(1);
+		private String ipAddress = generateIPAddress();
+		private static UniquIDGenerator SELF = new UniquIDGenerator();
+		public static UniquIDGenerator getInstance(){
+			return SELF;
+		}
+		private String generateIPAddress() {
+			InetAddress addr = null;
+			for (int tries = 1; ; tries++) {
+				try {
+					addr = InetAddress.getLocalHost();
+					String hostID = getHostID();
+					if (hostID == null) {
+						addr = InetAddress.getLocalHost();
+					}
+					else {
+						addr = InetAddress.getByName( hostID );
+					}
+					validateIPAddress(addr);
+					break;
+				} catch (UnknownHostException e) {
+					if (tries >= 3) {
+						break;
+					} else {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException ignored) {
+							// ignored
+						}
+					}
+				}
+			}
+			if(addr == null){
+				return null;
+			}
+			BigInteger ip = new BigInteger(1, addr.getAddress());
+			// pad the ip address string to 10 characters
+			String ipString = ip.toString();
+			if (ipString.length() < 10) {
+				ipString = "0000000000".substring(ipString.length()) + ipString;
+			}
+			// trim leading characters in case it's > 10 digits long
+			if (ipString.length() > 10) {
+				ipString = ipString.substring(ipString.length() - 10);
+			}
+			return ipString;
+		}
+		private String getHostID() {
+			return System.getProperty("host_id");
+		}
+		public String createUniqueID(){
+			long time = System.nanoTime();
+			long serial = serialNumber.getAndIncrement();
+			if(ipAddress == null){
+				return null;
+			}
+			return createUniqueID(ipAddress, time, serial);
+		}
+		private String createUniqueID(String ipAddress, long timeInNano, long serial) {
+			return String.format("%015d%05d%10s",
+					timeInNano,
+					serial % 100000,
+					ipAddress);
+		}
+		/**
+		 * Validates the IP address.  The only validation currenly
+		 * being made is the check against 127.0.0.1.
+		 **/
+		private static void validateIPAddress(InetAddress addr)
+				throws UnknownHostException {
+			if (addr.equals(InetAddress.getByName("127.0.0.1"))) {
+				throw new UnknownHostException(
+						"127.0.0.1 is not allowed.  Use a different IP address.");
+			}
+		}
+	}
 }
