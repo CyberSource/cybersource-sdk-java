@@ -69,7 +69,7 @@ public class RunSampleWithTPS {
                     System.out.println("Total transaction successfully executed >> " + totalSuccessfulTxn);
                     System.out.println("Total transaction failure executed >> " + totalFailureTxn);
                     System.out.println("=====================================================");
-                    System.out.println("End time >> "+ new Date()g);
+                    System.out.println("End time >> "+ new Date());
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
