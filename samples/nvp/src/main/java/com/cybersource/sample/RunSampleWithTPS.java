@@ -5,55 +5,73 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RunSampleWithTPS {
-    public static AtomicInteger txnTPS = new AtomicInteger(0);
-    public static AtomicInteger totalSuccessfulTxn = new AtomicInteger(0);
-    public static AtomicInteger totalFailureTxn = new AtomicInteger(0);
-    public static AtomicInteger totalTxnSent = new AtomicInteger(0);
-    public static ExecutorService executorService;
-    public static int tps;
-    public static boolean shutdownTriggered;
+    static ExecutorService executorService;
+    private static int tps;
+    static boolean shutdownTriggered;
+    static AtomicInteger txnTPS = new AtomicInteger(0);
+
     public static void main(String[] args) {
         System.out.println("Start time >> "+ new Date());
         tps = Integer.parseInt(args[0]);
         registerShutdownHook();
+
+        //enable below if you enable apache http client logging.
+        enableApacheHttpClientLogging();
+
+        executorService = Executors.newFixedThreadPool(100);
+
+        TPSCalculator tpsCalculator = startAndGetTpsCalculator();
+
+        startLoadRunner();
+
+        Scanner scan = new Scanner(System.in);
+        printUserHelpMessage();
+        int input = scan.nextInt();
+        while (input != 0) {
+            changeTPS(input);
+            printUserHelpMessage();
+            input = scan.nextInt();
+        }
+        System.out.println("0 entered, processing in-flight transactions before shutting down. Please wait for 15 seconds....");
+        shutdownTriggered = true;
+        try {
+            tpsCalculator.setShutdown();
+            Thread.sleep(15000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.exit(0);
+    }
+
+    private static void printUserHelpMessage() {
+        System.out.println("Enter any positive number to change tps or 0 to exit.");
+    }
+
+    private static void startLoadRunner() {
+        Properties props = RunSample.readProperty("cybs.properties");
+        TxnThread txnThread = new TxnThread(props);
+        Thread txnTh = new Thread(txnThread);
+        txnTh.start();
+    }
+
+    private static TPSCalculator startAndGetTpsCalculator() {
+        TPSCalculator tpsCalculator = new TPSCalculator();
+        Thread t = new Thread(tpsCalculator);
+        t.start();
+        return tpsCalculator;
+    }
+
+    private static void enableApacheHttpClientLogging() {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
         System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
         System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "debug");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
-        executorService = Executors.newFixedThreadPool(100);
-        String argument="cybs";
-        Properties props = RunSample.readProperty(argument + ".properties");
-
-        TPSCalculator tpsCalculator = new TPSCalculator();
-        Thread t = new Thread(tpsCalculator);
-        t.start();
-
-        TxnThread txnThread = new TxnThread(props);
-        Thread txnTh = new Thread(txnThread);
-        txnTh.start();
-
-      /*  while (true) {
-                executeTask(props, executorService);
-        }*/
-        Scanner scan = new Scanner(System.in);
-        int input = scan.nextInt();
-        while (input != 0) {
-            changeTPS(input);
-            input = scan.nextInt();
-        }
-        System.out.println("Coming out of the proceeing loop");
-        shutdownTriggered = true;
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
     }
 
     private static void changeTPS (int input) {
-        System.out.println("changing TPS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + RunSampleWithTPS.tps);
+        System.out.println("Changing TPS to " + RunSampleWithTPS.tps);
         tps = input;
     }
 
@@ -64,11 +82,16 @@ public class RunSampleWithTPS {
                 System.out.println("Shutdown hook triggered.");
                 try {
                     Thread.sleep(15000);
+                    System.out.println("=========================AUTH============================");
+                    System.out.println("Total auth transaction executed >> " + RunSample.totalTxnSent);
+                    System.out.println("Total auth transaction successfully executed >> " + RunSample.totalSuccessfulTxn);
+                    System.out.println("Total auth transaction failure executed >> " + RunSample.totalFailedTxn);
                     System.out.println("=====================================================");
-                    System.out.println("Total transaction executed >> " + totalTxnSent);
-                    System.out.println("Total transaction successfully executed >> " + totalSuccessfulTxn);
-                    System.out.println("Total transaction failure executed >> " + totalFailureTxn);
-                    System.out.println("=====================================================");
+
+                    System.out.println("=========================AUTH REVERSAL============================");
+                    System.out.println("Total auth reversal transaction executed >> " + RunSample.authReversalTotalTxnSent);
+                    System.out.println("Total auth reversal transaction successfully executed >> " + RunSample.authReversalTotalSuccessfulTxn);
+                    System.out.println("Total auth reversal transaction failure executed >> " + RunSample.authReversalTotalFailedTxn);
                     System.out.println("End time >> "+ new Date());
 
                 } catch (InterruptedException e) {
@@ -81,7 +104,7 @@ public class RunSampleWithTPS {
         });
     }
 
-    public static void executeTask(Properties props, ExecutorService executorService) {
+    static void executeTask(Properties props, ExecutorService executorService) {
         List<Callable<String>> tasks = new ArrayList<Callable<String>>();
 
         System.out.println("Current loop count >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + RunSampleWithTPS.tps);
@@ -90,20 +113,18 @@ public class RunSampleWithTPS {
             tasks.add(trans);
         }
 
-        List<Future<String>> results = null;
-
         try {
-            results = executorService.invokeAll(tasks);
+            List<Future<String>> results = executorService.invokeAll(tasks);
             try {
 
                 for (Future future : results) {
                     String requestId = (String)future.get();
                     if (requestId == null) {
-                        totalFailureTxn.incrementAndGet();
+                        RunSample.totalFailedTxn.incrementAndGet();
                     } else {
-                        totalSuccessfulTxn.incrementAndGet();
+                        RunSample.totalSuccessfulTxn.incrementAndGet();
                     }
-                    System.out.println("Request id : " + future.get());
+                    //System.out.println(LocalDateTime.now().toString() + " Auth Request id : " + future.get());
                     txnTPS.incrementAndGet();
                 }
 
@@ -125,15 +146,20 @@ class RunCallable implements Callable {
         this.cybsProperties = cybsProperties;
     }
     @Override
-    public Object call() throws Exception {
-        RunSampleWithTPS.totalTxnSent.incrementAndGet();
-        return RunSample.runAuth(cybsProperties);
+    public Object call() {
+        RunSample.totalTxnSent.incrementAndGet();
+        String requestID = RunSample.runAuth(cybsProperties);
+        if (requestID != null) {
+            RunSample.authReversalTotalTxnSent.incrementAndGet();
+            RunSample.runAuthReversal(cybsProperties, requestID, "");
+        }
+        return requestID;
     }
 }
 
 class TPSCalculator implements Runnable {
 
-    public boolean shutdown;
+    private boolean shutdown;
     @Override
     public void run() {
         while(!shutdown) {
@@ -146,13 +172,18 @@ class TPSCalculator implements Runnable {
             }
         }
     }
+
+    void setShutdown() {
+        this.shutdown = true;
+    }
 }
 
 class TxnThread implements Runnable {
-    Properties props;
-    public TxnThread (Properties props) {
+    private Properties props;
+    TxnThread(Properties props) {
         this.props = props;
     }
+
     @Override
     public void run() {
         while (!RunSampleWithTPS.shutdownTriggered) {
