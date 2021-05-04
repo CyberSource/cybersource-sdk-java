@@ -213,17 +213,15 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing, and supports XML Digital Signature APIs.
     4. org.apache.commons:commons-lang3:3.4
       Apache Commons Lang, a package of Java utility classes for the classes that are in java.lang's hierarchy, or are considered to be so standard as to justify existence in java.lang.
-    5. commons-httpclient:commons-httpclient:3.1
-      Provides a framework by which new request types (methods) or HTTP extensions can be created easily.
-    6. commons-logging:commons-logging:jar:1.1.1
+    5. commons-logging:commons-logging:jar:1.1.1
       This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging systems.
-    7. org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21
+    6. org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21
       slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
-    8. junit:junit:4.12
+    7. junit:junit:4.12
       JUnit is a unit testing framework for Java.
-    9. org.mockito:mockito-all:1.10.19
+    8. org.mockito:mockito-all:1.10.19
       Mock objects library for java  
-    10. org.apache.httpcomponents:httpclient:4.5.11
+    9. org.apache.httpcomponents:httpclient:4.5.11
        Provides reusable components for client-side authentication, HTTP state management, and HTTP connection management. It is used for poolinghttpclientconnectionmanager feature.
 
 
