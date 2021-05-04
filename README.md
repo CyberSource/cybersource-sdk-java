@@ -50,7 +50,7 @@ You do not need to download and build the source to use the SDK but if you want 
   - Set `keysDirectory` to the directory where your key resides.  Use forward-slashes for the directory separator, even on Windows. For example, "c:/keys"
   - Uncomment & set KeyFilename if you want to use JKS file or if the p12 file name is different from Merchant_ID
   - Optional Additional Changes
-    - Set `targetAPIVersion` to the latest version displayed at: https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/. By default, it is set to the latest version when the package was created.
+    - Set `targetAPIVersion` to the latest version displayed at: https://<cybersource-host>/commerce/1.x/transactionProcessor/. By default, it is set to the latest version when the package was created.
     - Modify the logging properties as appropriate. Use forward-slashes for the directory separator in the `logDirectory` value, even on Windows. The directory you specify must already exist.
     - Set `useSignAndEncrypted` to true, to encrypt the signed Payload.
       - For more information about MLE, See [Message Level Encryption](README.md#message-level-encryption).
@@ -79,7 +79,7 @@ You do not need to download and build the source to use the SDK but if you want 
             Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
          - `connectionRequestTimeoutMs` Time taken in milliseconds to get connection request from the pool. If it times out, it will throw error as Timeout waiting for connection from pool
          - `connectionTimeoutMs` Specifies the number of milliseconds to wait while a connection is being established.
-         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. Recommanded valut is 130000 (in ms).
+         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
          - `evictThreadSleepTimeMs` Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread. 
             This thread will check if any idle/expired/stale connections are available in pool and evict it.
          - `maxKeepAliveTimeMs` Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
