@@ -1,40 +1,22 @@
 package com.cybersource.sample;
 
-import com.cybersource.ws.client.Client;
-import com.cybersource.ws.client.ClientException;
-import com.cybersource.ws.client.FaultException;
-import com.cybersource.ws.client.Utility;
-
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Properties;
 
-import static com.cybersource.ws.client.Utility.MERCHANT_TRANSACTION_IDENTIFIER;
+import com.cybersource.ws.client.*;
 
 
 /**
  * Sample class that demonstrates how to call Credit Card Authorization.
  */
 public class RunSample {
-    public static AtomicInteger totalSuccessfulTxn = new AtomicInteger(0);
-    public static AtomicInteger totalFailedTxn = new AtomicInteger(0);
-    public static AtomicInteger totalTxnSent = new AtomicInteger(0);
-
-    // Authreversal
-    public static AtomicInteger authReversalTotalSuccessfulTxn = new AtomicInteger(0);
-    public static AtomicInteger authReversalTotalFailedTxn = new AtomicInteger(0);
-    public static AtomicInteger authReversalTotalTxnSent = new AtomicInteger(0);
-
-    private static final String PROPERTIES = "cybs.properties";
-
-    public enum sample {
-        auth, capture, emv_auth, credit, auth_reversal, sale;
-
+    public enum sample{ auth, capture, emv_auth, credit, auth_reversal, sale;
         public static int enum_exist(String str) {
             for (sample me : sample.values()) {
                 if (me.name().equalsIgnoreCase(str))
@@ -44,46 +26,62 @@ public class RunSample {
         }
 
     }
+    Properties cybsProps = new Properties();
+    private static final String PROPERTIES="cybs.properties";
+    static String authDecision;
+    static String captureDecision;
 
     /**
      * Entry point.
      *
-     * @param args command-line arguments. The name of the property file may be
-     *             passed as a command-line argument. If not passed, it will look
-     *             for "cybs.properties" in the current directory.
+     * @param args
+     *            command-line arguments. The name of the property file may be
+     *            passed as a command-line argument. If not passed, it will look
+     *            for "cybs.properties" in the current directory.
      */
     public static void main(String[] args) {
-        String argument = args[0];
+
+        String argument=args[0];
+        Properties props = readProperty(argument + ".properties");
+        @SuppressWarnings("unchecked")
+
         String requestID;
+        String emvrequestID;
 
-        Properties cybProperties = readCybsProperty();
-        int choice = sample.enum_exist(argument);
-
+        Properties cybProperties = new Properties();
+        cybProperties = readCybsProperty(PROPERTIES);
+        int choice =sample.enum_exist(argument);
         switch (choice) {
+
             case 0:
-                runAuth(cybProperties);
+                requestID = runAuth(cybProperties);
                 break;
+
             case 1:
                 requestID = runAuth(cybProperties);
                 System.out.println("Request ID is " + requestID);
-                if (requestID != null) {
-                    runCapture(cybProperties, requestID);
+                if (!("null".equals(requestID))) {
+                    requestID = runCapture(cybProperties, requestID, argument);
                 }
                 break;
+
             case 2:
-                runAuthEMV(cybProperties, argument);
+                emvrequestID = runAuthEMV(cybProperties,argument);
                 break;
+
             case 3:
-                requestID = runAuth(cybProperties);
+                requestID = runAuth(cybProperties );
                 System.out.println("Request ID is " + requestID);
-                if (requestID != null) {
-                    runCapture(cybProperties, requestID);
-                    runCredit(cybProperties, requestID, argument);
+                if (!("null".equals(requestID))) {
+                    requestID = runCapture(cybProperties, requestID,  argument);
+                    if (!("null".equals(requestID)))
+                        runCredit(cybProperties, requestID, argument);
                 }
                 break;
+
             case 4:
                 requestID = runAuth(cybProperties);
-                if (requestID != null) {
+                if (!("null".equals(requestID))) {
                     runAuthReversal(cybProperties, requestID, argument);
                 }
                 break;
@@ -91,30 +89,72 @@ public class RunSample {
                 runSale(cybProperties);
                 break;
             case -1:
-                System.out.println(" \t\t Enter the correct Service_name\n\n " +
-                        "\t\t while running the Script enter the service_name \n\n" +
-                        "\t\t for example to run a auth transaction enter the following command: \n" +
-                        "\t\t\t  for windows : runSample <service_name> \n " +
-                        "\t\t\t  for linux : ./runSample.sh <service_name>  \n" +
-                        "\t\t service name argument can be auth,sale,credit,authreversal,capture,emv_auth \n" +
+                System.out.println(" \t\t Enter the correct Service_name\n\n "+
+                        "\t\t while running the Script enter the service_name \n\n"+
+                        "\t\t for example to run a auth transaction enter the following command: \n"+
+                        "\t\t\t  for windows : runSample <service_name> \n "+
+                        "\t\t\t  for linux : ./runSample.sh <service_name>  \n"+
+                        "\t\t service name argument can be auth,sale,credit,authreversal,capture,emv_auth \n"+
                         "\t\t NOTE: if no argument is entered the script will terminate the program");
                 break;
             default:
                 break;
+
         }
     }
-
     public static String runSale(Properties props) {
         String requestID = null;
-        Properties saleProps = readProperty("sale.properties");
-        HashMap<String, String> request = new HashMap<String, String>((Map) saleProps);
+        Properties saleProps = new Properties();
+        saleProps = readProperty("sale.properties");
+        HashMap<String, String> request = new HashMap<String, String>(
+                (Map) saleProps);
         try {
             displayMap("CREDIT CARD SALE REQUEST:", request);
             // run transaction now
             Map<String, String> reply = Client.runTransaction(request, props);
             displayMap("CREDIT CARD SALE REPLY:", reply);
-            requestID = reply.get("requestID");
-            System.out.println("Sale completed " + requestID);
+            requestID = (String) reply.get("requestID");
+            System.out.println("Sale completed " +requestID);
+
+        } catch (ClientException e) {
+            System.out.println(e.getMessage());
+            if (e.isCritical()) {
+                handleCriticalException(e, request);
+            }
+        } catch (FaultException e) {
+            System.out.println(e.getMessage());
+            if (e.isCritical()) {
+                handleCriticalException(e, request);
+            }
+        }
+
+        return (requestID);
+    }
+    /**
+     * Runs Credit Card Authorization.
+     *
+     * @param props
+     *            Properties object.
+     * @return the requestID.
+     */
+
+    public static String runAuth(Properties props) {
+        String requestID = null;
+        Properties authProps = new Properties();
+        authProps = readProperty("auth.properties");
+        HashMap<String, String> request = new HashMap<String, String>(
+                (Map) authProps);
+        try {
+            displayMap("CREDIT CARD AUTHORIZATION REQUEST:", request);
+            // run transaction now
+            Map<String, String> reply = Client.runTransaction(request, props);
+            displayMap("CREDIT CARD AUTHORIZATION REPLY:", reply);
+            // if the authorization was successful, obtain the request id
+            // for the follow-on capture later.
+            String decision = (String) reply.get("decision");
+            if ("ACCEPT".equalsIgnoreCase(decision)) {
+                requestID = (String) reply.get("requestID");
+            }
 
         } catch (ClientException e) {
             System.out.println(e.getMessage());
@@ -132,62 +172,27 @@ public class RunSample {
     }
 
     /**
-     * Runs Credit Card Authorization.
-     *
-     * @param props Properties object.
-     * @return the requestID.
-     */
-
-    public static String runAuth(Properties props) {
-        long startTime = System.currentTimeMillis();
-        String requestID = null;
-        Properties authProps = readProperty("auth.properties");
-        authProps.put(MERCHANT_TRANSACTION_IDENTIFIER, UniquIDGenerator.getInstance().createUniqueID());
-        HashMap<String, String> request = new HashMap<String, String>(
-                (Map) authProps);
-        try {
-            displayMap("CREDIT CARD AUTHORIZATION REQUEST:", request);
-            // run transaction now
-            Map<String, String> reply = Client.runTransaction(request, props);
-            displayMap("CREDIT CARD AUTHORIZATION REPLY:", reply);
-            // if the authorization was successful, obtain the request id
-            // for the follow-on capture later.
-            String decision = reply.get("decision");
-            if (decision != null) {
-                requestID = reply.get("requestID");
-            }
-            if (requestID == null) {
-                System.out.println("Request id null >>" + reply);
-            }
-        } catch (ClientException e) {
-            String stackTrace = Utility.getStackTrace(e.getInnerException() != null ? e.getInnerException() : e);
-            System.out.println("client exception >>> " + stackTrace);
-        } catch (FaultException e) {
-            System.out.println("fault exception >>>" + e);
-        } catch (Exception e) {
-            System.out.println("exception >>>" + e.getMessage());
-        }
-
-        System.out.println("Time taken for request id : " + requestID + " " + (System.currentTimeMillis() - startTime));
-        return requestID;
-    }
-
-    /**
      * Runs Credit Card Capture.
      *
-     * @param props         Properties object.
-     * @param authRequestID requestID returned by a previous authorization.
+     * @param props
+     *            Properties object.
+     * @param authRequestID
+     *            requestID returned by a previous authorization.
      */
-    public static String runCapture(Properties props, String authRequestID) {
-        Properties captureProps = readProperty("capture.properties");
-        HashMap<String, String> request = new HashMap<String, String>((Map) captureProps);
+    public static String runCapture(Properties props, String authRequestID,String propFileName ) {
+        Properties captureProps = new Properties();
+        captureProps = readProperty("capture.properties");
+        HashMap<String, String> request = new HashMap<String, String>(
+                (Map) captureProps);
 
         request.put("ccCaptureService_authRequestID", authRequestID);
         try {
             displayMap("FOLLOW-ON CAPTURE REQUEST:", request);
             // run transaction now
             Map<String, String> reply = Client.runTransaction(request, props);
+
             displayMap("FOLLOW-ON CAPTURE REPLY:", reply);
+
         } catch (ClientException e) {
             System.out.println(e.getMessage());
             if (e.isCritical()) {
@@ -205,15 +210,11 @@ public class RunSample {
     /**
      * @param props
      * @param authRequestID
-     * @param propFileName
+     * @param request
      */
     public static void runAuthReversal(Properties props, String authRequestID, String propFileName) {
-        long startTime = System.currentTimeMillis();
-        String requestID = null;
-        propFileName = "auth_reversal";
-        Properties authReversalProps = readProperty(propFileName+".properties");
-        authReversalProps = readProperty("auth_reversal.properties");
-        authReversalProps.put("merchantTransactionIdentifier",UniquIDGenerator.getInstance().createUniqueID());
+        Properties authReversalProps = new Properties();
+        authReversalProps = readProperty(propFileName+".properties");
         HashMap<String, String> request = new HashMap<String, String>(
                 (Map) authReversalProps);
         request.put("ccAuthReversalService_authRequestID", authRequestID);
@@ -224,33 +225,28 @@ public class RunSample {
             // run transaction now
             Map<String, String> reply = Client.runTransaction(request, props);
             displayMap("REVERSAL REPLY:", reply);
-
-            String decision = reply.get("decision");
-            if ("ACCEPT".equalsIgnoreCase(decision) || "REJECT".equalsIgnoreCase(decision)) {
-                requestID = reply.get("requestID");
-                authReversalTotalSuccessfulTxn.incrementAndGet();
-            }
-            if (requestID == null) {
-                authReversalTotalFailedTxn.incrementAndGet();
-                System.out.println(new Date()  + " authreversal request id null >> " + " auth id: " + authRequestID +  " " + reply);
-            }
-
         } catch (ClientException e) {
-            String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);
-            System.out.println(new Date() + " authreversal client exception >>> auth id: " + authRequestID + " " + stackTrace);
+            System.out.println(e.getMessage());
+            if (e.isCritical()) {
+                handleCriticalException(e, request);
+            }
         } catch (FaultException e) {
-            System.out.println(new Date()  + " authreversal fault exception >>>auth id: " + authRequestID + " " + e);
-        } catch (Exception e) {
-            System.out.println(new Date()  + " authreversal exception >>>auth id: " + authRequestID + " " + e.getMessage());
+            System.out.println(e.getMessage());
+            if (e.isCritical()) {
+                handleCriticalException(e, request);
+            }
         }
-        System.out.println(new Date() + " Time taken for authreversal request id : " + requestID + " auth id: " + authRequestID + " " +(System.currentTimeMillis()-startTime));
 
     }
 
     public static String runAuthEMV(Properties props, String propFileName) {
-        Properties authEMVProps = readProperty(propFileName + ".properties");
+        Properties authEMVProps = new Properties();
         String emvRequestID = null;
-        HashMap<String, String> request = new HashMap<String, String>((Map) authEMVProps);
+        authEMVProps = readProperty(propFileName+".properties");
+        HashMap<String, String> request = new HashMap<String, String>(
+                (Map) authEMVProps);
+
+
         try {
             displayMap("CREDIT CARD EMVAUTHORIZATION REQUEST:", request);
             // run transaction now
@@ -258,9 +254,9 @@ public class RunSample {
             displayMap("CREDIT CARD EMVAUTHORIZATION REPLY:", reply);
             // if the authorization was successful, obtain the request id
             // for the follow-on capture later.
-            String decision = reply.get("decision");
+            String decision = (String) reply.get("decision");
             if ("ACCEPT".equalsIgnoreCase(decision)) {
-                emvRequestID = reply.get("requestID");
+                emvRequestID = (String) reply.get("requestID");
             }
 
         } catch (ClientException e) {
@@ -275,13 +271,16 @@ public class RunSample {
             }
         }
 
-        return emvRequestID;
+        return (emvRequestID);
+
     }
 
     public static void runCredit(Properties props, String RequestID, String propFileName) {
-        Properties creditProps = readProperty(propFileName + ".properties");
-        HashMap<String, String> request = new HashMap<String, String>((Map) creditProps);
-        request.put("ccCreditService_captureRequestID", RequestID);
+        Properties creditProps = new Properties();
+        creditProps = readProperty(propFileName+".properties");
+        HashMap<String, String> request = new HashMap<String, String>(
+                (Map) creditProps);
+        request.put("ccCreditService_captureRequestID",RequestID);
         try {
             displayMap("CREDIT REQUEST:", request);
             // run transaction now
@@ -303,13 +302,15 @@ public class RunSample {
     /**
      * Displays the content of the Map object.
      *
-     * @param header Header text.
-     * @param map    Map object to display.
+     * @param header
+     *            Header text.
+     * @param map
+     *            Map object to display.
      */
     private static void displayMap(String header, Map map) {
         System.out.println(header);
 
-        StringBuilder dest = new StringBuilder();
+        StringBuffer dest = new StringBuffer();
 
         if (map != null && !map.isEmpty()) {
             Iterator iter = map.keySet().iterator();
@@ -317,7 +318,7 @@ public class RunSample {
             while (iter.hasNext()) {
                 key = (String) iter.next();
                 val = (String) map.get(key);
-                dest.append(key).append("=").append(val).append("\n");
+                dest.append(key + "=" + val + "\n");
             }
         }
 
@@ -339,8 +340,10 @@ public class RunSample {
      * with the transaction information. Note that this is only a
      * recommendation; it may not apply to your business model.
      *
-     * @param e       Critical ClientException object.
-     * @param request Request that was sent.
+     * @param e
+     *            Critical ClientException object.
+     * @param request
+     *            Request that was sent.
      */
     private static void handleCriticalException(ClientException e, Map request) {
         // send the exception and order information to the appropriate
@@ -351,8 +354,10 @@ public class RunSample {
     /**
      * See header comment in the other version of handleCriticalException above.
      *
-     * @param e       FaultException object.
-     * @param request Request that was sent.
+     * @param e
+     *            Critical ClientException object.
+     * @param request
+     *            Request that was sent.
      */
     private static void handleCriticalException(FaultException e, Map request) {
         // send the exception and order information to the appropriate
@@ -362,6 +367,7 @@ public class RunSample {
 
     public static Properties readProperty(String filename) {
         Properties props = new Properties();
+
         try {
             FileInputStream fis = new FileInputStream(filename);
             props.load(fis);
@@ -370,104 +376,21 @@ public class RunSample {
         } catch (IOException ioe) {
             System.out.println("File not found");
             // do nothing. An empty Properties object will be returned.
-            ioe.printStackTrace();
         }
 
         return (props);
     }
 
-    private static Properties readCybsProperty() {
+    public static Properties readCybsProperty(String file) {
         Properties cybsProps = new Properties();
         try {
-            FileInputStream fis = new FileInputStream(PROPERTIES);
+            String filename = file;
+            FileInputStream fis = new FileInputStream(filename);
             cybsProps.load(fis);
             fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioe) {
         }
         return (cybsProps);
     }
 
-    public static class UniquIDGenerator {
-        private AtomicLong serialNumber = new AtomicLong(1);
-        private String ipAddress = generateIPAddress();
-        private static UniquIDGenerator SELF = new UniquIDGenerator();
-
-        static UniquIDGenerator getInstance() {
-            return SELF;
-        }
-
-        private String generateIPAddress() {
-            InetAddress addr = null;
-            for (int tries = 1; ; tries++) {
-                try {
-                    addr = InetAddress.getLocalHost();
-                    String hostID = getHostID();
-                    if (hostID == null) {
-                        addr = InetAddress.getLocalHost();
-                    } else {
-                        addr = InetAddress.getByName(hostID);
-                    }
-                    validateIPAddress(addr);
-                    break;
-                } catch (UnknownHostException e) {
-                    if (tries >= 3) {
-                        break;
-                    } else {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException ignored) {
-                            // ignored
-                        }
-                    }
-                }
-            }
-            if (addr == null) {
-                return null;
-            }
-            BigInteger ip = new BigInteger(1, addr.getAddress());
-            // pad the ip address string to 10 characters
-            String ipString = ip.toString();
-            if (ipString.length() < 10) {
-                ipString = "0000000000".substring(ipString.length()) + ipString;
-            }
-            // trim leading characters in case it's > 10 digits long
-            if (ipString.length() > 10) {
-                ipString = ipString.substring(ipString.length() - 10);
-            }
-            return ipString;
-        }
-
-        private String getHostID() {
-            return System.getProperty("host_id");
-        }
-
-        String createUniqueID() {
-            long time = System.nanoTime();
-            long serial = serialNumber.getAndIncrement();
-            if (ipAddress == null) {
-                return null;
-            }
-            return createUniqueID(ipAddress, time, serial);
-        }
-
-        private String createUniqueID(String ipAddress, long timeInNano, long serial) {
-            return String.format("%015d%05d%10s",
-                    timeInNano,
-                    serial % 100000,
-                    ipAddress);
-        }
-
-        /**
-         * Validates the IP address.  The only validation currenly
-         * being made is the check against 127.0.0.1.
-         **/
-        private static void validateIPAddress(InetAddress addr)
-                throws UnknownHostException {
-            if (addr.equals(InetAddress.getByName("127.0.0.1"))) {
-                throw new UnknownHostException(
-                        "127.0.0.1 is not allowed.  Use a different IP address.");
-            }
-        }
-    }
 }

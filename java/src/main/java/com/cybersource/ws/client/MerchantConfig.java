@@ -795,8 +795,6 @@ public class MerchantConfig {
             appendPair(sb, "maxConnectionsPerRoute", maxConnectionsPerRoute);
             appendPair(sb, "connectionRequestTimeoutMs", connectionRequestTimeoutMs);
             appendPair(sb, "connectionTimeoutMs", connectionTimeoutMs);
-            appendPair(sb, "socketTimeoutMs", socketTimeoutMs);
-            appendPair(sb, "evictThreadSleepTimeMs", evictThreadSleepTimeMs);
             appendPair(sb, "maxKeepAliveTimeMs", maxKeepAliveTimeMs);
             appendPair(sb, "validateAfterInactivityMs", validateAfterInactivityMs);
             appendPair(sb, "staleConnectionCheckEnabled", staleConnectionCheckEnabled);
@@ -804,6 +802,8 @@ public class MerchantConfig {
             appendPair(sb, "retryIfMTIFieldExist", retryIfMTIFieldExist);
         }
         appendPair(sb, "timeout", timeout);
+        appendPair(sb, "socketTimeoutMs", socketTimeoutMs);
+        appendPair(sb, "evictThreadSleepTimeMs", evictThreadSleepTimeMs);
         if (proxyHost != null) {
             appendPair(sb, "proxyHost", proxyHost);
             appendPair(sb, "proxyPort", proxyPort);
