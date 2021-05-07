@@ -240,7 +240,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       JUnit is a unit testing framework for Java.
     8. org.mockito:mockito-all:1.10.19
       Mock objects library for java  
-    9. org.apache.httpcomponents:httpclient:4.5.11
+    9. org.apache.httpcomponents:httpclient:4.5.13
        Provides reusable components for client-side authentication, HTTP state management, and HTTP connection management. It is used for poolinghttpclientconnectionmanager feature.
     10. org.apache.httpcomponents:httpcore:4.4.13
        Provides low level HTTP transport components that can be used to build custom client and server side HTTP services with a minimal footprint.
