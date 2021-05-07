@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/mahendya1002/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/mahendya1002/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -10,7 +10,7 @@ To install the `cybersource-sdk-java` from central repository, add dependency to
 <dependency>
   <groupId>com.cybersource</groupId>
   <artifactId>cybersource-sdk-java</artifactId>
-  <version>6.2.10</version>
+  <version>6.2.11</version>
 </dependency> 
 ```
 Run `mvn install` to install dependency
@@ -19,7 +19,7 @@ Run `mvn install` to install dependency
 Add the dependency to your build.gradle
 ```java
 dependencies {
-  compile 'com.cybersource:cybersource-sdk-java:6.2.10'
+  compile 'com.cybersource:cybersource-sdk-java:6.2.11'
 }
 ```
 ## Requirements
