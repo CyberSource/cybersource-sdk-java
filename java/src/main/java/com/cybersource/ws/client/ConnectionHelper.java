@@ -18,6 +18,16 @@
 
 package com.cybersource.ws.client;
 
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.AuthSchemes;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.ProxyAuthenticationStrategy;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.io.IOException;
@@ -26,6 +36,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Collections;
 
 /**
  * Helps in creating the Proxy and adding Proxy credentials to JDKHttpURLConnection.
@@ -45,12 +56,11 @@ public class ConnectionHelper {
     /**
      * Sets the timeout for HTTP Request
      * @param con - HttpURLConnection
-     * @param timeout - timeout integer value
+     * @param mc - MerchantConfig
      */
-    public static void setTimeout(HttpURLConnection con, int timeout) {
-        int timeoutInMS = timeout * 1000;
-        con.setConnectTimeout(timeoutInMS);
-        con.setReadTimeout(timeoutInMS);
+    public static void setTimeout(HttpURLConnection con, MerchantConfig mc) {
+        con.setConnectTimeout(mc.getConnectionTimeoutMs());
+        con.setReadTimeout(mc.getSocketTimeoutMs());
     }
 
     /**
@@ -106,6 +116,32 @@ public class ConnectionHelper {
                     "Basic " +
                             Base64.encode((mc.getProxyUser() + ":" + mc.getProxyPassword()).getBytes(Charset.forName("UTF-8"))));
 
+        }
+    }
+
+    /**
+     * Set proxy by using proxy credentials to create httpclient
+     *
+     * @param httpClientBuilder
+     * @param requestConfigBuilder
+     * @param merchantConfig
+     */
+    public static void setProxy(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder, MerchantConfig merchantConfig) {
+        if (merchantConfig.getProxyHost() != null) {
+            HttpHost proxy = new HttpHost(merchantConfig.getProxyHost(), merchantConfig.getProxyPort());
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            httpClientBuilder.setRoutePlanner(routePlanner);
+
+            if (merchantConfig.getProxyUser() != null) {
+                httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
+                requestConfigBuilder.setProxyPreferredAuthSchemes(Collections.singletonList(AuthSchemes.BASIC));
+
+                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(AuthScope.ANY,
+                        new UsernamePasswordCredentials(merchantConfig.getProxyUser(), merchantConfig.getProxyPassword()));
+
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
         }
     }
 }

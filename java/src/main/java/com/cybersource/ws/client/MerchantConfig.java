@@ -72,6 +72,7 @@ public class MerchantConfig {
     private int numberOfRetries = 0;
     private long retryInterval = 0;
 
+    @Deprecated
     private int timeout;
 
     private String proxyHost;
@@ -278,6 +279,23 @@ public class MerchantConfig {
             staleConnectionCheckEnabled = getBooleanProperty(merchantID, "staleConnectionCheckEnabled", true);
             shutdownHookEnabled = getBooleanProperty(merchantID, "enabledShutdownHook", true);
             retryIfMTIFieldExist = getBooleanProperty(merchantID, "retryIfMTIFieldExist", true);
+        }else{
+            if (StringUtils.isEmpty(getProperty(merchantID, "connectionTimeoutMs"))) {
+                connectionTimeoutMs = timeout * 1000;
+            } else {
+                connectionTimeoutMs = getIntegerProperty(merchantID, "connectionTimeoutMs");
+                if (connectionTimeoutMs <= 0) {
+                    throw new ConfigException("connectionTimeoutMs property can't be 0 or negative");
+                }
+            }
+            if (StringUtils.isEmpty(getProperty(merchantID, "socketTimeoutMs"))) {
+                socketTimeoutMs = timeout * 1000;
+            } else {
+                socketTimeoutMs = getIntegerProperty(merchantID, "socketTimeoutMs");
+                if (socketTimeoutMs <= 0) {
+                    throw new ConfigException("socketTimeoutMs property can't be 0 or negative");
+                }
+            }
         }
 
         if (useHttpClient || useHttpClientWithConnectionPool) {
@@ -416,6 +434,7 @@ public class MerchantConfig {
      *
      * @return int
      */
+    @Deprecated
     public int getTimeout() {
         return timeout;
     }

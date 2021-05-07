@@ -5,11 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NoHttpResponseException;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -18,7 +14,6 @@ import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.*;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -121,7 +116,7 @@ public class PoolingHttpClientConnection extends Connection {
             httpClientBuilder.setRetryHandler(new CustomRetryHandler());
         }
 
-        setProxy(httpClientBuilder, requestConfigBuilder, merchantConfig);
+        ConnectionHelper.setProxy(httpClientBuilder, requestConfigBuilder, merchantConfig);
 
         httpClient = httpClientBuilder
                 .setDefaultRequestConfig(requestConfigBuilder.build())
@@ -358,32 +353,6 @@ public class PoolingHttpClientConnection extends Connection {
             }
 
             return false;
-        }
-    }
-
-    /**
-     * Set proxy by using proxy credentials to create httpclient
-     *
-     * @param httpClientBuilder
-     * @param requestConfigBuilder
-     * @param merchantConfig
-     */
-    private void setProxy(HttpClientBuilder httpClientBuilder, RequestConfig.Builder requestConfigBuilder, MerchantConfig merchantConfig) {
-        if (merchantConfig.getProxyHost() != null) {
-            HttpHost proxy = new HttpHost(merchantConfig.getProxyHost(), merchantConfig.getProxyPort());
-            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-            httpClientBuilder.setRoutePlanner(routePlanner);
-
-            if (merchantConfig.getProxyUser() != null) {
-                httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
-                requestConfigBuilder.setProxyPreferredAuthSchemes(Collections.singletonList(AuthSchemes.BASIC));
-
-                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(merchantConfig.getProxyUser(), merchantConfig.getProxyPassword()));
-
-                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            }
         }
     }
 
