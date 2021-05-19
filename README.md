@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/mahendya1002/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/mahendya1002/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -253,7 +253,7 @@ _______________________________
     2)Upgrading Apache's basic http client functionality.
     3)Upgrading org.apache.httpcomponents:httpclient:4.5.11 to org.apache.httpcomponents:httpclient:4.5.13 because of CVE-2020-13956 vulnerability.
     4)ReadMe changes for meta key support.
-    5)Http request retry is added in case of HttpPoolingClient when 'javax.net.ssl.SSLException:Connection reset' exception is thrown(specific to jdk8u261 & + version refer this https://bugs.openjdk.java.net/browse/JDK-8214339)
+    5)Http request retry is added in case of HttpPoolingClient when 'javax.net.ssl.SSLException:Connection reset' exception is thrown(specific to jdk8u251 & + version refer this https://bugs.openjdk.java.net/browse/JDK-8214339)
     6)Separate out connection and socket timeout prop. Right now both are set via timeout property in case of jdk HttpUrlConnectiona and Apache basic http client.
 _______________________________
 Version Cybersource-sdk-java 6.2.10 (MAY,2020)
