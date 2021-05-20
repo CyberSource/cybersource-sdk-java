@@ -350,7 +350,6 @@ _______________________________
 
 - Put below block of code to handle the ClientException to print the complete stacktrace.
 
-        In 6.2.10 or below releases, handle the exception as 
         try{
             Client.runTransaction(requestMap, merchantProperties);
         }catch (ClientException e){
@@ -358,13 +357,6 @@ _______________________________
             // or 
             String stackTrace = Utility.getStackTrace(e.getInnerException() != null? e.getInnerException(): e);      
         }
-        
-        In 6.2.11 release onward, handle the exception as 
-         try{
-             Client.runTransaction(requestMap, merchantProperties);
-         }catch (ClientException e){
-             String stackTrace = Utility.getStackTrace(e);      
-         }
       
 ## Documentation
 - For more information about CyberSource services, see <https://www.cybersource.com/en-us/support/technical-documentation.html>.
