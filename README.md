@@ -78,8 +78,11 @@ You do not need to download and build the source to use the SDK but if you want 
             
             Note: This number cannot be greater than Maximum Total Connections and every connection created here also counts into Maximum Total Connections.
          - `connectionRequestTimeoutMs` Time taken in milliseconds to get connection request from the pool. If it times out, it will throw error as Timeout waiting for connection from pool
-         - `connectionTimeoutMs` Specifies the number of milliseconds to wait while a connection is being established.
-         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets.
+         - `connectionTimeoutMs` Specifies the number of milliseconds to wait while a connection is being established. With 6.2.11 release onwards, this property can be used for basic 
+            apache http client and JDK provided HttpUrlConnection implementation as well while keeping the backward compatibility with 'timeout' property.
+         - `socketTimeoutMs` Specifies the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets. 
+            With 6.2.11 release onwards, this property can be used for basic apache http client and JDK provided HttpUrlConnection implementation as well while keeping the 
+            backward compatibility with 'timeout' property.
          - `evictThreadSleepTimeMs` Specifies time duration in milliseconds between "sweeps" by the "idle connection" evictor thread. 
             This thread will check if any idle/expired/stale connections are available in pool and evict it.
          - `maxKeepAliveTimeMs` Specifies the time duration in milliseconds that a connection can be idle before it is evicted from the pool.
@@ -247,7 +250,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 _______________________________
-Version Cybersource-sdk-java 6.2.11 (JUNE,2020)
+Version Cybersource-sdk-java 6.2.11 (MAY,2020)
 _______________________________
     1)Exception handling improvement.
     2)Upgrading Apache's basic http client functionality.
