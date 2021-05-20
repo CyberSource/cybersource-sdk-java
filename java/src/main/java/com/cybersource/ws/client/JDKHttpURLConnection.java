@@ -73,7 +73,7 @@ public class JDKHttpURLConnection extends Connection {
         con.setRequestProperty(Utility.SDK_ELAPSED_TIMESTAMP, String.valueOf(System.currentTimeMillis() - startTime));
         con.setRequestMethod("POST");
         con.setDoOutput(true);
-        ConnectionHelper.setTimeout(con, mc.getTimeout());
+        ConnectionHelper.setTimeout(con, mc);
         logRequestHeaders();
         OutputStream out = con.getOutputStream();
         byte[] requestBytes = documentToByteArray(request);

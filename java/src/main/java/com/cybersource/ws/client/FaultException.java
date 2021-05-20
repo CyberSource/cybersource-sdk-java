@@ -27,9 +27,9 @@ import org.w3c.dom.Document;
 public class FaultException
         extends Exception {
     private final Document faultDocument;
-    private String faultCode = null;
-    private String faultString = null;
-    private String requestID = null;
+    private String faultCode;
+    private String faultString;
+    private String requestID;
     private boolean critical = true;
 
     /**
@@ -106,7 +106,7 @@ public class FaultException
             faultCode
                     = Utility.getElementText(faultDocument, "faultcode", null);
 
-            int colonPos = faultCode.indexOf(":");
+            int colonPos = faultCode!=null? faultCode.indexOf(":"): -1;
             String localPart
                     = (colonPos != -1)
                     ? faultCode.substring(colonPos + 1)
@@ -133,14 +133,14 @@ public class FaultException
      * @return a string representation of the object for logging purposes.
      */
     String getLogString() {
-        StringBuffer sb = new StringBuffer("FaultException details:\n");
+        StringBuilder sb = new StringBuilder("FaultException details:\n");
 
         if (critical) {
             sb.append("CRITICAL\n");
         }
 
         if (requestID != null) {
-            sb.append("requestID = " + requestID + "\n");
+            sb.append("requestID = ").append(requestID).append("\n");
         }
 
         sb.append(Utility.nodeToString(faultDocument));
@@ -154,13 +154,13 @@ public class FaultException
      * @return a description of the exception.
      */
     public String getMessage() {
-        StringBuffer sb = new StringBuffer("Fault:");
+        StringBuilder sb = new StringBuilder("Fault:");
         if (faultString != null) {
-            sb.append(" " + faultString);
+            sb.append(" ").append(faultString);
         }
 
         if (requestID != null) {
-            sb.append(" (requestID=" + requestID + ")");
+            sb.append(" (requestID=").append(requestID).append(")");
         }
 
         if (critical) {
