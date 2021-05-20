@@ -12,7 +12,7 @@
 
     <groupId>com.cybersource</groupId>
     <artifactId>cybersource-sdk-master</artifactId>
-    <version>6.2.11-SNAPSHOT</version>
+    <version>6.2.12-SNAPSHOT</version>
     <name>cybersource-sdk-java-master</name>
     <packaging>pom</packaging>
 
