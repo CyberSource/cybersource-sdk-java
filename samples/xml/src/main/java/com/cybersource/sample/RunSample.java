@@ -85,7 +85,7 @@ public class RunSample {
                 captureReply = runCapture(props, requestID, "capture");
                 requestID = getRequestID(captureReply);
                 decision = getDecisonCode(captureReply);
-                if (requestID != null && "decline".equalsIgnoreCase(decision)))
+                if (requestID != null && "decline".equalsIgnoreCase(decision))
                 runCredit(props, requestID, "credit");
                 break;
 
@@ -95,7 +95,7 @@ public class RunSample {
                     break;
                 requestID = getRequestID(authReply);
                 decision = getDecisonCode(authReply);
-                if (requestID != null && "decline".equalsIgnoreCase(decision)))
+                if (requestID != null && "decline".equalsIgnoreCase(decision))
                 runAuthReversal(props, requestID, "authReversal");
                 break;
 

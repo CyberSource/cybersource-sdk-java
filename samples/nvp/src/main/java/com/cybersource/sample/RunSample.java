@@ -210,7 +210,7 @@ public class RunSample {
     /**
      * @param props
      * @param authRequestID
-     * @param request
+     * @param propFileName
      */
     public static void runAuthReversal(Properties props, String authRequestID, String propFileName) {
         Properties authReversalProps = new Properties();
