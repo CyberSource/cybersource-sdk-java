@@ -31,7 +31,10 @@ public class SecurityUtil {
     private static final String KEY_FILE_TYPE = "PKCS12";
     
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
-    
+    private static final String FAILED_TO_LOAD_KEY_STORE = "Exception while loading KeyStore";
+    private static final String FAILED_TO_OBTAIN_PRIVATE_KEY = "Exception while obtaining private key from KeyStore with alias";
+
+
     private static MessageHandlerKeyStore localKeyStoreHandler = null;
     
     //mapping between IdentityName and Identity
@@ -88,7 +91,7 @@ public class SecurityUtil {
                 logger.log(Logger.LT_EXCEPTION,
                            "SecurityUtil, cannot instantiate class with keystore error. "
                            + e.getMessage());
-                throw new SignException(e.getMessage());
+                throw new SignException(e.getMessage(), e);
             }
             if(merchantConfig.isJdkCertEnabled()){
                 logger.log(Logger.LT_INFO," Loading the certificate from JDK Cert");
@@ -120,23 +123,23 @@ public class SecurityUtil {
                                                     bcProvider);
         } catch (KeyStoreException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while instantiating KeyStore");
-            throw new SignException(e);
+            throw new SignException("Exception while instantiating KeyStore",e);
         }
         
         try {
             merchantKeyStore.load(new FileInputStream(merchantConfig.getKeyFile()), merchantConfig.getKeyPassword().toCharArray());
         } catch (IOException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
-            throw new SignException(e);
+            logger.log(Logger.LT_EXCEPTION, FAILED_TO_LOAD_KEY_STORE + ", '" + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(FAILED_TO_LOAD_KEY_STORE,e);
         } catch (NoSuchAlgorithmException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
-            throw new SignException(e);
+            logger.log(Logger.LT_EXCEPTION, FAILED_TO_LOAD_KEY_STORE + ", '" + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(FAILED_TO_LOAD_KEY_STORE,e);
         } catch (CertificateException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
-            throw new SignException(e);
+            logger.log(Logger.LT_EXCEPTION, FAILED_TO_LOAD_KEY_STORE + ", '" + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(FAILED_TO_LOAD_KEY_STORE,e);
         } catch (ConfigException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
-            throw new SignException(e);
+            logger.log(Logger.LT_EXCEPTION, FAILED_TO_LOAD_KEY_STORE + ", '" + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(FAILED_TO_LOAD_KEY_STORE,e);
         }
         
         // our p12 files do not contain an alias as a normal name, its the common name and serial number
@@ -151,14 +154,14 @@ public class SecurityUtil {
                         keyEntry = (KeyStore.PrivateKeyEntry) merchantKeyStore.getEntry
                         (merchantKeyAlias, new KeyStore.PasswordProtection(merchantConfig.getKeyPassword().toCharArray()));
                     } catch (NoSuchAlgorithmException e) {
-                        logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                        throw new SignException(e);
+                        logger.log(Logger.LT_EXCEPTION, FAILED_TO_OBTAIN_PRIVATE_KEY + ", '" + merchantConfig.getKeyAlias() + "'");
+                        throw new SignException(FAILED_TO_OBTAIN_PRIVATE_KEY, e);
                     } catch (UnrecoverableEntryException e) {
-                        logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                        throw new SignException(e);
+                        logger.log(Logger.LT_EXCEPTION, FAILED_TO_OBTAIN_PRIVATE_KEY + ", '" + merchantConfig.getKeyAlias() + "'");
+                        throw new SignException(FAILED_TO_OBTAIN_PRIVATE_KEY, e);
                     } catch (KeyStoreException e) {
-                        logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-                        throw new SignException(e);
+                        logger.log(Logger.LT_EXCEPTION, FAILED_TO_OBTAIN_PRIVATE_KEY + ", '" + merchantConfig.getKeyAlias() + "'");
+                        throw new SignException(FAILED_TO_OBTAIN_PRIVATE_KEY, e);
                     }
                     
                     Identity identity = new Identity(merchantConfig,(X509Certificate) keyEntry.getCertificate(),keyEntry.getPrivateKey(),logger);
@@ -171,8 +174,8 @@ public class SecurityUtil {
                 identities.put(identity.getName(), identity);
             }
         } catch (KeyStoreException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
-            throw new SignException(e);
+            logger.log(Logger.LT_EXCEPTION, FAILED_TO_OBTAIN_PRIVATE_KEY + ", '" + merchantConfig.getKeyAlias() + "'");
+            throw new SignException(FAILED_TO_OBTAIN_PRIVATE_KEY, e);
         }
     }
 
@@ -194,7 +197,7 @@ public class SecurityUtil {
         try {
             secHeader.insertSecurityHeader(signedDoc);
         } catch (WSSecurityException e) {
-            logger.log(Logger.LT_EXCEPTION, "Exception while adding docuemnt in soap securiy header for MLE");
+            logger.log(Logger.LT_EXCEPTION, "Exception while adding document in soap securiy header for MLE");
             throw new SignException(e);
         }
         
@@ -274,8 +277,8 @@ public class SecurityUtil {
             //System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
             return document;
         } catch (WSSecurityException e) {
-            logger.log(Logger.LT_EXCEPTION, "Failed while signing requeest for , '" + keyAlias + "'");
-            throw new SignException(e.getMessage());
+            logger.log(Logger.LT_EXCEPTION, "Failed while signing request for , '" + keyAlias + "'");
+            throw new SignException(e.getMessage(),e);
         }
     }
 
@@ -312,22 +315,22 @@ public class SecurityUtil {
 					try {
 						keyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry(merchantKeyAlias,
 								new KeyStore.PasswordProtection(merchantConfig.getKeyPassword().toCharArray()));
-					} catch (NoSuchAlgorithmException e) {
-						logger.log(Logger.LT_EXCEPTION,
-								"Exception while obtaining private key from KeyStore with alias, '"
-										+ merchantConfig.getKeyAlias() + "'");
-						throw new SignException(e);
-					} catch (UnrecoverableEntryException e) {
-						logger.log(Logger.LT_EXCEPTION,
-								"Exception while obtaining private key from KeyStore with alias, '"
-										+ merchantConfig.getKeyAlias() + "'");
-						throw new SignException(e);
-					} catch (KeyStoreException e) {
-						logger.log(Logger.LT_EXCEPTION,
-								"Exception while obtaining private key from KeyStore with alias, '"
-										+ merchantConfig.getKeyAlias() + "'");
-						throw new SignException(e);
-					}
+                    } catch (NoSuchAlgorithmException e) {
+                        logger.log(Logger.LT_EXCEPTION,
+                                FAILED_TO_OBTAIN_PRIVATE_KEY + ", '"
+                                        + merchantConfig.getKeyAlias() + "'");
+                        throw new SignException(e);
+                    } catch (UnrecoverableEntryException e) {
+                        logger.log(Logger.LT_EXCEPTION,
+                                FAILED_TO_OBTAIN_PRIVATE_KEY + ", '"
+                                        + merchantConfig.getKeyAlias() + "'");
+                        throw new SignException(e);
+                    } catch (KeyStoreException e) {
+                        logger.log(Logger.LT_EXCEPTION,
+                                FAILED_TO_OBTAIN_PRIVATE_KEY + ", '"
+                                        + merchantConfig.getKeyAlias() + "'");
+                        throw new SignException(e);
+                    }
 
 					Identity identity = new Identity(merchantConfig, (X509Certificate) keyEntry.getCertificate(),
 							keyEntry.getPrivateKey(), logger);
@@ -340,11 +343,11 @@ public class SecurityUtil {
 				localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
 				identities.put(identity.getName(), identity);
 			}
-		} catch (KeyStoreException e) {
-			logger.log(Logger.LT_EXCEPTION, "Exception while obtaining private key from KeyStore with alias, '"
-					+ merchantConfig.getKeyAlias() + "'");
-			throw new SignException(e);
-		}
+        } catch (KeyStoreException e) {
+            logger.log(Logger.LT_EXCEPTION, FAILED_TO_OBTAIN_PRIVATE_KEY + ", '"
+                    + merchantConfig.getKeyAlias() + "'");
+            throw new SignException(e);
+        }
 
 	}
     
@@ -392,25 +395,24 @@ public class SecurityUtil {
 			identities.put(identity.getName(), identity);
 
 		}
-
-		catch (java.security.cert.CertificateException e) {
-			logger.log(Logger.LT_EXCEPTION, "Unable to load the certificate," + merchantConfig.getKeyFilename() + "'");
-			throw new SignException(e);
-		} catch (NoSuchAlgorithmException e) {
-			logger.log(Logger.LT_EXCEPTION, "Unable to find the certificate with the specified algorithm");
-			throw new SignException(e);
-		} catch (FileNotFoundException e) {
-			logger.log(Logger.LT_EXCEPTION, "File Not found ");
-			throw new SignException(e);
-		} catch (KeyStoreException e) {
-			logger.log(Logger.LT_EXCEPTION,
-					"Exception while obtaining private key from KeyStore" + merchantConfig.getKeyFilename() + "'");
-			throw new SignException(e);
-		} catch (IOException e) {
-			logger.log(Logger.LT_EXCEPTION,
-					"Exception while loading KeyStore, '" + merchantConfig.getKeyFilename() + "'");
-			throw new SignException(e);
-		} finally {
+        catch (java.security.cert.CertificateException e) {
+            logger.log(Logger.LT_EXCEPTION, "Unable to load the certificate," + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(e);
+        } catch (NoSuchAlgorithmException e) {
+            logger.log(Logger.LT_EXCEPTION, "Unable to find the certificate with the specified algorithm");
+            throw new SignException(e);
+        } catch (FileNotFoundException e) {
+            logger.log(Logger.LT_EXCEPTION, "File Not found ");
+            throw new SignException(e);
+        } catch (KeyStoreException e) {
+            logger.log(Logger.LT_EXCEPTION,
+                    "Exception while obtaining private key from KeyStore" + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(e);
+        } catch (IOException e) {
+            logger.log(Logger.LT_EXCEPTION,
+                    FAILED_TO_LOAD_KEY_STORE + ", '" + merchantConfig.getKeyFilename() + "'");
+            throw new SignException(e);
+        } finally {
 			if (null != is)
 				try {
 					is.close();

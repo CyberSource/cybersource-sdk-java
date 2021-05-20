@@ -26,10 +26,10 @@ import java.net.HttpURLConnection;
  */
 public class ClientException
         extends Exception {
-    private Exception innerException = null;
+    private Exception innerException;
     private boolean critical = false;
     private int httpStatusCode = -1;
-    private String httpError = null;
+    private String httpError;
 
     /**
      *
@@ -38,6 +38,7 @@ public class ClientException
      */
     public ClientException(
             Exception _innerException, Logger logger) {
+        super(_innerException);
         innerException = _innerException;
         log(logger);
     }
@@ -52,6 +53,7 @@ public class ClientException
      */
     public ClientException(
             Exception _innerException, boolean _critical, Logger logger) {
+        super(_innerException);
         innerException = _innerException;
         critical = _critical;
         log(logger);
@@ -77,7 +79,10 @@ public class ClientException
      */
     public ClientException(
             int _httpStatusCode, String _httpError, Logger logger) {
-        this(_httpStatusCode, logger);
+        super(_httpError);
+        httpStatusCode = _httpStatusCode;
+        critical
+                = (_httpStatusCode == HttpURLConnection.HTTP_GATEWAY_TIMEOUT);
         httpError = _httpError;
         log(logger);
     }
@@ -94,8 +99,7 @@ public class ClientException
     public ClientException(
             int _httpStatusCode, String _httpError, boolean _critical,
             Logger logger) {
-        this(_httpStatusCode, logger);
-        httpError = _httpError;
+        this(_httpStatusCode, _httpError, logger);
 
         // if critical is already true (the other constructor invoked in the
         // first line may set it to true), don't bother setting it as we don't
@@ -169,28 +173,24 @@ public class ClientException
      * @return a string representation of the object for logging purposes.
      */
     String getLogString() {
-        StringBuffer sb = new StringBuffer("ClientException details:\n");
+        StringBuilder sb = new StringBuilder("ClientException details:\n");
 
         if (critical) {
             sb.append("CRITICAL\n");
         }
 
         if (httpStatusCode != -1) {
-            sb.append("httpStatusCode = " + httpStatusCode + "\n");
+            sb.append("httpStatusCode = ").append(httpStatusCode).append("\n");
         }
 
         if (httpError != null) {
-            sb.append("httpError = " + httpError + "\n");
+            sb.append("httpError = ").append(httpError).append("\n");
         }
 
         if (innerException != null) {
-            sb.append(
-                    "innerException: \n" +
-                            Utility.getStackTrace(innerException));
+            sb.append("innerException: \n").append(Utility.getStackTrace(innerException));
         } else {
-            sb.append(
-                    "Stack trace: \n" +
-                            Utility.getStackTrace(this));
+            sb.append("Stack trace: \n").append(Utility.getStackTrace(this));
         }
 
         return (sb.toString());
@@ -204,13 +204,13 @@ public class ClientException
     public String getMessage() {
         if (innerException != null) return innerException.getMessage();
 
-        StringBuffer sb = new StringBuffer("ClientException:");
+        StringBuilder sb = new StringBuilder("ClientException:");
         if (httpStatusCode != -1) {
-            sb.append(" (" + httpStatusCode + ")");
+            sb.append(" (").append(httpStatusCode).append(")");
         }
 
         if (httpError != null) {
-            sb.append(" " + httpError);
+            sb.append(" ").append(httpError);
         }
 
         if (critical) {

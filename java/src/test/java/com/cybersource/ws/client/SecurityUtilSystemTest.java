@@ -83,7 +83,7 @@ public class SecurityUtilSystemTest {
         requestMap.put("shipTo_country", "US");
         requestMap.put("card_accountNumber", "4111111111111111");
         requestMap.put("card_expirationMonth", "12");
-        requestMap.put("card_expirationYear", "2020");
+        requestMap.put("card_expirationYear", "2025");
         requestMap.put("purchaseTotals_currency", "USD");
         requestMap.put("item_0_unitPrice", "12.34");
         requestMap.put("item_1_unitPrice", "56.78");

@@ -89,7 +89,7 @@ public abstract class BaseTest {
         basicRequestMap.put("shipTo_country", "US");
         basicRequestMap.put("card_accountNumber", "4111111111111111");
         basicRequestMap.put("card_expirationMonth", "12");
-        basicRequestMap.put("card_expirationYear", "2020");
+        basicRequestMap.put("card_expirationYear", "2025");
         basicRequestMap.put("purchaseTotals_currency", "USD");
         basicRequestMap.put("item_0_unitPrice", "12.34");
         basicRequestMap.put("item_1_unitPrice", "56.78");
@@ -119,7 +119,7 @@ public abstract class BaseTest {
         sampleRequestMap.put("shipTo_country", "US");
         sampleRequestMap.put("card_accountNumber", "4111111111111111");
         sampleRequestMap.put("card_expirationMonth", "12");
-        sampleRequestMap.put("card_expirationYear", "2020");
+        sampleRequestMap.put("card_expirationYear", "2025");
         sampleRequestMap.put("purchaseTotals_currency", "USD");
         sampleRequestMap.put("item_0_unitPrice", "12.34");
         sampleRequestMap.put("item_1_unitPrice", "56.78");
