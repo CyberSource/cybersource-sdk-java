@@ -5,7 +5,7 @@
     <parent>
         <artifactId>cybersource-sdk-master</artifactId>
         <groupId>com.cybersource</groupId>
-        <version>6.2.11-SNAPSHOT</version>
+        <version>6.2.12-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.cybersource</groupId>
             <artifactId>cybersource-sdk-java</artifactId>
-            <version>6.2.11-SNAPSHOT</version>
+            <version>6.2.12-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
