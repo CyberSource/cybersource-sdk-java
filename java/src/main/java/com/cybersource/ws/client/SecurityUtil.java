@@ -149,7 +149,7 @@ public class SecurityUtil {
             while (enumKeyStore.hasMoreElements()) {
                 KeyStore.PrivateKeyEntry keyEntry = null;
                 merchantKeyAlias = (String) enumKeyStore.nextElement();
-                if (merchantKeyAlias.contains(merchantConfig.getKeyAlias())){
+                if (merchantKeyAlias.toLowerCase().contains(merchantConfig.getKeyAlias().toLowerCase())){
                     try {
                         keyEntry = (KeyStore.PrivateKeyEntry) merchantKeyStore.getEntry
                         (merchantKeyAlias, new KeyStore.PasswordProtection(merchantConfig.getKeyPassword().toCharArray()));

@@ -15,6 +15,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -67,10 +68,10 @@ public class Identity {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
                 String subjectDNrray[] = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNrray.length == 1 && subjectDNrray[0].contains("CyberSourceCertAuth")){
+                if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains("CyberSourceCertAuth".toLowerCase())){
                     name = keyAlias = "CyberSourceCertAuth";
                 }
-                else if (subjectDNrray.length == 2 && subjectDNrray[1].contains(SERVER_ALIAS)) {
+                else if (subjectDNrray.length == 2 && subjectDNrray[1].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
                     name = SERVER_ALIAS;
                     serialNumber = subjectDNrray[1];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
@@ -148,10 +149,10 @@ public class Identity {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
                 String[] subjectDNrray = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNrray.length == 1 && subjectDNrray[0].contains("CyberSourceCertAuth")){
+                if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains("CyberSourceCertAuth".toLowerCase())){
                     name = keyAlias = "CyberSourceCertAuth";
                 }
-                else if (subjectDNrray.length == 2 && subjectDNrray[0].contains(SERVER_ALIAS)) {
+                else if (subjectDNrray.length == 2 && subjectDNrray[0].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
                     name = SERVER_ALIAS;
                     serialNumber = subjectDNrray[1];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
