@@ -41,6 +41,8 @@ public class Identity {
     
     private static final String SERVER_ALIAS = "CyberSource_SJC_US";
 
+    private static final String CYBS_CERT_AUTH = "CyberSourceCertAuth";
+
     private char[] pswd;
 
     /**
@@ -67,11 +69,12 @@ public class Identity {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
                 String subjectDNrray[] = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains("CyberSourceCertAuth".toLowerCase())){
-                    name = keyAlias = "CyberSourceCertAuth";
+                if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains(CYBS_CERT_AUTH.toLowerCase())){
+                    name = keyAlias = subjectDNrray[0].split("=")[1];
                 }
                 else if (subjectDNrray.length == 2 && subjectDNrray[1].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
-                    name = SERVER_ALIAS;
+                    String subjectDName = subjectDNrray[0].split("=")[1];
+                    name = subjectDName.substring(0, subjectDName.length()-1);
                     serialNumber = subjectDNrray[1];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
                 }else{
@@ -148,11 +151,12 @@ public class Identity {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
                 String[] subjectDNrray = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains("CyberSourceCertAuth".toLowerCase())){
-                    name = keyAlias = "CyberSourceCertAuth";
+                if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains(CYBS_CERT_AUTH.toLowerCase())){
+                    name = keyAlias = subjectDNrray[0].split("=")[1];
                 }
                 else if (subjectDNrray.length == 2 && subjectDNrray[0].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
-                    name = SERVER_ALIAS;
+                    String subjectDName = subjectDNrray[0].split("=")[1];
+                    name = subjectDName.substring(0, subjectDName.length()-1);
                     serialNumber = subjectDNrray[1];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
                 }else{

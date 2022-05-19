@@ -1,5 +1,6 @@
 package com.cybersource.ws.client;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
@@ -36,7 +37,7 @@ public class SecurityUtil {
     private static MessageHandlerKeyStore localKeyStoreHandler = null;
     
     //mapping between IdentityName and Identity
-    private static ConcurrentHashMap<String, Identity> identities = new ConcurrentHashMap<String, Identity>();
+    private static ConcurrentHashMap<String, Identity> identities = new ConcurrentHashMap<>();
     
     // By default signature algorithm is set to null and during WSSecSignature build() Signature algorithm will set to "http://www.w3.org/2000/09/xmldsig#rsa-sha1" .
     private static final String SIGNATURE_ALGORITHM = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
@@ -147,7 +148,7 @@ public class SecurityUtil {
             while (enumKeyStore.hasMoreElements()) {
                 KeyStore.PrivateKeyEntry keyEntry = null;
                 merchantKeyAlias = (String) enumKeyStore.nextElement();
-                if (merchantKeyAlias.toLowerCase().contains(merchantConfig.getKeyAlias().toLowerCase())){
+                if (merchantKeyAlias.contains(merchantConfig.getKeyAlias())){
                     try {
                         keyEntry = (KeyStore.PrivateKeyEntry) merchantKeyStore.getEntry
                         (merchantKeyAlias, new KeyStore.PasswordProtection(merchantConfig.getKeyPassword().toCharArray()));
@@ -202,8 +203,8 @@ public class SecurityUtil {
         WSSecEncrypt encrBuilder = new WSSecEncrypt();
         //Set the user name to get the encryption certificate.
         //The public key of this certificate is used, thus no password necessary. The user name is a keystore alias usually.
-        encrBuilder.setUserInfo(identities.get(SERVER_ALIAS).getKeyAlias());
-        
+        String serverAlias = getServerAlias();
+        encrBuilder.setUserInfo(identities.get(serverAlias).getKeyAlias());
         /*This is to reference a public key or certificate when signing or encrypting a SOAP message.
          *The following valid values for these configuration items are:
          *IssuerSerial (default),DirectReference[BST],X509KeyIdentifier,Thumbprint,SKIKeyIdentifier,KeyValue (signature only),EncryptedKeySHA1 (encryption only)
@@ -228,8 +229,8 @@ public class SecurityUtil {
             // encrypted using the public key of the receiver
             signedEncryptedDoc = encrBuilder.build(signedDoc, localKeyStoreHandler, secHeader);
         } catch (WSSecurityException e) {
-            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS);
-            throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS, e);
+            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + serverAlias);
+            throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + serverAlias, e);
         }
         encrBuilder.prependToHeader(secHeader);
         return signedEncryptedDoc;
@@ -384,7 +385,7 @@ public class SecurityUtil {
                     identities.put(identity.getName(), identity);
                 }
             }
-			java.security.cert.Certificate serverCert = keystore.getCertificate(SERVER_ALIAS);
+			java.security.cert.Certificate serverCert = keystore.getCertificate(getServerAlias());
 			if (serverCert == null) {
 				throw new SignException("Missing Server Certificate ");
 			}
@@ -421,4 +422,23 @@ public class SecurityUtil {
 		}
 
 	}
+
+    private static String getServerAlias() {
+        String serverAlias = SERVER_ALIAS;
+        if(!identities.containsKey(serverAlias)) {
+            if(identities.containsKey(serverAlias.toLowerCase())) {
+                serverAlias = serverAlias.toLowerCase();
+            } else if(identities.containsKey(serverAlias.toUpperCase())) {
+                serverAlias = serverAlias.toUpperCase();
+            } else {
+                for(String identityKey :identities.keySet()) {
+                    if(identityKey.equalsIgnoreCase(serverAlias)) {
+                        serverAlias = identityKey;
+                        break;
+                    }
+                }
+            }
+        }
+        return serverAlias;
+    }
 }
