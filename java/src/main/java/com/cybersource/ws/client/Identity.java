@@ -73,7 +73,7 @@ public class Identity {
                     name = keyAlias = subjectDNrray[0].split("=")[1];
                 }
                 else if (subjectDNrray.length == 2 && subjectDNrray[1].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
-                    String subjectDName = subjectDNrray[0].split("=")[1];
+                    String subjectDName = subjectDNrray[1].split("=")[1];
                     name = subjectDName.substring(0, subjectDName.length()-1);
                     serialNumber = subjectDNrray[1];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
