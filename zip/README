@@ -277,6 +277,11 @@ Provides low level HTTP transport components that can be used to build custom cl
 
 ##Changes
 
+Version Cybersource-sdk-java 6.2.12 (MAY,2022)
+_______________________________
+    
+    1)Modified the CYBS P12 certificate's CN name verification to case insensitive.
+
 Version Cybersource-sdk-java 6.2.11 (MAY,2020)
 _______________________________
 
