@@ -357,8 +357,6 @@ public class SecurityUtil {
 			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
 			keystore.load(is, merchantConfig.getCacertPassword().toCharArray());
 
-			Identity identity;
-
 			java.security.cert.Certificate[] cert = keystore.getCertificateChain(merchantConfig.getKeyAlias());
 			if (cert == null) {
 				throw new SignException("Empty Keystore or Missing Certificate ");
@@ -372,14 +370,14 @@ public class SecurityUtil {
 						+ merchantConfig.getKeyAlias() + "'");
 				throw new SignException(e);
 			}
-
-            for (int i = 0; i < cert.length; i++) {
-                if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(cert[i]))) {
-                    identity = new Identity(merchantConfig, (X509Certificate) cert[i], key, logger);
+            Identity identity;
+            for (java.security.cert.Certificate certificate : cert) {
+                if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(certificate))) {
+                    identity = new Identity(merchantConfig, (X509Certificate) certificate, key, logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getKeyAlias(), identity);
                 } else {
-                    identity = new Identity(merchantConfig, (X509Certificate) cert[i], logger);
+                    identity = new Identity(merchantConfig, (X509Certificate) certificate, logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
                 }

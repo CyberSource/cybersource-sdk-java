@@ -68,14 +68,14 @@ public class Identity {
         if (x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
-                String[] subjectDNrray = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains(CYBS_CERT_AUTH.toLowerCase())){
-                    name = keyAlias = subjectDNrray[0].split("=")[1];
+                String[] subjectDNArray = subjectDN.split("SERIALNUMBER=");
+                if (subjectDNArray.length == 1 && subjectDNArray[0].toLowerCase().contains(CYBS_CERT_AUTH.toLowerCase())){
+                    name = keyAlias = subjectDNArray[0].split("=")[1];
                 }
-                else if (subjectDNrray.length == 2 && subjectDNrray[1].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
-                    String subjectDName = subjectDNrray[1].split("=")[1];
+                else if (subjectDNArray.length == 2 && subjectDNArray[1].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
+                    String subjectDName = subjectDNArray[1].split("=")[1];
                     name = subjectDName.substring(0, subjectDName.length()-1);
-                    serialNumber = subjectDNrray[1];
+                    serialNumber = subjectDNArray[1];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
                 }else{
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
