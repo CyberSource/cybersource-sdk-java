@@ -73,9 +73,8 @@ public class Identity {
                     name = keyAlias = subjectDNArray[0].split("=")[1];
                 }
                 else if (subjectDNArray.length == 2 && subjectDNArray[1].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
-                    String subjectDName = subjectDNArray[1].split("=")[1];
-                    name = subjectDName.substring(0, subjectDName.length()-1);
-                    serialNumber = subjectDNArray[1];
+                    name = subjectDNArray[1].split("=")[1];
+                    serialNumber = subjectDNArray[1].split(",")[0];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
                 }else{
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
