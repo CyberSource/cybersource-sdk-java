@@ -36,7 +36,7 @@ public class SecurityUtil {
     private static MessageHandlerKeyStore localKeyStoreHandler = null;
     
     //mapping between IdentityName and Identity
-    private static ConcurrentHashMap<String, Identity> identities = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, Identity> identities = new ConcurrentHashMap<String, Identity>();
     
     // By default signature algorithm is set to null and during WSSecSignature build() Signature algorithm will set to "http://www.w3.org/2000/09/xmldsig#rsa-sha1" .
     private static final String SIGNATURE_ALGORITHM = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
