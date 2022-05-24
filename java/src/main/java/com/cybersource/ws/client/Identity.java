@@ -68,7 +68,7 @@ public class Identity {
         if (x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
-                String subjectDNrray[] = subjectDN.split("SERIALNUMBER=");
+                String[] subjectDNrray = subjectDN.split("SERIALNUMBER=");
                 if (subjectDNrray.length == 1 && subjectDNrray[0].toLowerCase().contains(CYBS_CERT_AUTH.toLowerCase())){
                     name = keyAlias = subjectDNrray[0].split("=")[1];
                 }

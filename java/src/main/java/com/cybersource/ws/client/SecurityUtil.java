@@ -228,8 +228,8 @@ public class SecurityUtil {
             // encrypted using the public key of the receiver
             signedEncryptedDoc = encrBuilder.build(signedDoc, localKeyStoreHandler, secHeader);
         } catch (WSSecurityException e) {
-            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + serverAlias);
-            throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + serverAlias, e);
+            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed request for , '" + merchantId + "'" + " with " + serverAlias);
+            throw new SignEncryptException("Failed while encrypting signed request for , '" + merchantId + "'" + " with " + serverAlias, e);
         }
         encrBuilder.prependToHeader(secHeader);
         return signedEncryptedDoc;
