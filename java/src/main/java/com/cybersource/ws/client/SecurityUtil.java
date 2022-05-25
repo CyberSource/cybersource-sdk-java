@@ -167,7 +167,7 @@ public class SecurityUtil {
                     identities.put(identity.getKeyAlias(), identity);
                     continue;
                 }
-                Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias),logger);
+                Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias));
                 localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                 identities.put(identity.getName(), identity);
             }
@@ -337,7 +337,7 @@ public class SecurityUtil {
 					continue;
 				}
 				Identity identity = new Identity(merchantConfig,
-						(X509Certificate) keystore.getCertificate(merchantKeyAlias), logger);
+						(X509Certificate) keystore.getCertificate(merchantKeyAlias));
 				localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
 				identities.put(identity.getName(), identity);
 			}
@@ -377,7 +377,7 @@ public class SecurityUtil {
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getKeyAlias(), identity);
                 } else {
-                    identity = new Identity(merchantConfig, (X509Certificate) certificate, logger);
+                    identity = new Identity(merchantConfig, (X509Certificate) certificate);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
                 }
@@ -386,7 +386,7 @@ public class SecurityUtil {
 			if (serverCert == null) {
 				throw new SignException("Missing Server Certificate ");
 			}
-			identity = new Identity(merchantConfig, (X509Certificate) serverCert, logger);
+			identity = new Identity(merchantConfig, (X509Certificate) serverCert);
 			localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
 			identities.put(identity.getName(), identity);
 

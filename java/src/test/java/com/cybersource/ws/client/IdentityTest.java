@@ -59,7 +59,7 @@ public class IdentityTest{
     	Logger logger = Mockito.mock(Logger.class);
     	Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
     	Mockito.when(principal.getName()).thenReturn(keyAlias);
-    	Identity identity = new Identity(config,x509Cert,logger);
+    	Identity identity = new Identity(config,x509Cert);
     	assertEquals(identity.getName(), "CyberSource_SJC_US");
     	assertEquals(identity.getSerialNumber(), "400000009910179089277");
     	assertNull(identity.getPrivateKey());

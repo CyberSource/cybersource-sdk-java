@@ -30,8 +30,9 @@ public class MessageHandlerKeyStore extends Merlin {
      * @throws SignEncryptException
      */
     public void addIdentityToKeyStore(Identity id, Logger logger) throws SignEncryptException {
-        if (id == null)
+        if (id == null) {
             return;
+        }
         X509Certificate certificate = id.getX509Cert();
         PrivateKey privateKey = id.getPrivateKey();
         try {
