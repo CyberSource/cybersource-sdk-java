@@ -48,7 +48,7 @@ public class IdentityTest {
     	Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
     	Mockito.when(principal.getName()).thenReturn(keyAlias);
     	Identity identity = new Identity(customConfig, x509Cert);
-    	assertEquals(identity.getName(), "CyberSource_SJC_US");
+    	assertEquals(identity.getName(), Utility.SERVER_ALIAS);
     	assertEquals(identity.getSerialNumber(), "400000009910179089277");
     	assertNull(identity.getPrivateKey());
     }
@@ -64,7 +64,7 @@ public class IdentityTest {
 		Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
 		Mockito.when(principal.getName()).thenReturn(keyAlias);
 		Identity identity = new Identity(customConfig, x509Cert);
-		assertEquals(identity.getName(), "CyberSource_SJC_US");
+		assertEquals(identity.getName(), Utility.SERVER_ALIAS);
 		assertEquals(identity.getSerialNumber(), "400000009910179089277");
 		assertNull(identity.getPrivateKey());
 	}
