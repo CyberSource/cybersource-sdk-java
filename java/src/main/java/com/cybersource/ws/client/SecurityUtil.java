@@ -420,7 +420,7 @@ public class SecurityUtil {
 
 	}
 
-    private static String getServerAlias() {
+    protected static String getServerAlias() {
         String serverAlias = SERVER_ALIAS;
         if(!identities.containsKey(serverAlias)) {
             if(identities.containsKey(serverAlias.toLowerCase())) {

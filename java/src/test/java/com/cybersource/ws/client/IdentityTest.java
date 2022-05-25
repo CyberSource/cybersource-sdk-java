@@ -1,33 +1,19 @@
 package com.cybersource.ws.client;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-public class IdentityTest{
-    Properties merchantProperties;
-    private MerchantConfig config;
-    
-    @Before
-    public void setUp() throws Exception {
-    	//Loading the properties file from src/test/resources
-        Properties merchantProperties = new Properties();
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
-		if (in == null) {
-			throw new RuntimeException("Unable to load test_cybs.properties file");
-		}
-		merchantProperties.load(in);
-	    config = new MerchantConfig(merchantProperties, merchantProperties.getProperty("merchantID"));
-    }
+public class IdentityTest {
 
     @Test
     public void testSetUpMerchant() throws SignException, ConfigException{
@@ -52,17 +38,45 @@ public class IdentityTest{
     }
     
     @Test
-    public void testsetUpServer() throws InstantiationException, IllegalAccessException, SignException{
+    public void testSetUpServerForP12Certs() throws SignException, IOException, ConfigException {
+		Properties merchantProps = getConfigProps();
+		merchantProps.setProperty("enableCacert", "false");
+		MerchantConfig customConfig = new MerchantConfig(merchantProps, merchantProps.getProperty("merchantID"));
     	String keyAlias = "CN=CyberSource_SJC_US,SERIALNUMBER=400000009910179089277";
     	X509Certificate x509Cert = Mockito.mock(X509Certificate.class);
     	Principal principal =  Mockito.mock(Principal.class);
-    	Logger logger = Mockito.mock(Logger.class);
     	Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
     	Mockito.when(principal.getName()).thenReturn(keyAlias);
-    	Identity identity = new Identity(config,x509Cert);
+    	Identity identity = new Identity(customConfig, x509Cert);
     	assertEquals(identity.getName(), "CyberSource_SJC_US");
     	assertEquals(identity.getSerialNumber(), "400000009910179089277");
     	assertNull(identity.getPrivateKey());
     }
+
+	@Test
+	public void testSetUpServerForCaCerts() throws SignException, IOException, ConfigException {
+		Properties merchantProps = getConfigProps();
+		merchantProps.setProperty("enableCacert", "true");
+		MerchantConfig customConfig = new MerchantConfig(merchantProps, merchantProps.getProperty("merchantID"));
+		String keyAlias = "SERIALNUMBER=400000009910179089277,CN=CyberSource_SJC_US";
+		X509Certificate x509Cert = Mockito.mock(X509Certificate.class);
+		Principal principal =  Mockito.mock(Principal.class);
+		Mockito.when(x509Cert.getSubjectDN()).thenReturn(principal);
+		Mockito.when(principal.getName()).thenReturn(keyAlias);
+		Identity identity = new Identity(customConfig, x509Cert);
+		assertEquals(identity.getName(), "CyberSource_SJC_US");
+		assertEquals(identity.getSerialNumber(), "400000009910179089277");
+		assertNull(identity.getPrivateKey());
+	}
+
+	private Properties getConfigProps() throws IOException {
+		Properties merchantProperties = new Properties();
+		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("test_cybs.properties");
+		if (in == null) {
+			throw new RuntimeException("Unable to load test_cybs.properties file");
+		}
+		merchantProperties.load(in);
+		return merchantProperties;
+	}
 
 }
