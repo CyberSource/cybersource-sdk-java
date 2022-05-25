@@ -18,6 +18,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,7 +29,6 @@ public class SecurityUtil {
     
     private static final String KEY_FILE_TYPE = "PKCS12";
     
-    private static final String SERVER_ALIAS = "CyberSource_SJC_US";
     private static final String FAILED_TO_LOAD_KEY_STORE = "Exception while loading KeyStore";
     private static final String FAILED_TO_OBTAIN_PRIVATE_KEY = "Exception while obtaining private key from KeyStore with alias";
 
@@ -202,7 +202,7 @@ public class SecurityUtil {
         WSSecEncrypt encrBuilder = new WSSecEncrypt();
         //Set the user name to get the encryption certificate.
         //The public key of this certificate is used, thus no password necessary. The user name is a keystore alias usually.
-        String serverAlias = getServerAlias();
+        String serverAlias = getServerAlias(identities);
         encrBuilder.setUserInfo(identities.get(serverAlias).getKeyAlias());
         /*This is to reference a public key or certificate when signing or encrypting a SOAP message.
          *The following valid values for these configuration items are:
@@ -382,7 +382,7 @@ public class SecurityUtil {
                     identities.put(identity.getName(), identity);
                 }
             }
-			java.security.cert.Certificate serverCert = keystore.getCertificate(getServerAlias());
+			java.security.cert.Certificate serverCert = keystore.getCertificate(getServerAlias(identities));
 			if (serverCert == null) {
 				throw new SignException("Missing Server Certificate ");
 			}
@@ -420,15 +420,15 @@ public class SecurityUtil {
 
 	}
 
-    protected static String getServerAlias() {
-        String serverAlias = SERVER_ALIAS;
-        if(!identities.containsKey(serverAlias)) {
-            if(identities.containsKey(serverAlias.toLowerCase())) {
+    protected static String getServerAlias(Map<String, Identity> identitiesMapper) {
+        String serverAlias = Utility.SERVER_ALIAS;
+        if(!identitiesMapper.containsKey(serverAlias)) {
+            if(identitiesMapper.containsKey(serverAlias.toLowerCase())) {
                 serverAlias = serverAlias.toLowerCase();
-            } else if(identities.containsKey(serverAlias.toUpperCase())) {
+            } else if(identitiesMapper.containsKey(serverAlias.toUpperCase())) {
                 serverAlias = serverAlias.toUpperCase();
             } else {
-                for(String identityKey :identities.keySet()) {
+                for(String identityKey :identitiesMapper.keySet()) {
                     if(identityKey.equalsIgnoreCase(serverAlias)) {
                         serverAlias = identityKey;
                         break;

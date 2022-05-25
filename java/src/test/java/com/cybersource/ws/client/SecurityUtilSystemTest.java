@@ -19,9 +19,7 @@
 package com.cybersource.ws.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;  
-import static org.junit.Assert.assertTrue; 
-import static org.mockito.Mockito.times;  
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Assert;
@@ -88,7 +86,7 @@ public class SecurityUtilSystemTest {
         requestMap.put("purchaseTotals_currency", "USD");
         requestMap.put("item_0_unitPrice", "12.34");
         requestMap.put("item_1_unitPrice", "56.78");
-        requestMap.put("merchant_id", "smccfep");
+        requestMap.put("merchant_id", "<merchantID>");
         
         //Loading the properties file from src/test/resources
         merchantProperties = new Properties();
@@ -206,9 +204,20 @@ public class SecurityUtilSystemTest {
     }
 
     @Test
-    // change expected result as per the P12 cert you are using for testing
     public void testServerAlias() {
-        Assert.assertEquals("CyberSource_SJC_US".toLowerCase(), SecurityUtil.getServerAlias());
+        Map<String, Identity> customIdentities = new HashMap<String, Identity>();
+        Identity identity = Mockito.mock(Identity.class);
+        customIdentities.put(Utility.SERVER_ALIAS, identity);
+        Assert.assertEquals(Utility.SERVER_ALIAS, SecurityUtil.getServerAlias(customIdentities));
+        customIdentities.clear();
+        customIdentities.put(Utility.SERVER_ALIAS.toLowerCase(), identity);
+        Assert.assertEquals(Utility.SERVER_ALIAS.toLowerCase(), SecurityUtil.getServerAlias(customIdentities));
+        customIdentities.clear();
+        customIdentities.put(Utility.SERVER_ALIAS.toUpperCase(), identity);
+        Assert.assertEquals(Utility.SERVER_ALIAS.toUpperCase(), SecurityUtil.getServerAlias(customIdentities));
+        customIdentities.clear();
+        customIdentities.put("CYBERSOURCE_Sjc_Us", identity);
+        Assert.assertEquals("CYBERSOURCE_Sjc_Us", SecurityUtil.getServerAlias(customIdentities));
     }
 	
     private static PrivateKey instPrivateKey() throws Exception{

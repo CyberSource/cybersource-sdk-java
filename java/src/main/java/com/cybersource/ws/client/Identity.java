@@ -39,10 +39,6 @@ public class Identity {
 
 	private long lastModifiedDate;
     
-    private static final String SERVER_ALIAS = "CyberSource_SJC_US";
-
-    private static final String CYBS_CERT_AUTH = "CyberSourceCertAuth";
-
     private char[] pswd;
 
     /**
@@ -69,10 +65,10 @@ public class Identity {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
                 String[] subjectDNArray = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNArray.length == 1 && subjectDNArray[0].toLowerCase().contains(CYBS_CERT_AUTH.toLowerCase())){
+                if (subjectDNArray.length == 1 && subjectDNArray[0].toLowerCase().contains(Utility.CYBS_CERT_AUTH.toLowerCase())){
                     name = keyAlias = subjectDNArray[0].split("=")[1];
                 }
-                else if (subjectDNArray.length == 2 && subjectDNArray[1].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
+                else if (subjectDNArray.length == 2 && subjectDNArray[1].toLowerCase().contains(Utility.SERVER_ALIAS.toLowerCase())) {
                     name = subjectDNArray[1].split("=")[1];
                     serialNumber = subjectDNArray[1].split(",")[0];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
@@ -150,10 +146,10 @@ public class Identity {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
                 String[] subjectDNArray = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNArray.length == 1 && subjectDNArray[0].toLowerCase().contains(CYBS_CERT_AUTH.toLowerCase())){
+                if (subjectDNArray.length == 1 && subjectDNArray[0].toLowerCase().contains(Utility.CYBS_CERT_AUTH.toLowerCase())){
                     name = keyAlias = subjectDNArray[0].split("=")[1];
                 }
-                else if (subjectDNArray.length == 2 && subjectDNArray[0].toLowerCase().contains(SERVER_ALIAS.toLowerCase())) {
+                else if (subjectDNArray.length == 2 && subjectDNArray[0].toLowerCase().contains(Utility.SERVER_ALIAS.toLowerCase())) {
                     String subjectDName = subjectDNArray[0].split("=")[1];
                     name = subjectDName.substring(0, subjectDName.length()-1);
                     serialNumber = subjectDNArray[1];
