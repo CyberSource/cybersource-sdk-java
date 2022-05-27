@@ -277,6 +277,10 @@ Provides low level HTTP transport components that can be used to build custom cl
 
 ##Changes
 
+Version Cybersource-sdk-java 6.2.12 (JUNE,2022)
+_______________________________
+    1) Apache WSS4j Security Vulnerability fix.
+
 Version Cybersource-sdk-java 6.2.11 (MAY,2020)
 _______________________________
 

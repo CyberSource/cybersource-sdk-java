@@ -10,7 +10,7 @@ To install the `cybersource-sdk-java` from central repository, add dependency to
 <dependency>
   <groupId>com.cybersource</groupId>
   <artifactId>cybersource-sdk-java</artifactId>
-  <version>6.2.11</version>
+  <version>6.2.12</version>
 </dependency> 
 ```
 Run `mvn install` to install dependency
@@ -19,7 +19,7 @@ Run `mvn install` to install dependency
 Add the dependency to your build.gradle
 ```java
 dependencies {
-  compile 'com.cybersource:cybersource-sdk-java:6.2.11'
+  compile 'com.cybersource:cybersource-sdk-java:6.2.12'
 }
 ```
 ## Requirements
@@ -249,6 +249,11 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
        Provides low level HTTP transport components that can be used to build custom client and server side HTTP services with a minimal footprint.
 
 ## Changes
+_______________________________
+Version Cybersource-sdk-java 6.2.12 (JUNE,2022)
+_______________________________
+    1) Apache WSS4j Security Vulnerability fix.
+_______________________________
 _______________________________
 Version Cybersource-sdk-java 6.2.11 (MAY,2020)
 _______________________________
