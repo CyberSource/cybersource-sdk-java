@@ -7,6 +7,7 @@ import org.apache.wss4j.dom.WSDocInfo;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
+import org.apache.xml.security.Init;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 
@@ -196,7 +197,6 @@ public class SecurityUtil {
 
         logger.log(Logger.LT_INFO, "Encrypting Signed doc ...");
 
-        org.apache.xml.security.Init.init();
         WSSecHeader secHeader = new WSSecHeader(signedDoc);
         try {
             secHeader.insertSecurityHeader();
@@ -204,6 +204,10 @@ public class SecurityUtil {
             logger.log(Logger.LT_EXCEPTION, "Exception while adding document in soap securiy header for MLE");
             throw new SignException(e);
         }
+
+        //Must initialize xml-security library correctly before use it
+        Init.init();
+
         WSSecEncrypt encrBuilder = new WSSecEncrypt(secHeader);
         //Set the user name to get the encryption certificate.
         //The public key of this certificate is used, thus no password necessary. The user name is a keystore alias usually.

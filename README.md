@@ -252,7 +252,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 _______________________________
 Version Cybersource-sdk-java 6.2.12 (JUNE,2022)
 _______________________________
-    1) Apache WSS4j Security Vulnerability fix.
+    1) Mitigation of Apache WSS4j Security Vulnerability fix.
 _______________________________
 _______________________________
 Version Cybersource-sdk-java 6.2.11 (MAY,2020)
