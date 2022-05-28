@@ -11,6 +11,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 
 import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -230,8 +231,14 @@ public class SecurityUtil {
             // If no external key (symmetricalKey) was set ,generate an encryption
             // key (session key) for this Encrypt element. This key will be
             // encrypted using the public key of the receiver
-            signedEncryptedDoc = encrBuilder.build(localKeyStoreHandler, KeyGenerator.getInstance(SYM_KEY_ALGO).generateKey());
-        } catch (WSSecurityException | NoSuchAlgorithmException e) {
+            SecretKey symmetricKey;
+            try {
+                symmetricKey = KeyGenerator.getInstance(SYM_KEY_ALGO).generateKey();
+            } catch (NoSuchAlgorithmException e) {
+                throw new WSSecurityException(WSSecurityException.ErrorCode.UNSUPPORTED_ALGORITHM, e, "Failed to generate SecretKey");
+            }
+            signedEncryptedDoc = encrBuilder.build(localKeyStoreHandler, symmetricKey);
+        } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS);
             throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS, e);
         }
@@ -241,18 +248,18 @@ public class SecurityUtil {
 
     /**
      * Create signed document
-     * @param signedDoc
+     * @param workingDocument
      * @param keyAlias
      * @param password
      * @param logger
      * @return Document
      * @throws SignException
      */
-    public static Document createSignedDoc(Document signedDoc,String keyAlias, String password,Logger logger) throws SignException {
+    public static Document createSignedDoc(Document workingDocument,String keyAlias, String password,Logger logger) throws SignException {
 
         logger.log(Logger.LT_INFO, "Signing request...");
         long startTime = System.nanoTime();
-        WSSecHeader secHeader = new WSSecHeader(signedDoc);
+        WSSecHeader secHeader = new WSSecHeader(workingDocument);
         try {
             secHeader.insertSecurityHeader();
         } catch (WSSecurityException e) {
@@ -269,7 +276,7 @@ public class SecurityUtil {
         sign.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         sign.setUseSingleCertificate(true);
         //
-        sign.setWsDocInfo(new WSDocInfo(signedDoc));
+        sign.setWsDocInfo(new WSDocInfo(workingDocument));
 
         //Set which parts of the message to encrypt/sign.
         WSEncryptionPart msgBodyPart = new WSEncryptionPart(WSConstants.ELEM_BODY, WSConstants.URI_SOAP11_ENV, "");
