@@ -14,7 +14,7 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 public class IdentityTest{
-    Properties merchantProperties;
+
     private MerchantConfig config;
     
     @Before
@@ -52,8 +52,14 @@ public class IdentityTest{
     }
     
     @Test
-    public void testsetUpServer() throws InstantiationException, IllegalAccessException, SignException{
-    	String keyAlias = "CN=CyberSource_SJC_US,SERIALNUMBER=400000009910179089277";
+    public void testsetUpServer() throws SignException {
+		String keyAlias;
+    	if(config.isJdkCertEnabled() || config.isCacertEnabled()) {
+			keyAlias = "SERIALNUMBER=400000009910179089277,CN=CyberSource_SJC_US";
+		} else {
+    		keyAlias = "CN=CyberSource_SJC_US,SERIALNUMBER=400000009910179089277";
+		}
+
     	X509Certificate x509Cert = Mockito.mock(X509Certificate.class);
     	Principal principal =  Mockito.mock(Principal.class);
     	Logger logger = Mockito.mock(Logger.class);
