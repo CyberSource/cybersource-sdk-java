@@ -242,37 +242,39 @@ numberOfRetries parameter value should be set between 0 to 5. By default the val
 Config parameter for this property is 'retryInterval' in cybs.property file. The default value for 'retryInterval' parameter is 1000 which means a delay of 1000 milliSeconds.
 
 ##Third Party jars
-1.) org.apache.ws.security.wss4j:1.6.19
-The Apache WSS4J project provides a Java implementation of the primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications
-from the OASIS Web Services Security TC.
+1.) org.apache.wss4j:wss4j-ws-security-common:2.4.1
+      The Apache WSS4J project provides a Java implementation of the common primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications from the OASIS Web Services Security TC.
 
-2.) org.bouncycastle:bcprov-jdk15on:1.61
+2.) org.apache.wss4j:wss4j-ws-security-dom:2.4.1
+      WSS4J 2.0.0 introduces a streaming (StAX-based) WS-Security implementation to complement the existing DOM-based implementation. The DOM-based implementation is quite performant and flexible, but suffers from having to read the entire XML tree into memory. For large SOAP requests this can have a detrimental impact on performance. In addition, for web services stacks such as Apache CXF which are streaming-based, it carries an additional performance penalty of having to explicitly convert the request stream to a DOM Element.
+
+3.) org.bouncycastle:bcprov-jdk15on:1.61
 This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
 
-3.) org.apache.santuario:xmlsec:1.5.6
+4.) org.apache.santuario:xmlsec:1.5.6
 The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing,
 and supports XML Digital Signature APIs.
 
-4.) org.apache.commons:commons-lang3:3.4
+5.) org.apache.commons:commons-lang3:3.4
 Apache Commons Lang, a package of Java utility classes for the classes that are in java.lang's hierarchy, or are considered to be so standard as to justify existence in
 java.lang.
 
-5.) commons-logging:commons-logging:jar:1.1.1
+6.) commons-logging:commons-logging:jar:1.1.1
 This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging systems.
 
-6.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21
+7.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21
 slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
 
-7.) junit:junit:4.13.1
+8.) junit:junit:4.13.1
 JUnit is a unit testing framework for Java.
 
-8.) org.mockito:mockito-all:1.10.19
+9.) org.mockito:mockito-all:1.10.19
 Mock objects library for java
 
-9.) org.apache.httpcomponents:httpclient:4.5.13
+10.) org.apache.httpcomponents:httpclient:4.5.13
 provides reusable components for client-side authentication, HTTP state management, and HTTP connection management. It is used for poolinghttpclientconnectionmanager feature.
 
-10.) org.apache.httpcomponents:httpcore:4.4.13
+11.) org.apache.httpcomponents:httpcore:4.4.13
 Provides low level HTTP transport components that can be used to build custom client and server side HTTP services with a minimal footprint.
 
 ##Changes

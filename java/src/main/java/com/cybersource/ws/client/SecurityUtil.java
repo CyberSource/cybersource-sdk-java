@@ -2,6 +2,7 @@ package com.cybersource.ws.client;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.WSDocInfo;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
@@ -12,7 +13,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -46,8 +46,6 @@ public class SecurityUtil {
     private static final String SIGNATURE_ALGORITHM = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
     // By default digest algorithm is set to "http://www.w3.org/2000/09/xmldsig#sha1"
     private static final String DIGEST_ALGORITHM = "http://www.w3.org/2001/04/xmlenc#sha256";
-    // SymmetricKey Generator Algorithm to handle message encryption
-    private static final String SYM_KEY_ALGO = "AES";
 
     private static BouncyCastleProvider bcProvider = new BouncyCastleProvider();
     
@@ -56,6 +54,8 @@ public class SecurityUtil {
         Security.addProvider(bcProvider);
         try {
             initKeystore();
+            //Must initialize xml-security library correctly before use it
+            Init.init();
         } catch (Exception e) {
             localKeyStoreHandler=null;
         }
@@ -205,9 +205,6 @@ public class SecurityUtil {
             throw new SignException(e);
         }
 
-        //Must initialize xml-security library correctly before use it
-        Init.init();
-
         WSSecEncrypt encrBuilder = new WSSecEncrypt(secHeader);
         //Set the user name to get the encryption certificate.
         //The public key of this certificate is used, thus no password necessary. The user name is a keystore alias usually.
@@ -225,7 +222,6 @@ public class SecurityUtil {
         //Sets the algorithm to encode the symmetric key. Default is the WSConstants.KEYTRANSPORT_RSAOEP algorithm.
         //encrBuilder.setKeyEnc(WSConstants.KEYTRANSPORT_RSAOEP);
 
-
         //Create signed document
         //Document signedDoc = createSignedDoc(workingDocument,senderAlias,password,secHeader);
 
@@ -235,13 +231,8 @@ public class SecurityUtil {
             // If no external key (symmetricalKey) was set ,generate an encryption
             // key (session key) for this Encrypt element. This key will be
             // encrypted using the public key of the receiver
-            SecretKey symmetricKey;
-            try {
-                symmetricKey = KeyGenerator.getInstance(SYM_KEY_ALGO).generateKey();
-            } catch (NoSuchAlgorithmException e) {
-                throw new WSSecurityException(WSSecurityException.ErrorCode.UNSUPPORTED_ALGORITHM, e, "Failed to generate SecretKey");
-            }
-            signedEncryptedDoc = encrBuilder.build(localKeyStoreHandler, symmetricKey);
+            KeyGenerator keyGen = KeyUtils.getKeyGenerator(WSConstants.AES_256);
+            signedEncryptedDoc = encrBuilder.build(localKeyStoreHandler, keyGen.generateKey());
         } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS);
             throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS, e);
@@ -260,9 +251,8 @@ public class SecurityUtil {
      * @throws SignException
      */
     public static Document createSignedDoc(Document workingDocument,String keyAlias, String password,Logger logger) throws SignException {
-
         logger.log(Logger.LT_INFO, "Signing request...");
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
         WSSecHeader secHeader = new WSSecHeader(workingDocument);
         try {
             secHeader.insertSecurityHeader();
@@ -288,7 +278,7 @@ public class SecurityUtil {
         try {
             sign.addReferencesToSign(Collections.singletonList(msgBodyPart));
             Document document = sign.build(localKeyStoreHandler);
-            System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
+//            System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
             return document;
         } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION, "Failed while signing request for , '" + keyAlias + "'");
