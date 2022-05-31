@@ -251,7 +251,7 @@ Config parameter for this property is 'retryInterval' in cybs.property file. The
 3.) org.bouncycastle:bcprov-jdk15on:1.61
 This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
 
-4.) org.apache.santuario:xmlsec:1.5.6
+4.) org.apache.santuario:xmlsec:2.3.0
 The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing,
 and supports XML Digital Signature APIs.
 
@@ -262,7 +262,7 @@ java.lang.
 6.) commons-logging:commons-logging:jar:1.1.1
 This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging systems.
 
-7.) org.slf4j:slf4j-api:1.7.21 and org.slf4j:slf4j-jcl:1.7.21
+7.) org.slf4j:slf4j-api:1.7.32, org.slf4j:slf4j-simple:1.7.32 and org.slf4j:slf4j-jcl:1.7.32
 slf4j-api is getting used as a dependency for wss4j. Modified to latest version.
 
 8.) junit:junit:4.13.1
