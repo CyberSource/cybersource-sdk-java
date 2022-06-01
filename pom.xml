@@ -28,7 +28,7 @@
         <xalan.version>2.7.2</xalan.version>
         <xmlsec.version>2.3.0</xmlsec.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <bouncycastle.version>1.67</bouncycastle.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
         <wss4j.version>2.4.1</wss4j.version>
         <commonlang3.version>3.4</commonlang3.version>
         <mockito.version>1.10.19</mockito.version>

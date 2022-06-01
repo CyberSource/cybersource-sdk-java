@@ -248,7 +248,7 @@ Config parameter for this property is 'retryInterval' in cybs.property file. The
 2.) org.apache.wss4j:wss4j-ws-security-dom:2.4.1
       WSS4J 2.0.0 introduces a streaming (StAX-based) WS-Security implementation to complement the existing DOM-based implementation. The DOM-based implementation is quite performant and flexible, but suffers from having to read the entire XML tree into memory. For large SOAP requests this can have a detrimental impact on performance. In addition, for web services stacks such as Apache CXF which are streaming-based, it carries an additional performance penalty of having to explicitly convert the request stream to a DOM Element.
 
-3.) org.bouncycastle:bcprov-jdk15on:1.61
+3.) org.bouncycastle:bcprov-jdk15on:1.70
 This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
 
 4.) org.apache.santuario:xmlsec:2.3.0

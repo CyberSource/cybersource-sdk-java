@@ -231,7 +231,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       The Apache WSS4J project provides a Java implementation of the common primary security standards for Web Services, namely the OASIS Web Services Security (WS-Security) specifications from the OASIS Web Services Security TC.
     2. org.apache.wss4j:wss4j-ws-security-dom:2.4.1
       WSS4J 2.0.0 introduces a streaming (StAX-based) WS-Security implementation to complement the existing DOM-based implementation. The DOM-based implementation is quite performant and flexible, but suffers from having to read the entire XML tree into memory. For large SOAP requests this can have a detrimental impact on performance. In addition, for web services stacks such as Apache CXF which are streaming-based, it carries an additional performance penalty of having to explicitly convert the request stream to a DOM Element.
-    3. org.bouncycastle:bcprov-jdk15on:1.67
+    3. org.bouncycastle:bcprov-jdk15on:1.70
       This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
     4. org.apache.santuario:xmlsec:2.3.0
       The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing, and supports XML Digital Signature APIs.
