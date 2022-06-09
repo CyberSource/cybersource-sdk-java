@@ -239,7 +239,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
       Apache Commons Lang, a package of Java utility classes for the classes that are in java.lang's hierarchy, or are considered to be so standard as to justify existence in java.lang.
     6. commons-logging:commons-logging:jar:1.1.1
       This is getting downloaded as compile time dependency of wss4j:1.6.19.Apache Commons Logging is a thin adapter allowing configurable bridging to other, well known logging systems.
-    7. org.slf4j:slf4j-jcl:1.7.32
+    7. org.slf4j:slf4j-api:1.7.32 and org.slf4j:slf4j-jcl:1.7.32
       slf4j-jcl is getting used as a dependency for wss4j. Modified to latest version.
     8. junit:junit:4.13.1
       JUnit is a unit testing framework for Java.
