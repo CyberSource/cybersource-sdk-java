@@ -181,7 +181,6 @@ public class SecurityUtilSystemTest {
     
 	@Test  
     public void testCertificateCacheEnabled() throws Exception{
-        merchantProperties.setProperty("keyFilename", merchantProperties.getProperty("keyAlias") + ".p12");
         merchantProperties.setProperty("certificateCacheEnabled", "true");
         // caching enabled (default)  
         final MerchantConfig configCertificateCachingEnabled =  

@@ -72,7 +72,7 @@ public class Identity {
                 }
                 else if (subjectDNrray.length == 2 && subjectDNrray[1].contains(SERVER_ALIAS)) {
                     name = SERVER_ALIAS;
-                    serialNumber = subjectDNrray[1];
+                    serialNumber = subjectDNrray[1].split(",")[0];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
                 }else{
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
