@@ -8,7 +8,12 @@
     <name>RunSample</name>
     <url>http://maven.apache.org</url>
     <properties>
-      <javasdk.version>[6.2.0, 6.2.12-SNAPSHOT]</javasdk.version>
+        <javasdk.version>[6.2.0, 6.2.12-SNAPSHOT]</javasdk.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <bouncycastle.version>1.67</bouncycastle.version>
+        <wss4j.version>2.4.1</wss4j.version>
+        <commonlang3.version>3.4</commonlang3.version>
+        <slf4j.version>1.7.32</slf4j.version>
     </properties>
     <dependencies>
         <dependency>
@@ -19,7 +24,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <version>${httpclient.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -30,28 +35,27 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.61</version>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.security</groupId>
-            <artifactId>wss4j</artifactId>
-            <version>1.6.19</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.opensaml</groupId>
-                    <artifactId>opensaml</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.wss4j</groupId>
+            <artifactId>wss4j-ws-security-common</artifactId>
+            <version>${wss4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wss4j</groupId>
+            <artifactId>wss4j-ws-security-dom</artifactId>
+            <version>${wss4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
+            <version>${commonlang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jcl</artifactId>
-            <version>1.7.21</version>
+            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
     <build>
