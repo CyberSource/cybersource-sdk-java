@@ -1,6 +1,6 @@
 # CyberSource Simple Order API for Java
 
-[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=future)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
+[![Build Status](https://travis-ci.org/CyberSource/cybersource-sdk-java.png?branch=master)](https://travis-ci.org/CyberSource/cybersource-sdk-java)
 
 ## Package Managers
 
@@ -252,7 +252,7 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 _______________________________
-Version Cybersource-sdk-java 6.2.12 (JUNE,2022)
+Version Cybersource-sdk-java 6.2.12 (JULY,2022)
 _______________________________
     1) Mitigation of Apache WSS4j Security Vulnerability (CVE-2016-1000343, CVE-2018-1000180).
        i) Updated Apache wss4j version from 1.6.19 to 2.4.1

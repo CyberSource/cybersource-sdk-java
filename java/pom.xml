@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>cybersource-sdk-master</artifactId>
-        <groupId>com.cybersource</groupId>
-        <version>6.2.12-SNAPSHOT</version>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
     </parent>
 
     <groupId>com.cybersource</groupId>
     <artifactId>cybersource-sdk-java</artifactId>
-    <version>6.2.12-SNAPSHOT</version>
+    <version>6.2.13-SNAPSHOT</version>
     <name>cybersource-sdk-java</name>
     <description>Simple Order API Client</description>
     <url>http://www.cybersource.com</url>
@@ -36,6 +36,20 @@
             <email>developer@cybersource.com</email>
         </developer>
     </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <junit.version>4.13.1</junit.version>
+        <xalan.version>2.7.2</xalan.version>
+        <xmlsec.version>2.3.0</xmlsec.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
+        <wss4j.version>2.4.1</wss4j.version>
+        <commonlang3.version>3.4</commonlang3.version>
+        <mockito.version>1.10.19</mockito.version>
+        <slf4j.version>1.7.32</slf4j.version>
+    </properties>
 
     <packaging>jar</packaging>
 
@@ -230,6 +244,12 @@
     		<groupId>org.apache.santuario</groupId>
     		<artifactId>xmlsec</artifactId>
     		<version>${xmlsec.version}</version>
+            <exclusions>
+               <exclusion>
+                    <artifactId>woodstox-core</artifactId>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                </exclusion>
+            </exclusions>
 		</dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -255,6 +275,42 @@
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cryptacular</artifactId>
+                    <groupId>org.cryptacular</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-saml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-xacml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-xacml-saml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>joda-time</artifactId>
+                    <groupId>joda-time</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jasypt</artifactId>
+                    <groupId>org.jasypt</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>geronimo-javamail_1.4_mail</artifactId>
+                    <groupId>org.apache.geronimo.javamail</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xmlsec</artifactId>
+                    <groupId>org.apache.santuario</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

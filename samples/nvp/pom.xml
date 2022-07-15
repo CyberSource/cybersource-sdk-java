@@ -8,7 +8,7 @@
     <name>RunSample</name>
     <url>http://maven.apache.org</url>
      <properties>
-         <javasdk.version>[6.2.0, 6.2.12-SNAPSHOT]</javasdk.version>
+         <javasdk.version>[6.2.0, 6.2.13-SNAPSHOT]</javasdk.version>
          <httpclient.version>4.5.13</httpclient.version>
          <bouncycastle.version>1.67</bouncycastle.version>
          <wss4j.version>2.4.1</wss4j.version>
@@ -41,6 +41,48 @@
             <groupId>org.apache.wss4j</groupId>
             <artifactId>wss4j-ws-security-common</artifactId>
             <version>${wss4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cryptacular</artifactId>
+                    <groupId>org.cryptacular</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-saml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-xacml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-xacml-saml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>joda-time</artifactId>
+                    <groupId>joda-time</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jasypt</artifactId>
+                    <groupId>org.jasypt</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>geronimo-javamail_1.4_mail</artifactId>
+                    <groupId>org.apache.geronimo.javamail</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xmlsec</artifactId>
+                    <groupId>org.apache.santuario</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.wss4j</groupId>
