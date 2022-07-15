@@ -244,6 +244,12 @@
     		<groupId>org.apache.santuario</groupId>
     		<artifactId>xmlsec</artifactId>
     		<version>${xmlsec.version}</version>
+            <exclusions>
+               <exclusion>
+                    <artifactId>woodstox-core</artifactId>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                </exclusion>
+            </exclusions>
 		</dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -269,6 +275,42 @@
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cryptacular</artifactId>
+                    <groupId>org.cryptacular</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-saml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-xacml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>opensaml-xacml-saml-impl</artifactId>
+                    <groupId>org.opensaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>joda-time</artifactId>
+                    <groupId>joda-time</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jasypt</artifactId>
+                    <groupId>org.jasypt</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>geronimo-javamail_1.4_mail</artifactId>
+                    <groupId>org.apache.geronimo.javamail</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xmlsec</artifactId>
+                    <groupId>org.apache.santuario</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

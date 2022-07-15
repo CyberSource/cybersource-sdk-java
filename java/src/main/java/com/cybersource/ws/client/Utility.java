@@ -45,7 +45,7 @@ public class Utility {
     /**
      * Version number of this release.
      */
-    public static final String VERSION = "6.2.12";
+    public static final String VERSION = "6.2.13";
     public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
     public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
     public static final String RESPONSE_TIME_REPLY = "v-c-response-time";
@@ -54,7 +54,6 @@ public class Utility {
     public static final String AUTH_SERVICE = "ccAuthService";
     public static final String AUTH_SERVICE_XML_RUN_ATT = "run";
     public static final String AUTH_SERVICE_NVP = "ccAuthService_run";
-
     public static final String ELEM_MERCHANT_ID = "merchantID";
     public static final String KEY_ALIAS = "keyAlias";
     public static final String ELEM_MERCHANT_REFERENCE_CODE = "merchantReferenceCode";
