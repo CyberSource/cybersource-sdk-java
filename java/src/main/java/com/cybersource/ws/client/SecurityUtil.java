@@ -1,15 +1,18 @@
 package com.cybersource.ws.client;
 
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSEncryptionPart;
-import org.apache.ws.security.WSSecurityException;
-import org.apache.ws.security.components.crypto.CredentialException;
-import org.apache.ws.security.message.WSSecEncrypt;
-import org.apache.ws.security.message.WSSecHeader;
-import org.apache.ws.security.message.WSSecSignature;
+import org.apache.wss4j.common.WSEncryptionPart;
+import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.util.KeyUtils;
+import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.WSDocInfo;
+import org.apache.wss4j.dom.message.WSSecEncrypt;
+import org.apache.wss4j.dom.message.WSSecHeader;
+import org.apache.wss4j.dom.message.WSSecSignature;
+import org.apache.xml.security.Init;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 
+import javax.crypto.KeyGenerator;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,7 +45,7 @@ public class SecurityUtil {
     private static final String SIGNATURE_ALGORITHM = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
     // By default digest algorithm is set to "http://www.w3.org/2000/09/xmldsig#sha1"
     private static final String DIGEST_ALGORITHM = "http://www.w3.org/2001/04/xmlenc#sha256";
-    
+
     private static BouncyCastleProvider bcProvider = new BouncyCastleProvider();
     
     // This is loaded by WSS4J but since we use it lets make sure its here
@@ -50,12 +53,14 @@ public class SecurityUtil {
         Security.addProvider(bcProvider);
         try {
             initKeystore();
+            //Must initialize xml-security library correctly before use it
+            Init.init();
         } catch (Exception e) {
             localKeyStoreHandler=null;
         }
     }
     
-    private static void initKeystore() throws KeyStoreException, CredentialException, IOException, NoSuchAlgorithmException, CertificateException{
+    private static void initKeystore() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException{
         KeyStore keyStore = KeyStore.getInstance("jks");
         keyStore.load(null, null);
         localKeyStoreHandler = new MessageHandlerKeyStore();
@@ -188,50 +193,51 @@ public class SecurityUtil {
      * @throws SignException
      */
     public static Document handleMessageCreation(Document signedDoc, String merchantId, Logger logger) throws SignEncryptException, SignException{
-        
+
         logger.log(Logger.LT_INFO, "Encrypting Signed doc ...");
-        
-        WSSecHeader secHeader = new WSSecHeader();
+
+        WSSecHeader secHeader = new WSSecHeader(signedDoc);
         try {
-            secHeader.insertSecurityHeader(signedDoc);
+            secHeader.insertSecurityHeader();
         } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION, "Exception while adding document in soap securiy header for MLE");
             throw new SignException(e);
         }
-        
-        WSSecEncrypt encrBuilder = new WSSecEncrypt();
+
+        WSSecEncrypt encrBuilder = new WSSecEncrypt(secHeader);
         //Set the user name to get the encryption certificate.
         //The public key of this certificate is used, thus no password necessary. The user name is a keystore alias usually.
         String serverAlias = getServerAlias(identities);
         encrBuilder.setUserInfo(identities.get(serverAlias).getKeyAlias());
+
         /*This is to reference a public key or certificate when signing or encrypting a SOAP message.
          *The following valid values for these configuration items are:
          *IssuerSerial (default),DirectReference[BST],X509KeyIdentifier,Thumbprint,SKIKeyIdentifier,KeyValue (signature only),EncryptedKeySHA1 (encryption only)
          */
         encrBuilder.setKeyIdentifierType(WSConstants.X509_KEY_IDENTIFIER);
-        
+
         //This encryption algorithm is used to encrypt the data.
         encrBuilder.setSymmetricEncAlgorithm(WSConstants.AES_256);
-        
+
         //Sets the algorithm to encode the symmetric key. Default is the WSConstants.KEYTRANSPORT_RSAOEP algorithm.
         //encrBuilder.setKeyEnc(WSConstants.KEYTRANSPORT_RSAOEP);
-        
-        
+
         //Create signed document
         //Document signedDoc = createSignedDoc(workingDocument,senderAlias,password,secHeader);
-        
+
         Document signedEncryptedDoc;
         try {
             //Builds the SOAP envelope with encrypted Body and adds encrypted key.
             // If no external key (symmetricalKey) was set ,generate an encryption
             // key (session key) for this Encrypt element. This key will be
             // encrypted using the public key of the receiver
-            signedEncryptedDoc = encrBuilder.build(signedDoc, localKeyStoreHandler, secHeader);
+            KeyGenerator keyGen = KeyUtils.getKeyGenerator(WSConstants.AES_256);
+            signedEncryptedDoc = encrBuilder.build(localKeyStoreHandler, keyGen.generateKey());
         } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed request for , '" + merchantId + "'" + " with " + serverAlias);
             throw new SignEncryptException("Failed while encrypting signed request for , '" + merchantId + "'" + " with " + serverAlias, e);
         }
-        encrBuilder.prependToHeader(secHeader);
+        encrBuilder.prependToHeader();
         return signedEncryptedDoc;
     }
 
@@ -245,34 +251,34 @@ public class SecurityUtil {
      * @throws SignException
      */
     public static Document createSignedDoc(Document workingDocument,String keyAlias, String password,Logger logger) throws SignException {
-        
         logger.log(Logger.LT_INFO, "Signing request...");
-        //long startTime = System.nanoTime();
-        WSSecHeader secHeader = new WSSecHeader();
+//        long startTime = System.nanoTime();
+        WSSecHeader secHeader = new WSSecHeader(workingDocument);
         try {
-            secHeader.insertSecurityHeader(workingDocument);
+            secHeader.insertSecurityHeader();
         } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION,
-                       "Exception while signing XML document");
+                    "Exception while signing XML document");
             throw new SignException(e);
         }
-        
-        WSSecSignature sign = new WSSecSignature();
-        
+
+        WSSecSignature sign = new WSSecSignature(secHeader);
         sign.setUserInfo(keyAlias, password);
-        
-        //sign.setUserInfo(mc.getKeyAlias(), mc.getPassword());
+
         sign.setDigestAlgo(DIGEST_ALGORITHM);
         sign.setSignatureAlgorithm(SIGNATURE_ALGORITHM);
         sign.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         sign.setUseSingleCertificate(true);
-        
+        //
+        sign.setWsDocInfo(new WSDocInfo(workingDocument));
+
         //Set which parts of the message to encrypt/sign.
         WSEncryptionPart msgBodyPart = new WSEncryptionPart(WSConstants.ELEM_BODY, WSConstants.URI_SOAP11_ENV, "");
-        sign.setParts(Collections.singletonList(msgBodyPart));
+
         try {
-            Document document = sign.build(workingDocument, localKeyStoreHandler, secHeader);
-            //System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
+            sign.addReferencesToSign(Collections.singletonList(msgBodyPart));
+            Document document = sign.build(localKeyStoreHandler);
+//            System.out.println("SecurityUtil.createSignedDoc time taken to sign the request is " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + " ms");
             return document;
         } catch (WSSecurityException e) {
             logger.log(Logger.LT_EXCEPTION, "Failed while signing request for , '" + keyAlias + "'");

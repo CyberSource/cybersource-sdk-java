@@ -1,7 +1,6 @@
 package com.cybersource.ws.client;
 
-import org.apache.ws.security.components.crypto.CredentialException;
-import org.apache.ws.security.components.crypto.Merlin;
+import org.apache.wss4j.common.crypto.Merlin;
 
 import java.io.IOException;
 import java.security.KeyStoreException;
@@ -15,11 +14,10 @@ import java.util.Properties;
 public class MessageHandlerKeyStore extends Merlin {
 
     /**
-     * @throws CredentialException
      * @throws IOException
      */
-	public MessageHandlerKeyStore() throws CredentialException, IOException {
-        super(null);
+	public MessageHandlerKeyStore() {
+        super();
         properties = new Properties();
     }
 
