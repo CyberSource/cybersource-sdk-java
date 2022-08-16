@@ -39,8 +39,6 @@ public class Identity {
 
 	private long lastModifiedDate;
     
-    private static final String SERVER_ALIAS = "CyberSource_SJC_US";
-
     private char[] pswd;
 
     /**
@@ -51,7 +49,7 @@ public class Identity {
      * @param x509Certificate
      * @throws SignException
      */
-    public Identity(MerchantConfig merchantConfig,X509Certificate x509Certificate,Logger logger) throws SignException {
+    public Identity(MerchantConfig merchantConfig, X509Certificate x509Certificate) throws SignException {
         this.merchantConfig = merchantConfig;
         this.x509Cert=x509Certificate;
         if(merchantConfig.isJdkCertEnabled() || merchantConfig.isCacertEnabled()){
@@ -66,13 +64,13 @@ public class Identity {
         if (x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
-                String subjectDNrray[] = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNrray.length == 1 && subjectDNrray[0].contains("CyberSourceCertAuth")){
-                    name = keyAlias = "CyberSourceCertAuth";
+                String[] subjectDNArray = subjectDN.split("SERIALNUMBER=");
+                if (subjectDNArray.length == 1 && subjectDNArray[0].toLowerCase().contains(Utility.CYBS_CERT_AUTH.toLowerCase())){
+                    name = keyAlias = subjectDNArray[0].split("=")[1];
                 }
-                else if (subjectDNrray.length == 2 && subjectDNrray[1].contains(SERVER_ALIAS)) {
-                    name = SERVER_ALIAS;
-                    serialNumber = subjectDNrray[1].split(",")[0];
+                else if (subjectDNArray.length == 2 && subjectDNArray[1].toLowerCase().contains(Utility.SERVER_ALIAS.toLowerCase())) {
+                    name = subjectDNArray[1].split("=")[1];
+                    serialNumber = subjectDNArray[1].split(",")[0];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
                 }else{
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
@@ -147,13 +145,14 @@ public class Identity {
         if (serialNumber == null && x509Cert != null) {
             String subjectDN = x509Cert.getSubjectDN().getName();
             if (subjectDN != null) {
-                String[] subjectDNrray = subjectDN.split("SERIALNUMBER=");
-                if (subjectDNrray.length == 1 && subjectDNrray[0].contains("CyberSourceCertAuth")){
-                    name = keyAlias = "CyberSourceCertAuth";
+                String[] subjectDNArray = subjectDN.split("SERIALNUMBER=");
+                if (subjectDNArray.length == 1 && subjectDNArray[0].toLowerCase().contains(Utility.CYBS_CERT_AUTH.toLowerCase())){
+                    name = keyAlias = subjectDNArray[0].split("=")[1];
                 }
-                else if (subjectDNrray.length == 2 && subjectDNrray[0].contains(SERVER_ALIAS)) {
-                    name = SERVER_ALIAS;
-                    serialNumber = subjectDNrray[1];
+                else if (subjectDNArray.length == 2 && subjectDNArray[0].toLowerCase().contains(Utility.SERVER_ALIAS.toLowerCase())) {
+                    String subjectDName = subjectDNArray[0].split("=")[1];
+                    name = subjectDName.substring(0, subjectDName.length()-1);
+                    serialNumber = subjectDNArray[1];
                     keyAlias = "serialNumber=" + serialNumber + ",CN=" + name;
                 }else{
                     throw new SignException("Exception while obtaining private key from KeyStore with alias, '" + merchantConfig.getKeyAlias() + "'");
