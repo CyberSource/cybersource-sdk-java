@@ -21,8 +21,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class for security related functions like loading p12 key, create signed or encrypted doc,
@@ -32,7 +32,6 @@ public class SecurityUtil {
     
     private static final String KEY_FILE_TYPE = "PKCS12";
     
-    private static final String SERVER_ALIAS = "CyberSource_SJC_US";
     private static final String FAILED_TO_LOAD_KEY_STORE = "Exception while loading KeyStore";
     private static final String FAILED_TO_OBTAIN_PRIVATE_KEY = "Exception while obtaining private key from KeyStore with alias";
 
@@ -173,7 +172,7 @@ public class SecurityUtil {
                     identities.put(identity.getKeyAlias(), identity);
                     continue;
                 }
-                Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias),logger);
+                Identity identity = new Identity(merchantConfig, (X509Certificate) merchantKeyStore.getCertificate(merchantKeyAlias));
                 localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                 identities.put(identity.getName(), identity);
             }
@@ -208,7 +207,8 @@ public class SecurityUtil {
         WSSecEncrypt encrBuilder = new WSSecEncrypt(secHeader);
         //Set the user name to get the encryption certificate.
         //The public key of this certificate is used, thus no password necessary. The user name is a keystore alias usually.
-        encrBuilder.setUserInfo(identities.get(SERVER_ALIAS).getKeyAlias());
+        String serverAlias = getServerAlias(identities);
+        encrBuilder.setUserInfo(identities.get(serverAlias).getKeyAlias());
 
         /*This is to reference a public key or certificate when signing or encrypting a SOAP message.
          *The following valid values for these configuration items are:
@@ -234,8 +234,8 @@ public class SecurityUtil {
             KeyGenerator keyGen = KeyUtils.getKeyGenerator(WSConstants.AES_256);
             signedEncryptedDoc = encrBuilder.build(localKeyStoreHandler, keyGen.generateKey());
         } catch (WSSecurityException e) {
-            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS);
-            throw new SignEncryptException("Failed while encrypting signed requeest for , '" + merchantId + "'" + " with " + SERVER_ALIAS, e);
+            logger.log(Logger.LT_EXCEPTION, "Failed while encrypting signed request for , '" + merchantId + "'" + " with " + serverAlias);
+            throw new SignEncryptException("Failed while encrypting signed request for , '" + merchantId + "'" + " with " + serverAlias, e);
         }
         encrBuilder.prependToHeader();
         return signedEncryptedDoc;
@@ -343,7 +343,7 @@ public class SecurityUtil {
 					continue;
 				}
 				Identity identity = new Identity(merchantConfig,
-						(X509Certificate) keystore.getCertificate(merchantKeyAlias), logger);
+						(X509Certificate) keystore.getCertificate(merchantKeyAlias));
 				localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
 				identities.put(identity.getName(), identity);
 			}
@@ -363,8 +363,6 @@ public class SecurityUtil {
 			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
 			keystore.load(is, merchantConfig.getCacertPassword().toCharArray());
 
-			Identity identity;
-
 			java.security.cert.Certificate[] cert = keystore.getCertificateChain(merchantConfig.getKeyAlias());
 			if (cert == null) {
 				throw new SignException("Empty Keystore or Missing Certificate ");
@@ -378,23 +376,23 @@ public class SecurityUtil {
 						+ merchantConfig.getKeyAlias() + "'");
 				throw new SignException(e);
 			}
-
-            for (int i = 0; i < cert.length; i++) {
-                if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(cert[i]))) {
-                    identity = new Identity(merchantConfig, (X509Certificate) cert[i], key, logger);
+            Identity identity;
+            for (java.security.cert.Certificate certificate : cert) {
+                if (merchantConfig.getKeyAlias().equals(keystore.getCertificateAlias(certificate))) {
+                    identity = new Identity(merchantConfig, (X509Certificate) certificate, key, logger);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getKeyAlias(), identity);
                 } else {
-                    identity = new Identity(merchantConfig, (X509Certificate) cert[i], logger);
+                    identity = new Identity(merchantConfig, (X509Certificate) certificate);
                     localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
                     identities.put(identity.getName(), identity);
                 }
             }
-			java.security.cert.Certificate serverCert = keystore.getCertificate(SERVER_ALIAS);
+			java.security.cert.Certificate serverCert = keystore.getCertificate(getServerAlias(identities));
 			if (serverCert == null) {
 				throw new SignException("Missing Server Certificate ");
 			}
-			identity = new Identity(merchantConfig, (X509Certificate) serverCert, logger);
+			identity = new Identity(merchantConfig, (X509Certificate) serverCert);
 			localKeyStoreHandler.addIdentityToKeyStore(identity, logger);
 			identities.put(identity.getName(), identity);
 
@@ -427,4 +425,23 @@ public class SecurityUtil {
 		}
 
 	}
+
+    protected static String getServerAlias(Map<String, Identity> identitiesMapper) {
+        String serverAlias = Utility.SERVER_ALIAS;
+        if(!identitiesMapper.containsKey(serverAlias)) {
+            if(identitiesMapper.containsKey(serverAlias.toLowerCase())) {
+                serverAlias = serverAlias.toLowerCase();
+            } else if(identitiesMapper.containsKey(serverAlias.toUpperCase())) {
+                serverAlias = serverAlias.toUpperCase();
+            } else {
+                for(String identityKey :identitiesMapper.keySet()) {
+                    if(identityKey.equalsIgnoreCase(serverAlias)) {
+                        serverAlias = identityKey;
+                        break;
+                    }
+                }
+            }
+        }
+        return serverAlias;
+    }
 }

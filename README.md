@@ -252,6 +252,12 @@ Retry Pattern allows to retry sending a failed request and it will only work wit
 
 ## Changes
 _______________________________
+Version Cybersource-sdk-java 6.2.13 (AUGUST,2022)
+_______________________________
+    1)Modified the CYBS P12 certificate's CN name verification to case insensitive.
+_______________________________
+
+_______________________________    
 Version Cybersource-sdk-java 6.2.12 (JULY,2022)
 _______________________________
     1) Mitigation of Apache WSS4j Security Vulnerability (CVE-2016-1000343, CVE-2018-1000180).
