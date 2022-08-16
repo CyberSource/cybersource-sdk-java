@@ -47,7 +47,7 @@ public class Utility {
      */
     public static final String SERVER_ALIAS = "CyberSource_SJC_US";
     public static final String CYBS_CERT_AUTH = "CyberSourceCertAuth";
-    public static final String VERSION = "6.2.13";
+    public static final String VERSION = "6.2.14";
     public static final String ORIGIN_TIMESTAMP = "v-c-client-iat";
     public static final String SDK_ELAPSED_TIMESTAMP = "v-c-client-computetime";
     public static final String RESPONSE_TIME_REPLY = "v-c-response-time";
