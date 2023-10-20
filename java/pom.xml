@@ -42,7 +42,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <junit.version>4.13.1</junit.version>
         <xalan.version>2.7.2</xalan.version>
-        <xmlsec.version>2.3.0</xmlsec.version>
+        <xmlsec.version>2.3.4</xmlsec.version>
         <httpclient.version>4.5.13</httpclient.version>
         <bouncycastle.version>1.70</bouncycastle.version>
         <wss4j.version>2.4.1</wss4j.version>
