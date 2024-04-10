@@ -248,10 +248,10 @@ Config parameter for this property is 'retryInterval' in cybs.property file. The
 2.) org.apache.wss4j:wss4j-ws-security-dom:2.4.1
       WSS4J 2.0.0 introduces a streaming (StAX-based) WS-Security implementation to complement the existing DOM-based implementation. The DOM-based implementation is quite performant and flexible, but suffers from having to read the entire XML tree into memory. For large SOAP requests this can have a detrimental impact on performance. In addition, for web services stacks such as Apache CXF which are streaming-based, it carries an additional performance penalty of having to explicitly convert the request stream to a DOM Element.
 
-3.) org.bouncycastle:bcprov-jdk15on:1.70
+3.) org.bouncycastle:bcprov-jdk18on:1.74
 This jar contains JCE provider and lightweight API for the Bouncy Castle Cryptography APIs for JDK 1.5 to JDK 1.8.
 
-4.) org.apache.santuario:xmlsec:2.3.0
+4.) org.apache.santuario:xmlsec:2.3.4
 The XML Security project is aimed at providing implementation of security standards for XML,supports XML-Signature Syntax and Processing,XML Encryption Syntax and Processing,
 and supports XML Digital Signature APIs.
 
@@ -278,6 +278,12 @@ provides reusable components for client-side authentication, HTTP state manageme
 Provides low level HTTP transport components that can be used to build custom client and server side HTTP services with a minimal footprint.
 
 ##Changes
+
+Version Cybersource-sdk-java 6.2.14 (APRIL,2024)
+_______________________________
+    1) Removed unnecessary dependencies
+    2) Upgraded outdated versions
+_______________________________
 
 Version Cybersource-sdk-java 6.2.13 (AUGUST,2022)
 _______________________________
@@ -383,7 +389,7 @@ _______________________________
 - If you get an exception **java.lang.SecurityException: JCE cannot authenticate the provider BC**. This could be because of
   many reasons. bcprov*.jar is a signed jar if java fails to validate the signature, it throws this exception. Make sure
   you run below java command to verify this signature.
-    jarsigner -verify bcprov-jdk15on-1.61.jar
+    jarsigner -verify bcprov-jdk18on-1.74.jar
   when above command fails it says "jar is unsigned. (signatures missing or not parsable)", this could be because of many
   reasons. e.g
         1) When we unpack it and include in our own jar file. Including bcprov*.jar separately in the CLASSPATH should solve this issue.
