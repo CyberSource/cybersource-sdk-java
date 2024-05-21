@@ -1,11 +1,20 @@
 package com.cybersource.ws.client;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import org.junit.function.ThrowingRunnable;
+import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -13,6 +22,7 @@ import java.util.*;
 public class UtilityTest extends BaseTest {
     String propertiesFilename;
     Properties properties;
+    private static final String ELEM_NVP_REPLY = "nvpReply";
 
     @Before
     public void setUp() {
@@ -128,7 +138,64 @@ public class UtilityTest extends BaseTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    public void testNewDocumentBuilder_validate() {
+        String testData1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<!DOCTYPE example [\n" +
+                "  <!ENTITY file SYSTEM \"file:///secrets.txt\" >\n" +
+                "]>\n" +
+                "<example>&file;</example>";
 
+        String testData2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<!DOCTYPE example [\n" +
+                "  <!ENTITY file SYSTEM \"file:////etc/shadow\" >\n" +
+                "]>\n" +
+                "<example>&file;</example>";
 
+        String testData3 = "<?xml version=\"1.0\"?>" +
+                "<w3resource>" +
+                "<design>html xhtml css svg xml</design>" +
+                "<programming>php mysql</programming>" +
+                "</w3resource>";
 
+        try {
+            DocumentBuilder docBuilder = Utility.newDocumentBuilder();
+
+            InputStream testStream = new ByteArrayInputStream(testData1.getBytes());
+            Document testDoc = docBuilder.parse(testStream);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (SAXException e) {
+            assertSame(e.getClass(), SAXParseException.class);
+        }
+
+        try {
+            DocumentBuilder docBuilder = Utility.newDocumentBuilder();
+
+            InputStream testStream = new ByteArrayInputStream(testData2.getBytes());
+            Document testDoc = docBuilder.parse(testStream);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (SAXException e) {
+            assertSame(e.getClass(), SAXParseException.class);
+        }
+
+        try {
+            DocumentBuilder docBuilder = Utility.newDocumentBuilder();
+
+            InputStream testStream = new ByteArrayInputStream(testData3.getBytes());
+            Document testDoc = docBuilder.parse(testStream);
+            assertNotNull(testDoc);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (SAXException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

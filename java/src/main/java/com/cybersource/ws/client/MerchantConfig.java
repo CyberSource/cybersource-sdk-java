@@ -767,7 +767,7 @@ public class MerchantConfig {
         appendPair(sb, "merchantID", merchantID);
         appendPair(sb, "keysDirectory", keysDirectory);
         appendPair(sb, "keyAlias", keyAlias);
-        appendPair(sb, "keyPassword", keyPassword);
+        appendPair(sb, "keyPassword", keyPassword != null ? "(masked)" : null);
         appendPair(sb, "sendToProduction", sendToProduction);
         appendPair(sb, "sendToAkamai", sendToAkamai);
         appendPair(sb, "targetAPIVersion", targetAPIVersion);
