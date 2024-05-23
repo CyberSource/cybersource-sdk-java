@@ -43,7 +43,7 @@
         <junit.version>4.13.1</junit.version>
         <xmlsec.version>2.3.4</xmlsec.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <bouncycastle.version>1.74</bouncycastle.version>
+        <bouncycastle.version>1.78</bouncycastle.version>
         <wss4j.version>2.4.1</wss4j.version>
         <commonlang3.version>3.4</commonlang3.version>
         <mockito.version>1.10.19</mockito.version>
