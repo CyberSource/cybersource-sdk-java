@@ -10,7 +10,7 @@
      <properties>
          <javasdk.version>[6.2.0, 6.2.15-SNAPSHOT]</javasdk.version>
          <httpclient.version>4.5.13</httpclient.version>
-         <bouncycastle.version>1.67</bouncycastle.version>
+         <bouncycastle.version>1.78</bouncycastle.version>
          <wss4j.version>2.4.1</wss4j.version>
          <commonlang3.version>3.4</commonlang3.version>
          <slf4j.version>1.7.32</slf4j.version>
@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
+            <artifactId>bcprov-jdk18on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
