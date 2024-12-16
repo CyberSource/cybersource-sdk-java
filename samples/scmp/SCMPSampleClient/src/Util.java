@@ -5,10 +5,8 @@ import com.cybersource.ics.client.message.ICSClientRequest;
 import com.cybersource.ws.client.Client;
 import com.cybersource.ws.client.ClientException;
 import com.cybersource.ws.client.FaultException;
-
 import java.io.*;
 import java.util.*;
-
 
 public class Util {
     private static final Properties requestConversionTable;
@@ -20,7 +18,6 @@ public class Util {
         responseConversionTable = readPropertyFile("so_scmp_response_mapping.properties");
         setupICSApplicationsLookUpTable();
     }
-
     public static final String ICS_PAYPAL_CREATE_AGREEMENT = "ics_paypal_create_agreement";
     public static final String ICS_PAYPAL_EC_DO_PAYMENT = "ics_paypal_ec_do_payment";
     public static final String ICS_PAYPAL_EC_GET_DETAILS = "ics_paypal_ec_get_details";
@@ -31,34 +28,6 @@ public class Util {
     public static final String SO_PAYPAL_EC_GET_DETAILS_SERVICE_PAYPAL_TOKEN = "payPalEcGetDetailsService_paypalToken";
     public static final String SO_PAYPAL_EC_ORDER_SETUP_SERVICE_PAYPAL_TOKEN = "payPalEcOrderSetupService_paypalToken";
     public static final String SO_PAYPAL_EC_SET_SERVICE_PAYPAL_TOKEN = "payPalEcSetService_paypalToken";
-
-
-    // Keys for Simple Order API request
-    public static final String SO_REQUEST_CC_AUTH_SERVICE_RUN = "ccAuthService_run";
-    public static  final String SO_REQUEST_CC_CREDIT_SERVICE_RUN ="ccCreditService_run";
-    public static final String SO_REQUEST_MERCHANT_REFERENCE_CODE = "merchantReferenceCode";
-    public static final String SO_REQUEST_BILL_TO_FIRST_NAME = "billTo_firstName";
-    public static final String SO_REQUEST_BILL_TO_LAST_NAME = "billTo_lastName";
-    public static final String SO_REQUEST_BILL_TO_EMAIL = "billTo_email";
-    public static final String SO_REQUEST_BILL_TO_PHONE_NUMBER = "billTo_phoneNumber";
-    public static final String SO_REQUEST_BILL_TO_STREET1 = "billTo_street1";
-    public static final String SO_REQUEST_BILL_TO_STREET2 = "billTo_street2";//SCMP:bill_address2
-    public static final String SO_REQUEST_BILL_TO_CITY = "billTo_city";
-    public static final String SO_REQUEST_BILL_TO_STATE = "billTo_state";
-    public static final String SO_REQUEST_BILL_TO_POSTAL_CODE = "billTo_postalCode";
-    public static final String SO_REQUEST_BILL_TO_COUNTRY = "billTo_country";
-    public static final String SO_REQUEST_BILL_TO_IP_ADDRESS = "billTo_ipAddress"; // SCMP: customer_ipaddress
-    public static final String SO_REQUEST_SHIP_TO_FIRST_NAME = "shipTo_firstName";//SCMP: ship_to_firstname
-    public static final String SO_REQUEST_SHIP_TO_LAST_NAME = "shipTo_lastName";//SCMP: ship_to_lasttname
-    public static final String SO_REQUEST_SHIP_TO_STREET1 = "shipTo_street1";
-    public static final String SO_REQUEST_SHIP_TO_STREET2 = "shipTo_street2";
-    public static final String SO_REQUEST_SHIP_TO_CITY = "shipTo_city";
-    public static final String SO_REQUEST_SHIP_TO_STATE = "shipTo_state";
-    public static final String SO_REQUEST_SHIP_TO_POSTAL_CODE = "shipTo_postalCode";
-    public static final String SO_REQUEST_SHIP_TO_COUNTRY = "shipTo_country";
-    public static final String SO_REQUEST_CARD_ACCOUNT_NUMBER = "card_accountNumber";
-    public static final String SO_REQUEST_CARD_EXPIRATION_MONTH = "card_expirationMonth";
-    public static final String SO_REQUEST_CARD_EXPIRATION_YEAR = "card_expirationYear";
     public static final String SO_REQUEST_PURCHASE_TOTALS_CURRENCY = "purchaseTotals_currency";
     public static final String SO_REQUEST_CHECK_ACCOUNT_ENCODER_ID = "check_accountEncoderID";
     public static final String SO_REQUEST_CARD_ACCOUNT_ENCODER_ID = "card_accountEncoderID";
@@ -104,94 +73,71 @@ public class Util {
     public static final String SO_REQUEST_PIN_DEBIT_CREDIT_SERVICE_COMMERCE_INDICATOR = "pinDebitCreditService_commerceIndicator";
     public static final String SO_REQUEST_PIN_DEBIT_SERVICE_COMMERCE_INDICATOR = "pinDebitPurchaseService_commerceIndicator";
     public static final String SO_REQUEST_PIN_LESS_DEBIT_SERVICE_COMMERCE_INDICATOR = "pinlessDebitService_commerceIndicator";
-
     public static final String SO_REQUEST_ECP_CREDIT_SERVICE_DEBIT_REQUEST_ID="ecCreditService_debitRequestID";
     public static final String SO_REQUEST_ECP_DEBIT_SERVICE_DEBIT_REQUEST_ID="ecDebitService_debitRequestID";
     public static final String SO_REQUEST_ECP_CREDIT_SERVICE_TRANSACTION_TOKEN="ecCreditService_transactionToken";
     public static final String SO_REQUEST_ECP_DEBIT_SERVICE_TRANSACTION_TOKEN="ecDebitService_transactionToken";
-
     public static final String SO_REQUEST_ECP_AUTHENTICATE_SERVICE_REFERENCE_NUMBER="ecAuthenticateService_referenceNumber";
     public static final String SO_REQUEST_ECP_CREDIT_SERVICE_REFERENCE_NUMBER="ecCreditService_referenceNumber";
     public static final String SO_REQUEST_ECP_DEBIT_SERVICE_REFERENCE_NUMBER="ecDebitService_referenceNumber";
-
     public static final String SO_REQUEST_ECP_CREDIT_SERVICE_SETTLEMENT_METHOD="ecCreditService_settlementMethod";
     public static final String SO_REQUEST_ECP_DEBIT_SERVICE_SETTLEMENT_METHOD="ecDebitService_settlementMethod";
-
     public static final String SO_REQUEST_PAYPAL_TRANSACTION_SEARCH_SERVICE_GRAND_TOTAL_AMOUNT="payPalTransactionSearchService_grandTotalAmount";
     public static final String SO_REQUEST_PURCHASE_TOTALS_GRAND_TOTAL_AMOUNT="purchaseTotals_grandTotalAmount";
-
     public static final String SO_REQUEST_AUTH_SERVICE_INDUSTRY_DATA_TYPE="ccAuthService_industryDatatype";
     public static final String SO_REQUEST_CAPTURE_SERVICE_INDUSTRY_DATA_TYPE="ccCaptureService_industryDatatype";
     public static final String SO_REQUEST_CREDIT_SERVICE_INDUSTRY_DATA_TYPE="ccCreditService_industryDatatype";
-
     public static final String SO_REQUEST_DIRECT_DEBIT_REFUND_SERVICE_MANDATE_ID="directDebitRefundService_mandateID";
     public static final String SO_REQUEST_DIRECT_DEBIT_SERVICE_MANDATE_ID="directDebitService_mandateID";
-
     public static final String SO_REQUEST_FRAUD_UPDATE_SERVICE_MARKING_NOTES = "fraudUpdateService_markingNotes";
     public static final String SO_REQUEST_RISK_UPDATE_SERVICE_MARKING_NOTES = "riskUpdateService_markingNotes";
-
     public static final String SO_REQUEST_FRAUD_UPDATE_SERVICE_MARKING_REASON = "fraudUpdateService_markingReason";
     public static final String SO_REQUEST_RISK_UPDATE_SERVICE_MARKING_REASON = "riskUpdateService_markingReason";
-
     public static final String SO_REQUEST_CAPTURE_SERVICE_MERCHANT_RECEIPT_NUMBER="ccCaptureService_merchantReceiptNumber";
     public static final String SO_REQUEST_CREDIT_SERVICE_MERCHANT_RECEIPT_NUMBER="ccCreditService_merchantReceiptNumber";
     public static final String SO_REQUEST_PIN_DEBIT_CREDIT_SERVICE_NETWORK_ORDER = "pinDebitCreditService_networkOrder";
     public static final String SO_REQUEST_PIN_DEBIT_SERVICE_NETWORK_ORDER = "pinDebitPurchaseService_networkOrder";
-
     public static final String SO_REQUEST_CAPTURE_SERVICE_PARTIAL_PAYMENT_ID="ccCaptureService_partialPaymentID";
     public static final String SO_REQUEST_CREDIT_SERVICE_PARTIAL_PAYMENT_ID="ccCreditService_partialPaymentID";
     public static final String SO_REQUEST_ECP_CREDIT_SERVICE_PARTIAL_PAYMENT_ID="ecCreditService_partialPaymentID";
     public static final String SO_REQUEST_ECP_DEBIT_SERVICE_PARTIAL_PAYMENT_ID="ecDebitService_partialPaymentID";
-
     public static final String SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_AUTHORIZATION_ID="payPalAuthReversalService_paypalAuthorizationId";
     public static final String SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_PAYPAL_AUTHORIZATION_ID="payPalDoCaptureService_paypalAuthorizationId";
-
     public static final String SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_AUTHORIZATION_REQUEST_ID="payPalAuthReversalService_paypalAuthorizationRequestID";
     public static final String SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_PAYPAL_AUTHORIZATION_REQUEST_ID="payPalDoCaptureService_paypalAuthorizationRequestID";
-
     public static final String SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_AUTHORIZATION_REQUEST_TOKEN="payPalAuthReversalService_paypalAuthorizationRequestToken";
     public static final String SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_PAYPAL_AUTHORIZATION_REQUEST_TOKEN="payPalDoCaptureService_paypalAuthorizationRequestToken";
     public static final String SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_BILLING_AGREEMENT_CUSTOM="payPalEcSetService_paypalBillingAgreementCustom";
     public static final String SO_REQUEST_PAYPAL_UPDATE_AGREEMENT_SERVICE_PAYPAL_BILLING_AGREEMENT_CUSTOM="payPalUpdateAgreementService_paypalBillingAgreementCustom";
-
     public static final String SO_REQUEST_PAYPAL_DO_REF_TRANSACTION_SERVICE_PAYPAL_BILLING_AGREEMENT_ID="payPalDoRefTransactionService_paypalBillingAgreementId";
     public static final String SO_REQUEST_PAYPAL_UPDATE_AGREEMENT_SERVICE_PAYPAL_BILLING_AGREEMENT_ID="payPalUpdateAgreementService_paypalBillingAgreementId";
-
     public static final String SO_REQUEST_PAYPAL_AUTHORIZATION_SERVICE_PAYPAL_CUSTOMER_EMAIL="payPalAuthorizationService_paypalCustomerEmail";
     public static final String SO_REQUEST_PAYPAL_EC_DO_PAYMENT_SERVICE_PAYPAL_CUSTOMER_EMAIL="payPalEcDoPaymentService_paypalCustomerEmail";
     public static final String SO_REQUEST_PAYPAL_EC_ORDER_SETUP_SERVICE_PAYPAL_CUSTOMER_EMAIL="payPalEcOrderSetupService_paypalCustomerEmail";
     public static final String SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_CUSTOMER_EMAIL="payPalEcSetService_paypalCustomerEmail";
     public static final String SO_REQUEST_PAYPAL_TRANSACTION_SEARCH_SERVICE_PAYPAL_CUSTOMER_EMAIL="payPalTransactionSearchService_paypalCustomerEmail";
-
     public static final String SO_REQUEST_PAYPAL_DO_REF_TRANSACTION_SERVICE_PAYPAL_DESC="payPalDoRefTransactionService_paypalDesc";
     public static final String SO_REQUEST_PAYPAL_EC_DO_PAYMENT_SERVICE_PAYPAL_DESC="payPalEcDoPaymentService_paypalDesc";
     public static final String SO_REQUEST_PAYPAL_EC_ORDER_SETUP_SERVICE_PAYPAL_DESC="payPalEcOrderSetupService_paypalDesc";
     public static final String SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_DESC="payPalEcSetService_paypalDesc";
-
     public static final String SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_EC_DO_PAYMENT_REQUEST_ID="payPalAuthReversalService_paypalEcDoPaymentRequestID";
     public static final String SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_PAYPAL_EC_DO_PAYMENT_REQUEST_ID="payPalDoCaptureService_paypalEcDoPaymentRequestID";
-
     public static final String SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_EC_DO_PAYMENT_REQUEST_TOKEN="payPalAuthReversalService_paypalEcDoPaymentRequestToken";
     public static final String SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_PAYPAL_EC_DO_PAYMENT_REQUEST_TOKEN="payPalDoCaptureService_paypalEcDoPaymentRequestToken";
-
     public static final String SO_REQUEST_PAYPAL_AUTH_SERVICE_PAYPAL_EC_ORDER_SETUP_REQUEST_ID="payPalAuthorizationService_paypalEcOrderSetupRequestID";
     public static final String SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_EC_ORDER_SETUP_REQUEST_ID="payPalAuthReversalService_paypalEcOrderSetupRequestID";
-
     public static final String SO_REQUEST_PAYPAL_AUTHORIZATION_SERVICE_PAYPAL_EC_ORDER_SETUP_REQUEST_TOKEN="payPalAuthorizationService_paypalEcOrderSetupRequestToken";
     public static final String SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_EC_ORDER_SETUP_REQUEST_TOKEN="payPalAuthReversalService_paypalEcOrderSetupRequestToken";
-
     public static final String SO_REQUEST_PAYPAL_CREATE_AGREEMENT_SERVICE_PAYPAL_EC_SET_REQUEST_ID="payPalCreateAgreementService_paypalEcSetRequestID";
     public static final String SO_REQUEST_PAYPAL_EC_DO_PAYMENT_SERVICE_PAYPAL_EC_SET_REQUEST_ID="payPalEcDoPaymentService_paypalEcSetRequestID";
     public static final String SO_REQUEST_PAYPAL_EC_GET_DETAILS_SERVICE_PAYPAL_EC_SET_REQUEST_ID="payPalEcGetDetailsService_paypalEcSetRequestID";
     public static final String SO_REQUEST_PAYPAL_EC_ORDER_SETUP_SERVICE_PAYPAL_EC_SET_REQUEST_ID="payPalEcOrderSetupService_paypalEcSetRequestID";
     public static final String SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_EC_SET_REQUEST_ID="payPalEcSetService_paypalEcSetRequestID";
-
     public static final String SO_REQUEST_PAYPAL_CREATE_AGREEMENT_SERVICE_PAYPAL_EC_SET_REQUEST_TOKEN="payPalCreateAgreementService_paypalEcSetRequestToken";
     public static final String SO_REQUEST_PAYPAL_EC_DO_PAYMENT_SERVICE_PAYPAL_EC_SET_REQUEST_TOKEN="payPalEcDoPaymentService_paypalEcSetRequestToken";
     public static final String SO_REQUEST_PAYPAL_EC_GET_DETAILS_SERVICE_PAYPAL_EC_SET_REQUEST_TOKEN="payPalEcGetDetailsService_paypalEcSetRequestToken";
     public static final String SO_REQUEST_PAYPAL_EC_ORDER_SETUP_SERVICE_PAYPAL_EC_SET_REQUEST_TOKEN="payPalEcOrderSetupService_paypalEcSetRequestToken";
     public static final String SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_EC_SET_REQUEST_TOKEN="payPalEcSetService_paypalEcSetRequestToken";
-
     public static final String SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_INVOICE_NUMBER="payPalDoCaptureService_invoiceNumber";
     public static final String SO_REQUEST_PAYPAL_DO_REF_TRANSACTION_SERVICE_INVOICE_NUMBER="payPalDoRefTransactionService_invoiceNumber";
     public static final String SO_REQUEST_PAYPAL_EC_DO_PAYMENT_SERVICE_INVOICE_NUMBER="payPalEcDoPaymentService_invoiceNumber";
@@ -200,19 +146,14 @@ public class Util {
     public static final String SO_REQUEST_PAYPAL_TRANSACTION_SEARCH_SERVICE_INVOICE_NUMBER="payPalTransactionSearchService_invoiceNumber";
     public static final String SO_REQUEST_PAYPAL_PRE_APPROVED_PAYMENT_SERVICE_MP_ID="payPalPreapprovedPaymentService_mpID";
     public static final String SO_REQUEST_PAYPAL_PRE_APPROVED_UPDATE_SERVICE_MP_ID="payPalPreapprovedUpdateService_mpID";
-
     public static final String SO_REQUEST_PAYPAL_EC_DO_PAYMENT_SERVICE_PAYPAL_PAYER_ID="payPalEcDoPaymentService_paypalPayerId";
     public static final String SO_REQUEST_PAYPAL_EC_ORDER_SETUP_SERVICE_PAYPAL_PAYER_ID="payPalEcOrderSetupService_paypalPayerId";
-
     public static final String SO_REQUEST_PAYPAL_DO_REF_TRANSACTION_SERVICE_PAYPAL_PAYMENT_TYPE="payPalDoRefTransactionService_paypalPaymentType";
     public static final String SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_PAYMENT_TYPE="payPalEcSetService_paypalPaymentType";
-
     public static final String SO_REQUEST_PAYPAL_DO_REF_TRANSACTION_SERVICE_PAYPAL_REQ_CONFIRM_SHIPPING="payPalDoRefTransactionService_paypalReqconfirmshipping";
     public static final String SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_REQ_CONFIRM_SHIPPING="payPalEcSetService_paypalReqconfirmshipping";
-
     public static final String SO_REQUEST_PAYPAL_GET_TRANSACTION_DETAILS_SERVICE_TRANSACTION_ID="payPalGetTxnDetailsService_transactionID";
     public static final String SO_REQUEST_PAYPAL_TRANSACTION_SEARCH_SERVICE_TRANSACTION_ID="payPalTransactionSearchService_transactionID";
-
     public static final String SO_REQUEST_CAPTURE_SERVICE_PURCHASING_LEVEL="ccCreditService_purchasingLevel";
     public static final String SO_REQUEST_CREDIT_SERVICE_PURCHASING_LEVEL="ccCreditService_purchasingLevel";
 
@@ -301,34 +242,9 @@ public class Util {
     public static final String SO_REQUEST_ITEM_SELLER_REGISTRATION = "sellerRegistration";
     public static final String SO_REQUEST_ITEM_POINT_OF_TITLE_TRANSFER = "pointOfTitleTransfer";
 
-
     // Keys for SCMP request
     public static final String SCMP_REQUEST_ICS_APPLICATIONS = "ics_applications";
     public static final String SCM_REQUEST_PAYPAL_TOKEN = "paypal_token";
-    public static final String SCMP_REQUEST_MERCHANT_REF_NUMBER = "merchant_ref_number";
-    public static final String SCMP_REQUEST_CUSTOMER_FIRST_NAME = "customer_firstname";
-    public static final String SCMP_REQUEST_CUSTOMER_LAST_NAME = "customer_lastname";
-    public static final String SCMP_REQUEST_CUSTOMER_EMAIL = "customer_email";
-    public static final String SCMP_REQUEST_CUSTOMER_PHONE = "customer_phone";
-    public static final String SCMP_REQUEST_BILL_ADDRESS1 = "bill_address1";
-    public static final String SCMP_REQUEST_BILL_ADDRESS2 = "bill_address2";
-    public static final String SCMP_REQUEST_BILL_CITY = "bill_city";
-    public static final String SCMP_REQUEST_BILL_STATE = "bill_state";
-    public static final String SCMP_REQUEST_BILL_ZIP = "bill_zip";
-    public static final String SCMP_REQUEST_BILL_COUNTRY = "bill_country";
-    public static final String SCMP_REQUEST_BILL_TO_IP_ADDRESS = "customer_ipaddress";
-    public static final String SCMP_REQUEST_SHIP_TO_FIRST_NAME = "ship_to_firstname";
-    public static final String SCMP_REQUEST_SHIP_TO_LAST_NAME = "ship_to_lastname";
-    public static  final String SCMP_REQUEST_SHIP_TO_ADDRESS1 = "ship_to_address1";
-    public static  final String SCMP_REQUEST_SHIP_TO_ADDRESS2 = "ship_to_address2";
-    public static final String SCMP_REQUEST_SHIP_TO_CITY = "ship_to_city";
-    public static final String SCMP_REQUEST_SHIP_TO_STATE = "ship_to_state";
-    public static final String SCMP_REQUEST_SHIP_TO_COUNTRY = "ship_to_country";
-    public static final String SCMP_REQUEST_SHIP_TO_ZIP = "ship_to_zip";
-    public static final String SCMP_REQUEST_CUSTOMER_CC_NUMBER = "customer_cc_number";
-    public static final String SCMP_REQUEST_CUSTOMER_CC_EXPIRATION_MONTH = "customer_cc_expmo";
-    public static final String SCMP_REQUEST_CUSTOMER_CC_EXPIRATION_YEAR = "customer_cc_expyr";
-    public static final String SCMP_REQUEST_CURRENCY = "currency";
     public static final String SCMP_REQUEST_PAYPAL_TRANSACTION_ID = "paypal_transaction_id";
     public static final String SCMP_REQUEST_ACCOUNT_ENCODER_ID = "account_encoder_id";
     public static final String SCMP_REQUEST_BANK_TRANSIT_NUMBER = "ecp_rdfi";
@@ -354,11 +270,12 @@ public class Util {
     public static final String SCMP_REQUEST_BILL_REQUEST_ID = "bill_request_id";
     public static final String SCMP_REQUEST_ICS_DCC_UPDATE = "ics_dcc_update";
     public static final String SCMP_REQUEST_CHECKSUM_KEY = "checksum_key";
+    public static final String SCMP_REQUEST_CURRENCY = "currency";
     public static final String SCMP_REQUEST_ICS_PAYPAL_TRANSACTION_SEARCH = "ics_paypal_transaction_search";
     public static final String SCMP_REQUEST_ICS_PAYPAL_AUTH_REVERSAL="ics_paypal_auth_reversal";
     public static final String SCMP_REQUEST_ICS_PAYPAL_EC_SET="ics_paypal_ec_set";
     public static final String SCMP_REQUEST_ICS_PAYPAL_UPDATE_AGREEMENT="ics_paypal_update_agreement";
-    public static final String  SCMP_REQUEST_ICS_PAYPAL_CREATE_AGREEMENT="ics_paypal_create_agreement";
+    public static final String SCMP_REQUEST_ICS_PAYPAL_CREATE_AGREEMENT="ics_paypal_create_agreement";
     public static final String SCMP_REQUEST_ICS_PAYPAL_DO_CAPTURE = "ics_paypal_do_capture";
     public static final String SCMP_REQUEST_ICS_PAYPAL_AUTH="ics_paypal_authorization";
     public static final String SCMP_REQUEST_ICS_PAYPAL_EC_DO_PAYMENT="ics_paypal_ec_do_payment";
@@ -369,15 +286,12 @@ public class Util {
     public static final String SCMP_REQUEST_ICS_PAYPAL_PRE_APPROVED_UPDATE="ics_paypal_preapproved_update";
     public static final String SCMP_REQUEST_ICS_PAYPAL_GET_TRANSACTION_DETAILS="ics_paypal_get_txn_details";
     public static final String SCMP_REQUEST_PURCHASING_LEVEL="purchasing_level";
-
-
     public static final String SCMP_REQUEST_DIRECT_DEBIT_MANDATE_AUTHENTICATION_DATE = "direct_debit_mandate_authentication_date";
     public static final String SCMP_REQUEST_ICS_DIRECT_DEBIT_REFUND = "ics_direct_debit_refund";
     public static final String SCMP_REQUEST_ICS_DIRECT_DEBIT = "SCMP_REQUEST_ICS_DIRECT_DEBIT";
     public static final String SCMP_REQUEST_DIRECT_DEBIT_RECURRING_TYPE = "direct_debit_recurring_type";
     public static final String SCMP_REQUEST_DIRECT_DEBIT_TYPE = "direct_debit_type";
     public static final String SCMP_REQUEST_ECOMMERCE_INDICATOR = "e_commerce_indicator";
-
     public static final String SCMP_REQUEST_ICS_ECP_CREDIT="ics_ecp_credit";
     public static final String SCMP_REQUEST_ICS_ECP_AUTHENTICATE = "ics_ecp_authenticate";
     public static final String SCMP_REQUEST_ICS_ECP_DEBIT="ics_ecp_debit";
@@ -396,10 +310,8 @@ public class Util {
     public static final String SCMP_REQUEST_MARKING_NOTES = "marking_notes";
     public static final String SCMP_REQUEST_MARKING_REASON = "marking_reason";
     public static final String SCMP_REQUEST_MERCHANT_RECEIPT_NUMBER = "merchant_receipt_number";
-
     public static final String SCMP_REQUEST_NETWORK_ORDER="network_order";
     public static final String SCMP_REQUEST_PARTIAL_PAYMENT_ID="partial_payment_id";
-
     public static final String SCMP_REQUEST_PAYPAL_AUTHORIZATION_ID="paypal_authorization_id";
     public static final String SCMP_REQUEST_PAYPAL_AUTHORIZATION_REQUEST_ID="paypal_authorization_request_id";
     public static final String SCMP_REQUEST_PAYPAL_AUTHORIZATION_REQUEST_TOKEN="paypal_authorization_request_token";
@@ -508,62 +420,23 @@ public class Util {
     public static final String SCMP_REQUEST_ITEM_SELLER_REGISTRATION = "seller_registration_";
     public static final String SCMP_REQUEST_ITEM_POINT_OF_TITLE_TRANSFER = "point_of_title_transfer";
 
+    public static final String SO_RESPONSE_PAYMENT_TYPE_INDICATOR ="paymentTypeIndicator";
+    public static final String SO_RESPONSE_CC_CREDIT_REPLY_RECONCILIATION_REFERENCE_NUMBER ="ccCreditReply_reconciliationReferenceNumber";
+    public static final String SO_RESPONSE_CC_AUTH_REPLY_MERCHANT_ADVICE_CODE ="ccAuthReply_merchantAdviceCode";
+    public static final String SO_RESPONSE_CC_AUTH_REPLY_MERCHANT_ADVICE_CODE_RAW ="ccAuthReply_merchantAdviceCodeRaw";
 
-    //Keys for Simple Order Response
-    public static final String SO_RESPONSE_AVS_CODE = "ccAuthReply_avsCode";
-    public static  final String SO_RESPONSE_REQUEST_TOKEN = "requestToken";
-    public static final String SO_RESPONSE_TERMINAL_ID = "pos_terminalID";
-    public static final String SO_RESPONSE_CARD_REGULATED = "ccAuthReply_cardRegulated";
-    public static final String SO_RESPONSE_CARD_HEALTHCARE ="ccAuthReply_cardHealthcare";
-    public static final String SO_RESPONSE_PAYMENT_NETWORK_TRANSACTION_ID ="ccAuthReply_paymentNetworkTransactionID";
-    public static final String SO_RESPONSE_CURRENCY = "purchaseTotals_currency";
-    public static final String SO_RESPONSE_REQUEST_ID = "requestID";
-    public static final String SO_RESPONSE_CARD_LEVEL3_ELIGIBLE = "ccAuthReply_cardLevel3Eligible";
-    public static final String SO_RESPONSE_AUTH_AMOUNT = "ccAuthReply_amount";
-    public static final String SO_RESPONSE_CARD_COMMERCIAL = "ccAuthReply_cardCommercial";
-    public static final String SO_RESPONSE_DECISION_EARLY_REPLY_CODE = "decisionEarlyReply_rcode";
-    public static final String SO_RESPONSE_RECONCILIATION_ID ="ccAuthReply_reconciliationID";
-    public static final String SO_RESPONSE_AUTH_CODE ="ccAuthReply_authorizationCode";
-    public static final String SO_RESPONSE_CARD_SIGNATURE_DEBIT ="ccAuthReply_cardSignatureDebit";
-    public static final String SO_RESPONSE_CARD_TYPE ="card_cardType";
-    public static final String SO_RESPONSE_CARD_PIN_LESS_DEBIT ="ccAuthReply_cardPINlessDebit";
-    public static final String SO_RESPONSE_REASON_CODE ="ccAuthReply_reasonCode";
-    public static final String SO_RESPONSE_CARD_ISSUER_COUNTRY ="ccAuthReply_cardIssuerCountry";
-    public static final String SO_RESPONSE_CARD_PREPAID ="ccAuthReply_cardPrepaid";
-    public static final String SO_RESPONSE_AFFLUENCE_INDICATOR ="ccAuthReply_affluenceIndicator";
-    public static final String SO_RESPONSE_AVS_RAW_CODE ="ccAuthReply_avsCodeRaw";
-    public static final String SO_RESPONSE_CARD_PAYROLL ="ccAuthReply_cardPayroll";
-    public static final String SO_RESPONSE_MERCHANT_REFERENCE_CODE ="merchantReferenceCode";
-    public static final String SO_RESPONSE_AUTHORIZE_DATE_TIME ="ccAuthReply_authorizedDateTime";
+    public static final String SO_RESPONSE_AUTH_PAYMENT_TYPE_INDICATOR ="auth_payment_type_indicator";
+    public static final String SO_RESPONSE_AUTH_REVERSAL_PAYMENT_TYPE_INDICATOR ="auth_reversal_payment_type_indicator";
+    public static final String SO_RESPONSE_CREDIT_AUTH_RECONCILIATION_REFERENCE_NUMBER ="credit_auth_reconciliation_reference_number";
+    public static final String SO_RESPONSE_CREDIT_RECONCILIATION_REFERENCE_NUMBER ="credit_reconciliation_reference_number";
+    public static final String SO_RESPONSE_AUTH_MERCHANT_ADVICE_CODE ="auth_merchant_advice_code";
+    public static final String SO_RESPONSE_MERCHANT_ADVICE_CODE ="merchant_advice_code";
+    public static final String SO_RESPONSE_AUTH_MERCHANT_ADVICE_CODE_RAW ="auth_merchant_advice_code_raw";
+    public static final String SO_RESPONSE_MERCHANT_ADVICE_CODE_RAW ="merchant_advice_code_raw";
 
-    //Keys for SCMP Response
-    public static final String SCMP_RESPONSE_AVS_CODE = "auth_auth_avs";
-    public static  final String SCMP_RESPONSE_REQUEST_TOKEN = "request_token";
-    public static final String SCMP_RESPONSE_TERMINAL_ID = "terminal_id";
-    public static final String SCMP_RESPONSE_CARD_REGULATED = "auth_card_regulated";
-    public static final String SCMP_RESPONSE_CARD_HEALTHCARE ="auth_card_healthcare";
-    public static final String SCMP_RESPONSE_PAYMENT_NETWORK_TRANSACTION_ID ="auth_payment_network_transaction_id";
-    public static final String SCMP_RESPONSE_CURRENCY = "currency";
-    public static final String SCMP_RESPONSE_REQUEST_ID = "request_id";
-    public static final String SCMP_RESPONSE_CARD_LEVEL3_ELIGIBLE = "auth_card_level_3_eligible";
-    public static final String SCMP_RESPONSE_AUTH_AUTH_AMOUNT = "auth_auth_amount";
-    public static final String SCMP_RESPONSE_CARD_COMMERCIAL = "auth_card_commercial";
-    public static final String SCMP_RESPONSE_DECISION_EARLY_REPLY_CODE = "decision_early_rcode";
-    public static final String SCMP_RESPONSE_RECONCILIATION_ID ="auth_trans_ref_no";
-    public static final String SCMP_RESPONSE_AUTH_CODE ="auth_auth_code";
-    public static final String SCMP_RESPONSE_CARD_SIGNATURE_DEBIT ="auth_card_signature_debit";
-    public static final String SCMP_RESPONSE_CARD_TYPE ="card_type";
-    public static final String SCMP_RESPONSE_CARD_PIN_LESS_DEBIT ="auth_card_pinless_debit";
-    public static final String SCMP_RESPONSE_REASON_CODE ="auth_auth_response";
-    public static final String SCMP_RESPONSE_CARD_ISSUER_COUNTRY ="auth_card_issuer_country";
-    public static final String SCMP_RESPONSE_CARD_PREPAID ="auth_card_prepaid";
-    public static final String SCMP_RESPONSE_AFFLUENCE_INDICATOR ="auth_affluence_indicator";
-    public static final String SCMP_RESPONSE_AVS_RAW_CODE ="auth_avs_raw";
-    public static final String SCMP_RESPONSE_CARD_PAYROLL ="auth_card_payroll";
-    public static final String SCMP_RESPONSE_MERCHANT_REFERENCE_CODE ="merchant_ref_number";
-    public static final String SCMP_RESPONSE_AUTHORIZE_DATE_TIME ="auth_auth_time";
-    public static final String SCMP_RESPONSE_ICS_REPLY_CODE ="ics_rcode";
-
+    /**
+     * Set up the lookup table of ics_applications from the ics_applications.properties file
+     */
     public static void setupICSApplicationsLookUpTable(){
         Properties icsApplicationsProperties = readPropertyFile("ics_applications.properties");
         if(icsApplicationsProperties == null){
@@ -588,6 +461,14 @@ public class Util {
      * @return an {@code ICSReply} object
      */
     public static ICSReply processRequest(ICSClientRequest icsClientRequest, Properties cybsProperties){
+        if(icsClientRequest == null){
+            System.out.println("Cannot process null ICS client request");
+            return null;
+        }
+        if(cybsProperties == null){
+            System.out.println("Cannot process null cybsProperties file");
+            return null;
+        }
         Map<String, String> nvpRequest = Util.convertICSClientRequestToNVPRequest(icsClientRequest);
         Util.displayMap("\n\nSIMPLE ORDER REQUEST:", nvpRequest) ;
         ICSReply icsReply = new ICSReply();
@@ -603,9 +484,9 @@ public class Util {
     }
 
     /**
-     * Converts an SCMP request to an NVP request
+     * Converts an SCMP request to a simple order NVP request
      * @param icsClientRequest the SCMP request to convert
-     * @return a {@code HashMap} representing the NVP request
+     * @return a {@code HashMap} representing the simple order NVP request
      */
     public static Map<String, String> convertICSClientRequestToNVPRequest(ICSClientRequest icsClientRequest){
         if(icsClientRequest == null){
@@ -618,17 +499,16 @@ public class Util {
             setupICSApplicationsLookUpTable();
         }
         HashMap<String, String> nvpRequest = new HashMap<>();
-
         String icsApplications = icsClientRequest.getField(SCMP_REQUEST_ICS_APPLICATIONS);
-        List<String> icsApplicationsList = null;
+        List<String> icsApplicationsList = new ArrayList<String>();
         if(icsApplications != null){
             if(icsApplications.contains(",")){
-                icsApplicationsList = Arrays.asList(icsApplications.split(","));
                 //this is a bundle call(ex. auth+capture or sale)
                 for(String icsApp:icsApplications.split(",")){
                     String icsApplication=ICS_APPLICATIONS_LOOKUP_TABLE.get(icsApp.trim());
                     if(icsApplication != null && !icsApplication.isEmpty()){
                         nvpRequest.put(icsApplication, "true");
+                        icsApplicationsList.add(icsApplication);
                     }
                     else{
                         System.out.println("ics_applications: " + icsApp + " has no mapping. Check the ics_applications.properties file");
@@ -639,30 +519,12 @@ public class Util {
                 String icsApplication=ICS_APPLICATIONS_LOOKUP_TABLE.get(icsApplications.trim());
                 if(icsApplication != null && !icsApplication.isEmpty()){
                     nvpRequest.put(icsApplication, "true");
-                    icsApplicationsList = new ArrayList<String>();
-                    icsApplicationsList.add(icsApplications.trim());
+                    icsApplicationsList.add(icsApplication.trim());
                 }
                 else{
                     System.out.println("ics_applications: " + icsApplication + " has no mapping. Check the ics_applications.properties file");
                 }
-                //#paypal_transaction_id=payPalGetTxnDetailsService_transactionID
-                //#paypal_transaction_id=payPalTransactionSearchService_transactionID
             }
-            //map paypal_token here since it's dependent on the ics_applications
-
-            /*
-            ics_paypal_ec_set=payPalEcSetService_run
-ics_paypal_ec_get_details=payPalEcGetDetailsService_run
-ics_paypal_ec_do_payment=payPalEcDoPaymentService_run
-ics_paypal_do_capture=payPalDoCaptureService_run
-ics_paypal_auth_reversal=payPalAuthReversalService_run
-ics_paypal_ec_order_setup=payPalEcOrderSetupService_run
-ics_paypal_authorization=payPalAuthorizationService_run
-ics_paypal_refund=payPalRefundService_run
-ics_paypal_update_agreement=payPalUpdateAgreementService_run
-ics_paypal_create_agreement=payPalCreateAgreementService_run
-ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
-             */
         }
         else{
             System.out.println(SCMP_REQUEST_ICS_APPLICATIONS + "=null");
@@ -690,117 +552,17 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 nvpRequest.put(nvpSOKey, scmpValue);
             }
         }
-
-/*
-        String icsApplications = icsClientRequest.getField(SCMP_ICS_APPLICATIONS);
-        if(icsApplications != null){
-            nvpRequest.put(ICS_APPLICATIONS_LOOKUP_TABLE.get(icsApplications), "true");
-        }
-        else{
-            System.out.println(SCMP_ICS_APPLICATIONS + "=null");
-        }
-        if(icsClientRequest.getField(SCMP_MERCHANT_REF_NUMBER) != null){
-            nvpRequest.put(SO_MERCHANT_REFERENCE_CODE, icsClientRequest.getField(SCMP_MERCHANT_REF_NUMBER));
-        }
-        if(icsClientRequest.getField(SCMP_CUSTOMER_FIRST_NAME) != null){
-            nvpRequest.put(SO_BILL_TO_FIRST_NAME, icsClientRequest.getField(SCMP_CUSTOMER_FIRST_NAME));
-        }
-        if(icsClientRequest.getField(SCMP_CUSTOMER_LAST_NAME) != null){
-            nvpRequest.put(SO_BILL_TO_LAST_NAME, icsClientRequest.getField(SCMP_CUSTOMER_LAST_NAME));
-        }
-        if(icsClientRequest.getField(SCMP_CUSTOMER_EMAIL) != null){
-            nvpRequest.put(SO_BILL_TO_EMAIL, icsClientRequest.getField(SCMP_CUSTOMER_EMAIL));
-        }
-        if(icsClientRequest.getField(SCMP_CUSTOMER_PHONE) != null){
-            nvpRequest.put(SO_BILL_TO_PHONE_NUMBER, icsClientRequest.getField(SCMP_CUSTOMER_PHONE));
-        }
-        if(icsClientRequest.getField(SCMP_BILL_ADDRESS1) != null){
-            nvpRequest.put(SO_BILL_TO_STREET1, icsClientRequest.getField(SCMP_BILL_ADDRESS1));
-        }
-        if(icsClientRequest.getField(SCMP_BILL_ADDRESS2) != null){
-            nvpRequest.put(SO_BILL_TO_STREET2, icsClientRequest.getField(SCMP_BILL_ADDRESS2));
-        }
-        if(icsClientRequest.getField(SCMP_BILL_CITY) != null){
-            nvpRequest.put(SO_BILL_TO_CITY, icsClientRequest.getField(SCMP_BILL_CITY));
-        }
-        if(icsClientRequest.getField(SCMP_BILL_STATE) != null){
-            nvpRequest.put(SO_BILL_TO_STATE, icsClientRequest.getField(SCMP_BILL_STATE));
-        }
-        if(icsClientRequest.getField(SCMP_BILL_ZIP) != null){
-            nvpRequest.put(SO_BILL_TO_POSTAL_CODE, icsClientRequest.getField(SCMP_BILL_ZIP));
-        }
-        if(icsClientRequest.getField(SCMP_BILL_COUNTRY) != null){
-            nvpRequest.put(SO_BILL_TO_COUNTRY, icsClientRequest.getField(SCMP_BILL_COUNTRY));
-        }
-        if(icsClientRequest.getField(SCMP_BILL_TO_IP_ADDRESS) != null){
-            nvpRequest.put(SO_BILL_TO_IP_ADDRESS, icsClientRequest.getField(SCMP_BILL_TO_IP_ADDRESS));
-        }
-        if(icsClientRequest.getField(SCMP_SHIP_TO_FIRST_NAME) != null){
-            nvpRequest.put(SO_SHIP_TO_FIRST_NAME, icsClientRequest.getField(SCMP_SHIP_TO_FIRST_NAME));
-        }
-        if(icsClientRequest.getField(SCMP_SHIP_TO_LAST_NAME) != null){
-            nvpRequest.put(SO_SHIP_TO_LAST_NAME, icsClientRequest.getField(SCMP_SHIP_TO_LAST_NAME));
-        }
-        if(icsClientRequest.getField(SCMP_SHIP_TO_ADDRESS1) != null){
-            nvpRequest.put(SO_SHIP_TO_STREET1, icsClientRequest.getField(SCMP_SHIP_TO_ADDRESS1));
-        }
-        if(icsClientRequest.getField(SCMP_SHIP_TO_ADDRESS2) != null){
-            nvpRequest.put(SO_SHIP_TO_STREET2, icsClientRequest.getField(SCMP_SHIP_TO_ADDRESS2));
-        }
-        if(icsClientRequest.getField(SCMP_SHIP_TO_CITY) != null){
-            nvpRequest.put(SO_SHIP_TO_CITY, icsClientRequest.getField(SCMP_SHIP_TO_CITY));
-        }
-        if(icsClientRequest.getField(SCMP_SHIP_TO_STATE) != null){
-            nvpRequest.put(SO_SHIP_TO_STATE, icsClientRequest.getField(SCMP_SHIP_TO_STATE));
-        }
-        if (icsClientRequest.getField(SCMP_SHIP_TO_COUNTRY) != null){
-            nvpRequest.put(SO_SHIP_TO_COUNTRY, icsClientRequest.getField(SCMP_SHIP_TO_COUNTRY));
-        }
-        if (icsClientRequest.getField(SCMP_SHIP_TO_ZIP) != null){
-            nvpRequest.put(SO_SHIP_TO_POSTAL_CODE, icsClientRequest.getField(SCMP_SHIP_TO_ZIP));
-        }
-        if(icsClientRequest.getField(SCMP_CUSTOMER_CC_NUMBER) != null){
-            nvpRequest.put(SO_CARD_ACCOUNT_NUMBER, icsClientRequest.getField(SCMP_CUSTOMER_CC_NUMBER));
-        }
-        if(icsClientRequest.getField(SCMP_CUSTOMER_CC_EXPIRATION_MONTH) != null){
-            nvpRequest.put(SO_CARD_EXPIRATION_MONTH, icsClientRequest.getField(SCMP_CUSTOMER_CC_EXPIRATION_MONTH));
-        }
-        if(icsClientRequest.getField(SCMP_CUSTOMER_CC_EXPIRATION_YEAR) != null){
-            nvpRequest.put(SO_CARD_EXPIRATION_YEAR, icsClientRequest.getField(SCMP_CUSTOMER_CC_EXPIRATION_YEAR));
-        }
-        if(icsClientRequest.getField(CURRENCY) != null){
-            nvpRequest.put(SO_PURCHASE_TOTALS_CURRENCY, icsClientRequest.getField(CURRENCY));
-        }
-        //scan through all the items
-        if(icsClientRequest.getAllOffers() != null){
-            for(int i=0; i<icsClientRequest.getNumOffers(); ++i){
-                ICSOffer offer = icsClientRequest.getOffer(i);
-                if(offer.getField(AMOUNT) != null){
-                    //item_0_unitPrice
-                    nvpRequest.put(SO_ITEM + "_" + i + "_" + SO_UNIT_PRICE, offer.getField(AMOUNT));
-                }
-                if(offer.getField(QUANTITY) != null){
-                    //item_0_quantity
-                    nvpRequest.put(SO_ITEM + "_" + i + "_" + QUANTITY, offer.getField(QUANTITY));
-                }
-                if(offer.getField(SCMP_PRODUCT_NAME) != null){
-                    //item_0_productName
-                    nvpRequest.put(SO_ITEM + "_" + i + "_" + SO_PRODUCT_NAME, offer.getField(SCMP_PRODUCT_NAME));
-                }
-                if(offer.getField(SCMP_PRODUCT_CODE) != null){
-                    //item_0_productCode
-                    nvpRequest.put(SO_ITEM + "_" + i + "_" + SO_PRODUCT_CODE, offer.getField(SCMP_PRODUCT_CODE));
-                }
-                if(offer.getField(SCMP_MERCHANT_PRODUCT_SKU) != null){
-                    //item_0_productSKU
-                    nvpRequest.put(SO_ITEM + "_" + i + "_" + SO_PRODUCT_SKU, offer.getField(SCMP_MERCHANT_PRODUCT_SKU));
-                }
-            }
-        }
-*/
         return nvpRequest;
     }
 
+    /**
+     * Maps all SCMP fields that have multiple mappings to the simple order API
+     * @param icsClientRequest SCMP request
+     * @param scmpKey scmp key
+     * @param icsApplications list of ics_applications
+     * @param nvpRequest simple order NVP request
+     * @param scmpValue SCMP value
+     */
     public static void mapNonDistinctSCMPFields(ICSClientRequest icsClientRequest, String scmpKey, List<String> icsApplications, HashMap<String, String> nvpRequest, String scmpValue) {
         switch(scmpKey){
             case SCMP_REQUEST_ACCOUNT_ENCODER_ID:{
@@ -818,16 +580,14 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_CREDIT)){
                     nvpRequest.put(SO_REQUEST_CREDIT_SERVICE_AGGREGATOR_ID, scmpValue);
                 }
-
             }break;
             case SCMP_REQUEST_AGGREGATOR_NAME:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTH)){
                     nvpRequest.put(SO_REQUEST_AUTH_SERVICE_AGGREGATOR_NAME, scmpValue);
                 }
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_CREDIT)){
-                    nvpRequest.put(SO_REQUEST_AUTH_SERVICE_AGGREGATOR_NAME, scmpValue);
+                    nvpRequest.put(SO_REQUEST_CREDIT_SERVICE_AGGREGATOR_NAME, scmpValue);
                 }
-
             }break;
             case SCMP_REQUEST_AP_AUTH_REQUEST_ID:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AP_AUTH_REVERSAL)){
@@ -836,7 +596,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_AP_CAPTURE)){
                     nvpRequest.put(SO_REQUEST_AP_CAPTURE_SERVICE_AUTH_REQUEST_ID, scmpValue);
                 }
-
             }break;
             case SCMP_REQUEST_AP_INITIATE_REQUEST_ID:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AP_CHECK_STATUS)){
@@ -845,7 +604,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_AP_REFUND)){
                     nvpRequest.put(SO_REQUEST_AP_REFUND_SERVICE_INITIATE_REQUEST_ID, scmpValue);
                 }
-
             }break;
             case SCMP_REQUEST_AUTH_CODE:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTO_AUTH_REVERSAL)){
@@ -854,7 +612,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_CREDIT)){
                     nvpRequest.put(SO_REQUEST_CREDIT_SERVICE_AUTH_CODE, scmpValue);
                 }
-
             }break;
             case SCMP_REQUEST_AUTH_REQUEST_ID:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTH_REVERSAL)){
@@ -866,8 +623,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_CAPTURE)){
                     nvpRequest.put(SO_REQUEST_CAPTURE_SERVICE_AUTH_REQUEST_ID, scmpValue);
                 }
-
-
             }break;
             case SCMP_REQUEST_AUTH_REQUEST_TOKEN:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTH_REVERSAL)){
@@ -876,8 +631,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_CAPTURE)){
                     nvpRequest.put(SO_REQUEST_CAPTURE_SERVICE_AUTH_REQUEST_TOKEN, scmpValue);
                 }
-
-
             }break;
             case SCMP_REQUEST_AUTH_TRANS_REF_NO:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTH)){
@@ -886,8 +639,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_AUTO_AUTH_REVERSAL)){
                     nvpRequest.put(SO_REQUEST_AUTO_AUTH_REVERSAL_SERVICE_RECONCILIATION_ID, scmpValue);
                 }
-
-
             }break;
             case SCMP_REQUEST_AUTH_TYPE:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTH)){
@@ -896,8 +647,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_CAPTURE)){
                     nvpRequest.put(SO_REQUEST_CAPTURE_SERVICE_AUTH_TYPE, scmpValue);
                 }
-
-
             }break;
             case SCMP_REQUEST_BILL_PAYMENT:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTH)){
@@ -909,8 +658,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_CREDIT)){
                     nvpRequest.put(SO_REQUEST_CREDIT_SERVICE_BILL_PAYMENT, scmpValue);
                 }
-
-
             }break;
             case SCMP_REQUEST_BILL_REQUEST_ID:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_CREDIT)){
@@ -922,8 +669,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_DCC_UPDATE)){
                     nvpRequest.put(SO_REQUEST_DCC_UPDATE_SERVICE_CAPTURE_REQUEST_ID, scmpValue);
                 }
-
-
             }break;
             case SCMP_REQUEST_CHECKSUM_KEY:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_AUTH)){
@@ -1028,7 +773,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_ECP_DEBIT)){
                     nvpRequest.put(SO_REQUEST_ECP_DEBIT_SERVICE_SETTLEMENT_METHOD, scmpValue);
                 }
-
             }break;
             case SCMP_REQUEST_GRAND_TOTAL_AMOUNT:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_PAYPAL_TRANSACTION_SEARCH)){
@@ -1089,7 +833,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                     nvpRequest.put(SO_REQUEST_PIN_DEBIT_SERVICE_NETWORK_ORDER, scmpValue);
                 }
             }break;
-
             case SCMP_REQUEST_PARTIAL_PAYMENT_ID:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_CAPTURE)){
                     nvpRequest.put(SO_REQUEST_CAPTURE_SERVICE_PARTIAL_PAYMENT_ID, scmpValue);//
@@ -1120,7 +863,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                     nvpRequest.put(SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_PAYPAL_AUTHORIZATION_REQUEST_ID, scmpValue);
                 }
             }break;
-
             case SCMP_REQUEST_PAYPAL_AUTHORIZATION_REQUEST_TOKEN:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_PAYPAL_AUTH_REVERSAL)){
                     nvpRequest.put(SO_REQUEST_PAYPAL_AUTH_REVERSAL_SERVICE_PAYPAL_AUTHORIZATION_REQUEST_TOKEN, scmpValue);//
@@ -1145,7 +887,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                     nvpRequest.put(SO_REQUEST_PAYPAL_UPDATE_AGREEMENT_SERVICE_PAYPAL_BILLING_AGREEMENT_ID, scmpValue);
                 }
             }break;
-
             case SCMP_REQUEST_PAYPAL_CUSTOMER_EMAIL:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_PAYPAL_AUTH)){
                     nvpRequest.put(SO_REQUEST_PAYPAL_AUTHORIZATION_SERVICE_PAYPAL_CUSTOMER_EMAIL, scmpValue);//
@@ -1163,7 +904,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                     nvpRequest.put(SO_REQUEST_PAYPAL_TRANSACTION_SEARCH_SERVICE_PAYPAL_CUSTOMER_EMAIL, scmpValue);
                 }
             }break;
-
             case SCMP_REQUEST_PAYPAL_DESC:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_PAYPAL_DO_REF_TRANSACTION)){
                     nvpRequest.put(SO_REQUEST_PAYPAL_DO_REF_TRANSACTION_SERVICE_PAYPAL_DESC, scmpValue);//
@@ -1177,7 +917,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 else if(icsApplications.contains(SCMP_REQUEST_ICS_PAYPAL_EC_SET)){
                     nvpRequest.put(SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_DESC, scmpValue);
                 }
-
             }break;
             case SCMP_REQUEST_PAYPAL_EC_DO_PAYMENT_REQUEST_ID:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_PAYPAL_AUTH_REVERSAL)){
@@ -1245,7 +984,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                     nvpRequest.put(SO_REQUEST_PAYPAL_EC_SET_SERVICE_PAYPAL_EC_SET_REQUEST_TOKEN, scmpValue);
                 }
             }break;
-
             case SCMP_REQUEST_PAYPAL_INVOICE_NUMBER:{
                 if(icsApplications.contains(SCMP_REQUEST_ICS_PAYPAL_DO_CAPTURE)){
                     nvpRequest.put(SO_REQUEST_PAYPAL_DO_CAPTURE_SERVICE_INVOICE_NUMBER, scmpValue);//
@@ -1314,8 +1052,6 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                     nvpRequest.put(SO_REQUEST_CREDIT_SERVICE_PURCHASING_LEVEL, scmpValue);
                 }
             }break;
-
-
             case SCM_REQUEST_PAYPAL_TOKEN:{
                 mapSCMPRequestPayPalToken(icsApplications, nvpRequest);
             }break;
@@ -1323,14 +1059,12 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 System.out.println("SCMP Key=" + scmpKey + " is unknown or not handled yet.");
             }
         }
-
-
     }
 
     /**
      * Maps the SCMP request paypal_token field based on the paypal transaction or the ics_applications
-     * @param icsApps the ics_applications or the PayPal transaction type
-     * @param nvpRequest
+     * @param icsApps the list of ics_applications or the PayPal transaction type
+     * @param nvpRequest simple order NVP request
      */
     public static void mapSCMPRequestPayPalToken(List<String> icsApps, HashMap<String, String> nvpRequest) {
         if(icsApps != null && !icsApps.isEmpty()){
@@ -1351,8 +1085,8 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
 
     /**
      * Convert SCMP's {@code ICSOffer} object to Simple Order items
-     * @param icsClientRequest the {@code ICSClientRequest} that contains the list of {@code ICSOffer} objects
-     * @param nvpRequest
+     * @param icsClientRequest the {@code ICSClientRequest} request that contains the list of {@code ICSOffer} objects
+     * @param nvpRequest simple order NVP request
      */
     public static void mapSCMPOffersToSimpleOrderItem(ICSClientRequest icsClientRequest, HashMap<String, String> nvpRequest) {
         if(icsClientRequest.getAllOffers() != null){
@@ -1601,8 +1335,7 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
                 //get the key from our response mapping table
                 String scmpKey = responseConversionTable.getProperty(key);
                 if(scmpKey == null || scmpKey.isEmpty()){
-                    //TODO: handle fields that have duplicate mapping. Derive them instead
-                    mapNonDistinctSOResponseFields(icsReply, value,icsClientRequest);
+                    mapNonDistinctSOResponseFields(icsReply, key, value,icsClientRequest);
                 }
                 else {
                     icsReply.setField(scmpKey, value);
@@ -1614,65 +1347,74 @@ ics_paypal_do_ref_transaction=payPalDoRefTransactionService_run
     }
 
     /**
-     *
-     * @param icsReply ICSReply
-     * @param value response field value
+     * Maps Simple order response fields that have multiple mapping to its SCMP equivalent
+     * @param icsReply ICSReply the SCMP reply
+     * @param nvpKey simple order response field key
+     * @param nvpValue simple order response field value
      * @param icsClientRequest ICS client request
      */
-    public static void mapNonDistinctSOResponseFields(ICSReply icsReply, String value, ICSClientRequest icsClientRequest) {
+    public static void mapNonDistinctSOResponseFields(ICSReply icsReply, String nvpKey, String nvpValue, ICSClientRequest icsClientRequest) {
         String icsApplications = icsClientRequest.getField(SCMP_REQUEST_ICS_APPLICATIONS);
         List<String> icsApplicationsList = new ArrayList<String>();
-        if(icsApplications != null) {
+        if (icsApplications != null) {
             if (icsApplications.contains(",")) {
-                for(String icsApp:icsApplications.split(",")){
-                    String icsApplication=ICS_APPLICATIONS_LOOKUP_TABLE.get(icsApp.trim());
-                    if(icsApplication != null && !icsApplication.isEmpty()){
+                for (String icsApp : icsApplications.split(",")) {
+                    String icsApplication = ICS_APPLICATIONS_LOOKUP_TABLE.get(icsApp.trim());
+                    if (icsApplication != null && !icsApplication.isEmpty()) {
                         icsApplicationsList.add(icsApplication);
-                    }
-                    else{
+                    } else {
                         System.out.println("ics_applications: " + icsApp + " is not mapped. Check the ics_applications.properties file");
                     }
                 }
-            }
-            else{
-                String icsApplication=ICS_APPLICATIONS_LOOKUP_TABLE.get(icsApplications.trim());
-                if(icsApplication != null && !icsApplication.isEmpty()){
+            } else {
+                String icsApplication = ICS_APPLICATIONS_LOOKUP_TABLE.get(icsApplications.trim());
+                if (icsApplication != null && !icsApplication.isEmpty()) {
                     icsApplicationsList.add(icsApplication);
-                }
-                else{
-                   System.out.println("ICS applications: " + icsApplications + " not found in ics_applications.properties mapping file");
+                } else {
+                    System.out.println("ICS applications: " + icsApplications + " not found in ics_applications.properties mapping file");
                 }
             }
         }
 
-        /*
-        #paymentTypeIndicator=auth_payment_type_indicator
-        #paymentTypeIndicator=auth_reversal_payment_type_indicator
+        switch (nvpKey) {
+            case SO_RESPONSE_PAYMENT_TYPE_INDICATOR: {
+                if (icsApplicationsList.contains(SCMP_REQUEST_ICS_AUTH)) {
+                    icsReply.setField(SO_RESPONSE_AUTH_PAYMENT_TYPE_INDICATOR, nvpValue);
+                } else {
+                    icsReply.setField(SO_RESPONSE_AUTH_REVERSAL_PAYMENT_TYPE_INDICATOR, nvpValue);
+                }
+            }
+            break;
+            case SO_RESPONSE_CC_CREDIT_REPLY_RECONCILIATION_REFERENCE_NUMBER: {
+                if (icsApplicationsList.contains(SCMP_REQUEST_ICS_CREDIT)) {
+                    icsReply.setField(SO_RESPONSE_CREDIT_AUTH_RECONCILIATION_REFERENCE_NUMBER, nvpValue);
+                } else {
+                    icsReply.setField(SO_RESPONSE_CREDIT_RECONCILIATION_REFERENCE_NUMBER, nvpValue);
+                }
+            }
+            break;
+            case SO_RESPONSE_CC_AUTH_REPLY_MERCHANT_ADVICE_CODE: {
+                if (icsApplicationsList.contains(SCMP_REQUEST_ICS_AUTH)) {
+                    icsReply.setField(SO_RESPONSE_AUTH_MERCHANT_ADVICE_CODE, nvpValue);
+                } else {
+                    icsReply.setField(SO_RESPONSE_MERCHANT_ADVICE_CODE, nvpValue);
+                }
+            }
+            break;
+            case SO_RESPONSE_CC_AUTH_REPLY_MERCHANT_ADVICE_CODE_RAW: {
+                if (icsApplicationsList.contains(SCMP_REQUEST_ICS_AUTH)) {
+                    icsReply.setField(SO_RESPONSE_AUTH_MERCHANT_ADVICE_CODE_RAW, nvpValue);
+                } else {
+                    icsReply.setField(SO_RESPONSE_MERCHANT_ADVICE_CODE_RAW, nvpValue);
+                }
+            }
+            break;
+            default: {
+                System.out.println("Simple Order key: " + nvpKey + " is unknown");
+            }
 
-        #name=parsed_field_names/decision_active_profile_rule/name
-        #name=parsed_field_names/decision_early_active_profile_pause_rule/name
-        #name=parsed_field_names/decision_early_active_profile_rule/name
-
-        #ccCreditReply_reconciliationReferenceNumber=credit_auth_reconciliation_reference_number
-#ccCreditReply_reconciliationReferenceNumber=credit_reconciliation_reference_number
-
-#ccAuthReply_merchantAdviceCode=auth_merchant_advice_code
-#ccAuthReply_merchantAdviceCode=merchant_advice_code
-
-#evaluation=parsed_field_names/decision_active_profile_rule/evaluation
-#evaluation=parsed_field_names/decision_early_active_profile_pause_rule/evaluation
-#evaluation=parsed_field_names/decision_early_active_profile_rule
-
-#ccAuthReply_merchantAdviceCodeRaw=auth_merchant_advice_code_raw
-#ccAuthReply_merchantAdviceCodeRaw=merchant_advice_code_raw
-
-#ruleID=parsed_field_names/decision_active_profile_rule
-#ruleID=parsed_field_names/decision_early_active_profile_pause_rule
-#ruleID=parsed_field_names/decision_early_active_profile_rule
-         */
+        }
     }
-
-
 
     /**
      * Display the content of a map object into the console
