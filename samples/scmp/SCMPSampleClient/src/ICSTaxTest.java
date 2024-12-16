@@ -69,7 +69,7 @@ public class ICSTaxTest {
       request = Util.convertPropertyFileToICSClientRequest(taxProps);
       System.out.println("-- request --");
 
-      System.out.println(request);
+      System.out.println(Util.getLoggableICSClientRequest(request));
       System.out.println("-- response --");
       //ICSReply reply = client.send(request);
       ICSReply reply = Util.processRequest(request,cybsProps);

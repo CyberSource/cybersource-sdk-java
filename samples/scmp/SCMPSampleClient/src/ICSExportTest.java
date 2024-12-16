@@ -62,7 +62,7 @@ public class ICSExportTest {
       request = Util.convertPropertyFileToICSClientRequest(exportProps);
       System.out.println("-- request --");
 
-      System.out.println(request);
+      System.out.println(Util.getLoggableICSClientRequest(request));
       System.out.println("-- response --");
       //ICSReply reply = client.send(request);
       ICSReply reply = Util.processRequest(request, cybsProperties);

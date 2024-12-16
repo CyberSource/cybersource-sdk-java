@@ -61,7 +61,7 @@ public class ICSECPCreditTest {
       request = Util.convertPropertyFileToICSClientRequest(ecpCreditProps);
       System.out.println("-- request --");
 
-      System.out.println(request);
+      System.out.println(Util.getLoggableICSClientRequest(request));
       ICSReply reply = Util.processRequest(request, cyberProperties);
       System.out.println("-- response --");
       //ICSReply reply =  client.send(request);

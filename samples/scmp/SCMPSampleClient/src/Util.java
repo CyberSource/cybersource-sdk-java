@@ -12,6 +12,12 @@ public class Util {
     private static final Properties requestConversionTable;
     private static final Properties responseConversionTable;
     private static final Map<String, String> ICS_APPLICATIONS_LOOKUP_TABLE = new HashMap<>();
+    public static final String RECORD_SEPARATOR = "\n";
+    public static final String VALUE_SEPARATOR = "=";
+    public static final List<String> FIELDS_TO_MASK = Arrays.asList("customer_cc_number", "customer_cc_expyr","customer_cc_expmo","customer_firstname",
+            "customer_lastname","bill_address1", "bill_address2", "customer_phone","customer_email","ecp_account_no","ecp_rdfi","billTo_email"
+    ,"billTo_lastName","billTo_street1","billTo_street2","billTo_firstName","card_expirationMonth","card_expirationYear","billTo_phoneNumber","card_accountNumber",
+    "check_bankTransitNumber","check_accountNumber","ecp_authenticate_id","check_authenticateID","ecp_check_no","check_checkNumber");
 
     static{
         requestConversionTable = readPropertyFile("scmp_so_mapping.properties");
@@ -501,6 +507,8 @@ public class Util {
         HashMap<String, String> nvpRequest = new HashMap<>();
         String icsApplications = icsClientRequest.getField(SCMP_REQUEST_ICS_APPLICATIONS);
         List<String> icsApplicationsList = new ArrayList<String>();
+
+
         if(icsApplications != null){
             if(icsApplications.contains(",")){
                 //this is a bundle call(ex. auth+capture or sale)
@@ -1430,7 +1438,12 @@ public class Util {
             while (iter.hasNext()) {
                 key = (String) iter.next();
                 val = (String) map.get(key);
-                dest.append(key + "=" + val + "\n");
+                if(FIELDS_TO_MASK.contains(key)){
+                    dest.append(key + "=" + maskContent(val) + "\n");
+                }
+                else {
+                    dest.append(key + "=" + val + "\n");
+                }
             }
         }
         System.out.println(dest.toString());
@@ -1524,5 +1537,57 @@ public class Util {
         else{
             return false;
         }
+    }
+
+    /**
+     * Mask the given text
+     * @param text the text to mask
+     * @return the masked equivalent of the given text
+     */
+    public static String maskContent(String text){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < text.length(); i++){
+            sb.append("*");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Returns a loggable version of the ICS client request which masks the sensitive data
+     * @param icsClientRequest the ICS client request
+     * @return loggable text of the given ICS client request object
+     */
+    public static String getLoggableICSClientRequest(ICSClientRequest icsClientRequest) {
+        if(icsClientRequest == null){
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(1500);
+        Enumeration e = icsClientRequest.getHashtable().keys();
+        while (e.hasMoreElements()) {
+            Object next_key = e.nextElement();
+            if (next_key instanceof String) {
+                String name = (String) next_key;
+                String value = (String) icsClientRequest.getHashtable().get(name);
+                sb.append(name);
+                if (value != null) {
+                    sb.append("=");
+                    if (FIELDS_TO_MASK.contains(name)) {
+                        sb.append(maskContent(value));
+                    } else {
+                        sb.append(value);
+                    }
+                }
+                if (e.hasMoreElements()) {
+                    sb.append("\n");
+                }
+            }
+        }
+
+        for(int i = 0; i < icsClientRequest.getAllOffers().size(); ++i) {
+            sb.append(RECORD_SEPARATOR + "offer" + i + VALUE_SEPARATOR + icsClientRequest.getAllOffers().elementAt(i));
+        }
+
+        return sb.toString();
     }
 }

@@ -64,7 +64,7 @@ public class ICSAuthTest {
 
       request = Util.convertPropertyFileToICSClientRequest(authProps);
       System.out.println("-- request --");
-      System.out.println(request);
+      System.out.println(Util.getLoggableICSClientRequest(request));
 
       //ICSReply reply = client.send(request);
       ICSReply reply = Util.processRequest(request, cyberProperties);
