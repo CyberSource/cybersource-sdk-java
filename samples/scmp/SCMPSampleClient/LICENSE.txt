@@ -1,0 +1,153 @@
+END-USER LICENSE AGREEMENT FOR CYBERSOURCE  SOFTWARE
+
+The software is subject to the terms and conditions detailed in the
+following license agreement.
+
+NOTICE: CYBERSOURCE LICENSES THE ENCLOSED SOFTWARE TO YOU ONLY UPON THE
+CONDITION THAT YOU ACCEPT ALL OF THE TERMS CONTAINED IN THIS LICENSE
+AGREEMENT.  BEFORE YOU CLICK ON THE "ACCEPT" BUTTON AT THE END OF THIS
+DOCUMENT, PLEASE READ THE TERMS AND CONDITIONS OF THIS AGREEMENT. IF
+YOU DO NOT AGREE TO THESE TERMS AND CONDITIONS, THEN CYBERSOURCE IS
+UNWILLING TO LICENSE THE SOFTWARE TO YOU, IN WHICH CASE YOU SHOULD ,
+CLICK THE "DO NOT ACCEPT" BUTTON, NOT USE THE SOFTWARE AND REMOVE THE
+SOFTWARE FROM YOUR SYSTEM. BY CLICKING ON THE "ACCEPT" BUTTON, YOU ARE
+CONSENTING TO BE BOUND BY AND ARE BECOMING A PARTY TO THIS AGREEMENT.
+
+SOFTWARE PRODUCT LICENSE. The SOFTWARE PRODUCT is protected by
+copyright laws and international copyright treaties, as well as other
+intellectual property laws and treaties. The SOFTWARE PRODUCT is
+licensed, not sold.
+
+1. GRANT OF LICENSE.  This EULA grants you the following rights:
+
+  a) Software Product. CyberSource grants to you as an individual or
+  business entity a  nonexclusive license to use the SOFTWARE for the
+  sole purposes subscribing to and utilizing services  from CyberSource
+  Corporation.  You may only install one copy of the SOFTWARE PRODUCT
+  on a single server for access to the CyberSource servers. A license
+  for the SOFTWARE PRODUCT may not be shared or used concurrently on
+  different servers.
+
+  b) Electronic Documents. Solely with respect to electronic documents
+  included with the SOFTWARE PRODUCT, you may make an unlimited number
+  of copies (either in hardcopy or electronic form), provided that such
+  copies shall be used only for internal purposes and are not
+  republished or distributed to any third party.
+
+  c) Storage/Network Use. You may store or install a copy of the
+  SOFTWARE PRODUCT on a storage device, such as a network server, to
+  install the SOFTWARE PRODUCT on your other servers over an internal
+  network; however, a separate license must be purchased for each
+  server on which the SOFTWARE PRODUCT is installed and used.
+
+  d) Limitations on Reverse Engineering, Decompilation, and
+  Disassembly.  You may not reverse engineer, decompile, or disassemble
+  the SOFTWARE PRODUCT, except and only to the extent that such
+  activity is expressly permitted by applicable law notwithstanding
+  this limitation.
+
+  e) Separation of Components. The SOFTWARE PRODUCT is licensed as a
+  single product. Its component parts may not be separated for use on
+  more than one computer.
+
+  f) Rental. You may not rent, lease, or lend the SOFTWARE PRODUCT.
+
+  g) Support Services. CyberSource may provide you with support
+  services related to the SOFTWARE PRODUCT (Support Services). Use of
+  Support Services is governed by the CyberSource policies and programs
+  described in the user manual, in online documentation, and/or in
+  other CyberSource-provided materials. Any supplemental software code
+  provided to you as part of the Support Services shall be considered
+  part of the SOFTWARE PRODUCT and subject to the terms and conditions
+  of this EULA.  With respect to technical information you provide to
+  CyberSource as part of the Support Services, CyberSource may use such
+  information for its business purposes, including for product support
+  and development.  CyberSource will not utilize such technical
+  information in a form that personally identifies you.
+
+  h) Termination. Without prejudice to any other rights, CyberSource
+  may terminate this EULA if you fail to comply with the terms and
+  conditions of this EULA. In such event, you must destroy all copies
+  of the SOFTWARE PRODUCT and all of its component parts.
+
+2. UPGRADES. If the SOFTWARE PRODUCT is labeled as an upgrade, you must
+be properly licensed to use a product identified by CyberSource as
+being eligible for the upgrade in order to use the SOFTWARE PRODUCT.  A
+SOFTWARE PRODUCT labeled as an upgrade replaces and/or supplements the
+product that formed the basis for your eligibility for the upgrade. You
+may use the resulting upgraded product only in accordance with the
+terms of this EULA.
+
+3. COPYRIGHT. All title and copyrights in and to the SOFTWARE PRODUCT
+(including but not limited to any images, photographs, animations,
+video, audio, music, text, and applets incorporated into the SOFTWARE
+PRODUCT), the accompanying printed materials, and any copies of the
+SOFTWARE PRODUCT are owned by CyberSource or its suppliers. The
+SOFTWARE PRODUCT is protected by copyright laws and international
+treaty provisions. Therefore, you must treat the SOFTWARE PRODUCT like
+any other copyrighted material except that you may install the SOFTWARE
+PRODUCT on a single server provided you keep the original solely for
+backup or archival purposes. You may not copy the printed materials
+accompanying the SOFTWARE PRODUCT.
+
+4. DUAL-MEDIA SOFTWARE. You may receive the SOFTWARE PRODUCT in more
+than one medium.  Regardless of the type or size of medium you receive,
+you may use only one medium that is appropriate for your single server.
+You may not use or install the other medium on another computer. You
+may not loan, rent, lease, or otherwise transfer the other medium to
+another user, except as part of the permanent transfer (as provided
+above) of the SOFTWARE PRODUCT.
+
+5. U.S. GOVERNMENT RESTRICTED RIGHTS. The SOFTWARE PRODUCT and
+documentation are provided with RESTRICTED RIGHTS. Use, duplication, or
+disclosure by the Government is subject to restrictions as set forth in
+subparagraph (c)(1)(ii) of the Rights in Technical Data and Computer
+Software clause at DFARS 252.227-7013 or subparagraphs (c)(1) and (2)
+of the Commercial Computer SoftwareRestricted Rights at 48 CFR
+52.227-19, as applicable. Manufacturer is CyberSource Corporation, 1295
+Charleston Rd., Mountain View, CA 94043.  
+
+6. EXPORT RESTRICTIONS. You agree that neither you nor your customers
+intend to or will, directly or indirectly, export or transmit the
+SOFTWARE or related documentation and technical data or any resulting
+product, or process, or service that is the direct product of the
+SOFTWARE, to any country to which such export or transmission is
+restricted by any applicable U.S. regulation or statute, without the
+prior written consent, if required, of the Bureau of Export
+Administration of the U.S. Department of Commerce, or such other
+governmental entity as may have jurisdiction over such export or
+transmission.
+
+MISCELLANEOUS. If you acquired this product in the United States, this
+EULA is governed by the laws of the State of California. If this
+product was acquired outside the United States, then local law may
+apply.  Should you have any questions concerning this EULA, or if you
+desire to contact CyberSource for any reason, please contact the
+CyberSource Corporate Headquarters, or write: CyberSource Sales
+Information CyberSource Corporation, 1295 Charleston Rd., Mountain
+View, CA 94043. 
+
+LIMITED WARRANTY.  CyberSource warrants that (a) the SOFTWARE PRODUCT
+will perform substantially in accordance with the accompanying written
+materials for a period of one-hundred twenty days (120) days from the
+date of receipt. Some states and jurisdictions do not allow limitations
+on duration of an implied warranty, so the above limitation may not
+apply to you.  NO OTHER WARRANTIES. To the maximum extent permitted by
+applicable law, CyberSource and its suppliers disclaim all other
+warranties, either express or implied, including, but not limited to,
+implied warranties of merchantability AND fitness for a particular
+purpose, with regard to the SOFTWARE PRODUCT. This limited warranty
+gives you specific legal rights. You may have others, which vary from
+state/jurisdiction to state/jurisdiction.
+
+NO LIABILITY FOR CONSEQUENTIAL DAMAGES.  To the maximum extent
+permitted by applicable law, in no event shall CyberSource or its
+suppliers be liable for any special, incidental, indirect, or
+consequential damages whatsoever (including, without limitation,
+damages for loss of business profits, business interruption, loss of
+business information, or any other pecuniary loss) arising out of the
+use of or inability to use the SOFTWARE PRODUCT, even if CyberSource
+has been advised of the possibility of such damages. Because some
+states and jurisdictions do not allow the exclusion or limitation of
+liability for consequential or incidental damages, the above limitation
+may not apply to you.
