@@ -1064,7 +1064,10 @@ public class Util {
                 mapSCMPRequestPayPalToken(icsApplications, nvpRequest);
             }break;
             default:{
-                System.out.println("SCMP Key=" + scmpKey + " is unknown or not handled yet.");
+                //ics_applications is not part of the scmp_so_mapping.properties as this is maintained in ics_applications.properties mapping file
+                if(!SCMP_REQUEST_ICS_APPLICATIONS.equals(scmpKey)) {
+                    System.out.println("SCMP Key=" + scmpKey + " is unknown or not handled yet.");
+                }
             }
         }
     }
@@ -1501,7 +1504,14 @@ public class Util {
                     }
                 }
                 else {
-                    icsClientRequest.setField(key, value);
+                    if(key.startsWith("offer")){
+                        //the ics.jar setField logic will treat field names that starts with "offer" as an item and as such will create a new ICCOffer object.
+                        //Need to access the hashtable directly here instead of using the setField method.
+                        icsClientRequest.getHashtable().put(key, value);
+                    }
+                    else {
+                        icsClientRequest.setField(key, value);
+                    }
                 }
             }
         }
