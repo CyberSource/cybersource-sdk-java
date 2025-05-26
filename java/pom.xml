@@ -3,12 +3,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
     <groupId>com.cybersource</groupId>
     <artifactId>cybersource-sdk-java</artifactId>
     <version>6.2.16-SNAPSHOT</version>
@@ -54,23 +48,10 @@
 
     <profiles>
         <profile>
-            <id>release-artifacts</id>
+            <id>release</id>
             <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
+                <activeByDefault>false</activeByDefault>
             </activation>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
@@ -135,6 +116,31 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.4.3</version>
+                        <configuration>
+                            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*SystemTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <checksums>required</checksums>
+                            <skipPublishing>false</skipPublishing>
+                            <publishingServerId>sonatype-nexus-staging</publishingServerId>
                         </configuration>
                     </plugin>
                 </plugins>
